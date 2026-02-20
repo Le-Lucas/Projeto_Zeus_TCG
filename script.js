@@ -1,4 +1,4 @@
-console.log("Conexão JS Estabelecida. MOTOR V7.0: Contra-Ataque Ativo, Anti-NaN e VFX Integrado.");
+console.log("Conexão JS Estabelecida. MOTOR V7.1: Seta de Mira, Brilho de Turno e Deck Aleatório Ativos.");
 
 window.onerror = function(msg) { if (msg.includes("gsap is not defined")) return true; return false; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -77,6 +77,7 @@ let maxMana = 3, playerMana = 3, maxLife = 20, playerLife = 20, enemyLife = 20, 
 let attackToken = "player", currentStep = "deploy_attacker"; 
 let selectedAttacker = null, selectedCardFromHand = null, turnTime = 80, timerInterval, gameIsOver = false, selectedHeroObj = null, isSystemLocked = false, draggedCard = null; 
 
+/* --- OVERRIDE SYSTEM --- */
 function loadSaveData() {
     playerCollection = [];
     baseDeck.forEach(card => { playerCollection.push({...card}); playerCollection.push({...card}); playerCollection.push({...card}); });
@@ -129,6 +130,36 @@ function bootTerminal() {
         }
     };
     if(document.getElementById("actionBtn")) document.getElementById("actionBtn").onclick = handleActionBtn;
+
+    // 🔥 A SETA MÁGICA (Mira do Mouse) 🔥
+    document.addEventListener('mousemove', (e) => {
+        const overlay = document.getElementById('targeting-overlay');
+        if(!overlay) return;
+        const line = document.getElementById('targeting-line');
+        const dot = document.getElementById('targeting-dot');
+        
+        let origin = null;
+        let cor = "#ff0000"; // Vermelho para ataque
+
+        if (currentStep === "combat" && selectedAttacker) { origin = selectedAttacker; } 
+        else if (selectedCardFromHand && selectedCardFromHand.dataset.type === "feitico") {
+            origin = selectedCardFromHand;
+            cor = "#00ffff"; // Ciano para magia
+        }
+
+        if (origin) {
+            overlay.style.display = "block";
+            const rect = origin.getBoundingClientRect();
+            line.setAttribute("x1", rect.left + rect.width / 2);
+            line.setAttribute("y1", rect.top + rect.height / 2);
+            line.setAttribute("x2", e.clientX);
+            line.setAttribute("y2", e.clientY);
+            line.setAttribute("stroke", cor);
+            dot.setAttribute("cx", e.clientX);
+            dot.setAttribute("cy", e.clientY);
+            dot.setAttribute("fill", cor);
+        } else { overlay.style.display = "none"; }
+    });
 }
 
 function initDeckBuilder() {
@@ -137,23 +168,56 @@ function initDeckBuilder() {
     if(document.getElementById("sort-type")) document.getElementById("sort-type").onclick = () => { currentSortMode = "type"; renderVitrine(); playSound("click"); };
     if(document.getElementById("btn-close-inspect")) document.getElementById("btn-close-inspect").onclick = () => { playSound("click"); document.getElementById("inspect-modal").classList.remove("active"); };
 
+    // 🔥 INJETOR DO BOTÃO "DECK ALEATÓRIO" 🔥
+    let toolbar = document.querySelector(".toolbar");
+    if(toolbar && !document.getElementById("btn-random-deck")) {
+        let btnRand = document.createElement("button");
+        btnRand.id = "btn-random-deck";
+        btnRand.className = "cmd-btn";
+        btnRand.style.width = "auto";
+        btnRand.style.padding = "5px 15px";
+        btnRand.style.fontSize = "0.7rem";
+        btnRand.style.borderColor = "#00ff00";
+        btnRand.style.color = "#00ff00";
+        btnRand.innerText = "🎲 ALEATÓRIO";
+        btnRand.onclick = generateRandomDeck;
+        toolbar.appendChild(btnRand);
+    }
+
     renderVitrine();
     let btnBack = document.getElementById("btn-back-from-deck");
     if(btnBack) btnBack.onclick = () => { playSound("click"); document.getElementById("deck-builder-screen").classList.remove("active"); document.getElementById("hero-screen").classList.add("active"); };
 }
 
+// 🔥 GERADOR DE DECK ALEATÓRIO 🔥
+function generateRandomDeck() {
+    playSound("click");
+    customDeck = [];
+    let pool = [...playerCollection];
+    // Embaralha
+    for(let i = pool.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    // Pesca 15
+    for(let card of pool) {
+        if(customDeck.length >= 15) break;
+        if(customDeck.filter(c => c.title === card.title).length < 3) {
+            customDeck.push({...card});
+        }
+    }
+    updateDeckUI();
+}
+
 function renderVitrine() {
-    const poolGrid = document.getElementById("card-pool-grid"); 
-    if(!poolGrid) return;
+    const poolGrid = document.getElementById("card-pool-grid"); if(!poolGrid) return;
     poolGrid.innerHTML = "";
     let uniqueCards = []; playerCollection.forEach(card => { if(!uniqueCards.find(c => c.title === card.title)) uniqueCards.push(card); });
-    
     uniqueCards.sort((a, b) => {
         if (currentSortMode === "cost") return a.custo - b.custo;
         if (currentSortMode === "type") return a.tipo.localeCompare(b.tipo);
         if (currentSortMode === "rarity") { const peso = { "comum": 1, "rara": 2, "epica": 3, "lendaria": 4 }; return peso[b.raridade] - peso[a.raridade]; }
     });
-
     uniqueCards.forEach(card => {
         const div = document.createElement("div"); div.className = `pool-card ${card.raridade}`;
         const imgUrl = card.img ? card.img : `https://placehold.co/100x80/111/ff0000?text=IMG`;
@@ -166,13 +230,10 @@ function renderVitrine() {
 
 function openInspectModal(cardData) {
     playSound("click");
-    const container = document.getElementById("inspect-card-container"); 
-    if(!container) return;
-    container.innerHTML = "";
-    const visualCard = createCard(cardData);
+    const container = document.getElementById("inspect-card-container"); if(!container) return;
+    container.innerHTML = ""; const visualCard = createCard(cardData);
     visualCard.onclick = null; visualCard.ondragstart = null; visualCard.style.position = "relative"; visualCard.style.cursor = "default";
-    container.appendChild(visualCard);
-    document.getElementById("inspect-modal").classList.add("active");
+    container.appendChild(visualCard); document.getElementById("inspect-modal").classList.add("active");
 }
 
 function addCardToDeck(card) { 
@@ -181,7 +242,6 @@ function addCardToDeck(card) {
         if (inDeckCount < 3) { customDeck.push({...card}); updateDeckUI(); } else { playSound("error"); alert("Máximo de 3 cópias iguais no deck."); }
     } 
 }
-
 function removeCardFromDeck(index) { customDeck.splice(index, 1); updateDeckUI(); }
 function updateDeckUI() {
     const deckList = document.getElementById("current-deck-list"); if(!deckList) return;
@@ -222,14 +282,19 @@ function openMarketModal(card, copies) {
 }
 
 /* =========================================================
-   BLINDAGEM CONTRA NaN E CONTRA-ATAQUE (MOTOR V7.0)
+   SISTEMA DE CARTAS (CRIAÇÃO E BLINDAGEM)
    ========================================================= */
 function createCard(item) { 
-    if(!item) return document.createElement("div"); // Prevenção 1
+    if(!item) return document.createElement("div"); 
     const c = document.createElement("div"); 
     c.className = `card-base ${item.raridade || 'comum'} ${item.tipo || 'tropa'}`;
     
-    // BLINDAGEM MATEMÁTICA ANTI-NaN
+    if (item.efeito === "provocar") c.classList.add("taunt-card"); 
+    if (item.efeito === "ataque_duplo") c.classList.add("double-attack-card"); 
+    if (item.efeito === "roubo_vida") c.classList.add("lifesteal-card");
+    if (item.efeito === "escudo_divino") { c.classList.add("shield-card"); c.dataset.shield = "true"; }
+    if (item.efeito === "furtividade") { c.classList.add("stealth-card"); c.dataset.stealth = "true"; }
+
     let safeAtk = Number(item.atk); if(isNaN(safeAtk)) safeAtk = 0;
     let safeDef = Number(item.def); if(isNaN(safeDef)) safeDef = 0;
     let safeCost = Number(item.custo); if(isNaN(safeCost)) safeCost = 0;
@@ -247,7 +312,6 @@ function createCard(item) {
     let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1));
     let starsHTML = '<div class="card-stars">'; for(let i=0; i<starsCount; i++) starsHTML += '<div class="star">★</div>'; starsHTML += '</div>';
     
-    // Status Visuais 100% Números (Sem letras ou vazios)
     let statsHTML = item.tipo !== 'feitico' ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">MAG</div></div>`;
     const imgUrl = item.img ? item.img : `https://placehold.co/200x150/111/ff0000?text=IMG`;
     c.innerHTML = `<div class="card-title">${item.title}</div><div class="card-art-box"><img src="${imgUrl}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}<div class="card-body"><div class="card-text">${item.text || ""}</div></div>${statsHTML}<div class="card-cost">${safeCost}</div>`;
@@ -282,17 +346,30 @@ function startNewRound() {
     if(maxMana < 10) maxMana++; playerMana = maxMana; drawCard(); updateUIState();
 }
 
+// 🔥 CONTROLE DE BRILHO (UX de Turnos) 🔥
 function updateUIState() {
     updateLifeAndMana(); clearInterval(timerInterval); document.getElementById("turn-display").innerText = `TURNO ${currentTurn}`;
     const btn = document.getElementById("actionBtn"); const phaseDisp = document.getElementById("phase-display");
+    
+    // Liga o Brilho de quem é o turno
+    const pHero = document.getElementById("player-hero");
+    const eHero = document.getElementById("enemy-hero");
+    if(pHero && eHero) {
+        pHero.style.boxShadow = "none"; eHero.style.boxShadow = "none";
+        pHero.style.borderColor = "#333"; eHero.style.borderColor = "#333";
+        if(attackToken === "player") { pHero.style.boxShadow = "0 0 30px #00ffff"; pHero.style.borderColor = "#00ffff"; } 
+        else { eHero.style.boxShadow = "0 0 30px #ff0000"; eHero.style.borderColor = "#ff0000"; }
+    }
+
+    // Textos Claros
     if (currentStep === "deploy_attacker") {
-        if (attackToken === "player") { phaseDisp.innerText = "SEU DEPLOY"; phaseDisp.style.color = "#00ffff"; btn.innerText = "FIM DEPLOY"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
-        else { phaseDisp.innerText = "IA: INVOCANDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiDeployPhase(); }
+        if (attackToken === "player") { phaseDisp.innerText = "FASE: DESCER CARTAS (SUA VEZ)"; phaseDisp.style.color = "#00ffff"; btn.innerText = "IR PARA ATAQUE"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
+        else { phaseDisp.innerText = "IA: DESCENDO CARTAS"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiDeployPhase(); }
     } else if (currentStep === "deploy_defender") {
-        if (attackToken === "enemy") { phaseDisp.innerText = "SUA DEFESA"; phaseDisp.style.color = "#00ffff"; btn.innerText = "FIM DEPLOY"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
+        if (attackToken === "enemy") { phaseDisp.innerText = "FASE: DEFESA (SUA VEZ)"; phaseDisp.style.color = "#00ffff"; btn.innerText = "ENCERRAR DEFESA"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
         else { phaseDisp.innerText = "IA: DEFENDENDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiDeployPhase(); }
     } else if (currentStep === "combat") {
-        if (attackToken === "player") { phaseDisp.innerText = "SEU ATAQUE"; phaseDisp.style.color = "#ff9900"; btn.innerText = "FIM TURNO"; btn.style.opacity = 1; isSystemLocked = false; startTimer(60); } 
+        if (attackToken === "player") { phaseDisp.innerText = "FASE: ATACAR INIMIGOS"; phaseDisp.style.color = "#ff9900"; btn.innerText = "ENCERRAR TURNO"; btn.style.opacity = 1; isSystemLocked = false; startTimer(60); } 
         else { phaseDisp.innerText = "IA: ATACANDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiCombatPhase(); }
     }
 }
@@ -305,8 +382,7 @@ async function aiDeployPhase() {
         const c = baseDeck.filter(x=>x.tipo!=="feitico")[Math.floor(Math.random() * 5)]; 
         const el = createCard(c); el.dataset.owner="enemy"; slots[0].appendChild(el); playSound("deploy");
         el.style.position = "absolute"; el.style.top = "50%"; el.style.left = "50%"; el.style.transform = "translate(-50%, -50%) scale(0.60)"; el.style.margin = "0";
-        if(typeof VFX !== 'undefined') VFX.onSummon(el, el.dataset.effect);
-        processCardEffect("AoJogar", el, "enemy"); updateAuras();
+        if(typeof VFX !== 'undefined') VFX.onSummon(el, el.dataset.effect); processCardEffect("AoJogar", el, "enemy"); updateAuras();
     } 
     await sleep(1000); if (!gameIsOver) advancePhase();
 }
@@ -356,12 +432,11 @@ function createSlots(f, o) {
     for(let i=0; i<5; i++) { 
         const s = document.createElement("div"); s.className = "slot"; s.dataset.owner = o; 
         if(o === "player") { 
-            s.onclick = (e) => { if(selectedCardFromHand && !e.currentTarget.querySelector('.card-base')) executePlayCard(e.currentTarget, selectedCardFromHand); }; 
+            s.onclick = (e) => { if(selectedCardFromHand) executePlayCard(e.currentTarget, selectedCardFromHand); }; 
             s.ondragover = (e) => e.preventDefault();
             s.ondrop = (e) => { 
                 if (isSystemLocked || !draggedCard) return; 
                 if(draggedCard.dataset.type === "feitico") { playSound("error"); alert("Magias: Clique nela e depois no Alvo!"); return; }
-                if (e.currentTarget.querySelector('.card-base')) return; 
                 executePlayCard(e.currentTarget, draggedCard); 
             };
         } 
@@ -431,8 +506,7 @@ function executeSpell(spellCard, targetElement, targetOwner) {
         let heal = parseInt(efeito.split("_")[1]) || 0;
         if(targetElement.id.includes("hero")) { playerLife += heal; if(typeof VFX !== 'undefined') VFX.particles(targetElement, "#00ff00"); }
         else { 
-            let curHp = parseInt(targetElement.dataset.hp) || 0;
-            targetElement.dataset.hp = curHp + heal; 
+            let curHp = parseInt(targetElement.dataset.hp) || 0; targetElement.dataset.hp = curHp + heal; 
             if(targetElement.querySelector(".stat-def")) targetElement.querySelector(".stat-def").innerText = targetElement.dataset.hp; 
             if(typeof VFX !== 'undefined') VFX.particles(targetElement, "#00ff00"); 
         }
@@ -447,43 +521,37 @@ function executePlayCard(slot, card) {
     if(card.dataset.type === "feitico") return; 
     let cst = parseInt(card.dataset.cost) || 0;
     if(playerMana >= cst) {
+        
+        // --- 💀 O RITUAL DE SACRIFÍCIO (Override) 💀 ---
+        const existingCard = slot.querySelector('.card-base');
+        if (existingCard) {
+            existingCard.dataset.dead = "true"; processCardEffect("UltimoSuspiro", existingCard, "player"); 
+            if(typeof VFX !== 'undefined') VFX.death(existingCard); else existingCard.remove();
+        }
+
         playerMana -= cst; slot.appendChild(card); card.classList.remove("deployment-selected");
         card.style.position = "absolute"; card.style.top = "50%"; card.style.left = "50%"; card.style.margin = "0"; card.style.transform = "translate(-50%, -50%) scale(0.60)";
         if (card.dataset.effect === "investida") card.dataset.hasAttacked = "false"; else { card.dataset.hasAttacked = "true"; card.classList.add("exhausted"); }
         selectedCardFromHand = null; draggedCard = null; playSound("deploy"); updateLifeAndMana();
         
         if(typeof VFX !== 'undefined') VFX.onSummon(card, card.dataset.effect);
-        processCardEffect("AoJogar", card, "player"); updateAuras();
+        processCardEffect("AoJogar", card, "player"); setTimeout(updateAuras, 100); 
         document.getElementById("hand").classList.remove("expanded"); arrangeHand();
     } else { playSound("error"); alert("RAM INSUFICIENTE!"); }
 }
 
-// O CÉREBRO DO CONTRA-ATAQUE
 function resolveCombat(atkCard, defCard, isPlayer) {
     if(typeof VFX !== 'undefined') VFX.onAttack(atkCard, defCard, atkCard.dataset.effect);
     if(atkCard.dataset.somAtaque) { let a = new Audio(atkCard.dataset.somAtaque); a.play().catch(e=>{}); } else { playSound("hit"); }
     
     setTimeout(() => {
-        let dmgToDef = parseInt(atkCard.dataset.attack) || 0;
-        let dmgToAtk = 0;
-
-        // Se o alvo for uma tropa, pega o ataque dela para revidar
-        if(!defCard.id.includes("hero")) {
-            dmgToAtk = parseInt(defCard.dataset.attack) || 0;
-        }
+        let dmgToDef = parseInt(atkCard.dataset.attack) || 0; let dmgToAtk = 0;
+        if(!defCard.id.includes("hero")) { dmgToAtk = parseInt(defCard.dataset.attack) || 0; }
         
-        // 1. Dano no Defensor
-        if(defCard.id.includes("hero")) { 
-            if(isPlayer) enemyLife -= dmgToDef; else playerLife -= dmgToDef; screenShake(); 
-        } else { 
-            applyDamage(defCard, dmgToDef); 
-        }
+        if(defCard.id.includes("hero")) { if(isPlayer) enemyLife -= dmgToDef; else playerLife -= dmgToDef; screenShake(); } 
+        else { applyDamage(defCard, dmgToDef); }
         
-        // 2. Dano no Atacante (Contra-Ataque)
-        if (dmgToAtk > 0) {
-            applyDamage(atkCard, dmgToAtk);
-        }
-        
+        if (dmgToAtk > 0) { applyDamage(atkCard, dmgToAtk); }
         if (atkCard.dataset.effect === "roubo_vida" && isPlayer) playerLife = Math.min(playerLife + dmgToDef, maxLife);
 
         checkGameOver(); updateLifeAndMana(); 
@@ -493,41 +561,31 @@ function resolveCombat(atkCard, defCard, isPlayer) {
 
         if (attackerAlive && atkCard.dataset.effect === "furia" && defenderDied) {
             atkCard.dataset.hasAttacked = "false"; atkCard.classList.remove("exhausted"); if(typeof VFX !== 'undefined') VFX.fury(atkCard);
-        } else if (attackerAlive) {
-            atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); 
-        }
+        } else if (attackerAlive) { atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); }
         
         atkCard.classList.remove("attacker-selected"); selectedAttacker = null;
-    }, 450); // Sincronizado para explodir quando o pulo terminar
+    }, 450); 
 }
 
 function applyDamage(target, dmg) {
-    if(target.dataset.dead === "true") return; // Prevenção de zumbis
-
+    if(target.dataset.dead === "true") return; 
     if(target.dataset.effect === "escudo_divino" && !target.dataset.shieldBroken) {
         target.dataset.shieldBroken = "true"; target.classList.remove("shield-card");
-        if(typeof VFX !== 'undefined') VFX.shield(target);
-        return; 
+        if(typeof VFX !== 'undefined') VFX.shield(target); return; 
     }
     
-    let currentHp = parseInt(target.dataset.hp) || 0;
-    let finalHp = currentHp - dmg;
-    target.dataset.hp = finalHp;
-    
-    if(target.querySelector(".stat-def")) target.querySelector(".stat-def").innerText = finalHp;
+    let currentHp = parseInt(target.dataset.hp) || 0; let finalHp = currentHp - dmg;
+    target.dataset.hp = finalHp; if(target.querySelector(".stat-def")) target.querySelector(".stat-def").innerText = finalHp;
     if(typeof VFX !== 'undefined') VFX.onDamage(target, target.dataset.effect);
 
     if(finalHp <= 0) {
-        target.dataset.dead = "true"; // Flag de morte
-        processCardEffect("UltimoSuspiro", target, target.parentElement.dataset.owner);
-        if(typeof VFX !== 'undefined') VFX.death(target); else target.remove();
-        setTimeout(updateAuras, 750); 
+        target.dataset.dead = "true"; processCardEffect("UltimoSuspiro", target, target.parentElement.dataset.owner);
+        if(typeof VFX !== 'undefined') VFX.death(target); else target.remove(); setTimeout(updateAuras, 750); 
     }
 }
 
 function processCardEffect(gatilho, cartaObj, owner) {
-    const efeito = cartaObj.dataset.effect;
-    const isPlayer = owner === "player";
+    const efeito = cartaObj.dataset.effect; const isPlayer = owner === "player";
 
     if (gatilho === "AoJogar") {
         if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { playerDeck.push(graveyard.player.pop()); updateLifeAndMana(); }
@@ -552,26 +610,17 @@ function processCardEffect(gatilho, cartaObj, owner) {
     }
     if (gatilho === "FimDeTurno") {
         if (efeito === "cura_turno" && isPlayer) { playerLife = Math.min(playerLife+1, maxLife); if(typeof VFX !== 'undefined') VFX.particles(document.getElementById("player-hero"), "#00ff00"); }
-        if (efeito === "regeneracao") { 
-            let regHp = (parseInt(cartaObj.dataset.hp) || 0) + 1; 
-            cartaObj.dataset.hp = regHp; 
-            if(cartaObj.querySelector(".stat-def")) cartaObj.querySelector(".stat-def").innerText = regHp; 
-            if(typeof VFX !== 'undefined') VFX.particles(cartaObj, "#00ff00"); 
-        }
+        if (efeito === "regeneracao") { let regHp = (parseInt(cartaObj.dataset.hp) || 0) + 1; cartaObj.dataset.hp = regHp; if(cartaObj.querySelector(".stat-def")) cartaObj.querySelector(".stat-def").innerText = regHp; if(typeof VFX !== 'undefined') VFX.particles(cartaObj, "#00ff00"); }
     }
 }
 
 function updateAuras() {
     ["player-field", "enemy-field"].forEach(f => {
-        const field = document.getElementById(f);
-        if(!field) return;
+        const field = document.getElementById(f); if(!field) return;
         const general = field.querySelector('.card-base[data-effect="aura_defesa"]');
-        
         field.querySelectorAll('.card-base').forEach(c => {
-            if(c.dataset.effect === "aura_defesa" || c.dataset.dead === "true") return; // Ignora o general e os mortos
-            
+            if(c.dataset.effect === "aura_defesa" || c.dataset.dead === "true") return; 
             let curHp = parseInt(c.dataset.hp) || 0; 
-            
             if(general) {
                 if(!c.dataset.buffed) { c.dataset.hp = curHp + 2; c.dataset.buffed="true"; c.classList.add("taunt-card"); if(c.querySelector(".stat-def")) c.querySelector(".stat-def").innerText = c.dataset.hp; }
             } else {
@@ -585,8 +634,12 @@ function checkGameOver() {
     if (playerLife <= 0 || enemyLife <= 0) { 
         gameIsOver = true; clearInterval(timerInterval);
         const modal = document.getElementById("game-over-modal");
-        modal.innerHTML = `<div class="modal-content"><h1 style="color:${playerLife<=0?'red':'green'}">${playerLife<=0?'DERROTA':'VITÓRIA'}</h1><button class="cmd-btn" onclick="location.reload()">VOLTAR</button></div>`;
+        modal.innerHTML = `<div class="modal-content"><h1 style="color:${playerLife<=0?'red':'green'}; font-size: 3rem; text-shadow: 0 0 20px ${playerLife<=0?'red':'green'};">${playerLife<=0?'SISTEMA CAIU':'VITÓRIA'}</h1><button class="cmd-btn" id="btn-soft-reset" style="margin-top:20px; border-color: #00ffff; color: #00ffff;">RETORNAR À BASE</button></div>`;
         modal.classList.add("active");
+        document.getElementById("btn-soft-reset").onclick = () => {
+            playSound("click"); modal.classList.remove("active"); document.getElementById("game-screen").classList.remove("active"); document.getElementById("hero-screen").classList.add("active");
+            if(playerLife > 0) { playerFragments += 100; document.getElementById("fragment-count").innerText = playerFragments; }
+        };
     } 
 }
 
