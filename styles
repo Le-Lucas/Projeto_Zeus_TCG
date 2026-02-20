@@ -1,0 +1,184 @@
+/* =========================================================
+   🎨 ESTILO GERAL & EFEITOS VISUAIS (PROJETO ZEUS V7.0 - WEBGL)
+   ========================================================= */
+body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; overflow-x: hidden; touch-action: none; }
+.screen { display: none; width: 100vw; height: 100vh; position: relative; z-index: 10; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* O CANVAS 3D FICA NO FUNDO DE TUDO */
+#bg-canvas {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 0; pointer-events: none; 
+    background: radial-gradient(circle at center, #1a0a1a 0%, #000000 100%); 
+}
+
+/* EFEITOS DE FUNDO (CIBERNÉTICOS) */
+.tv-noise { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9998; opacity: 0.04; background: repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%) 50% 0/2500px 2500px, repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 60% 60%/2500px 2500px; background-blend-mode: difference; animation: staticNoise 0.2s infinite alternate; }
+@keyframes staticNoise { 100% { background-position: 50% 0, 60% 50%; } }
+
+/* TEXTOS E BOTÕES GERAIS */
+.shimmer-text { text-transform: uppercase; background: linear-gradient(to right, #777 20%, #ff0000 50%, #777 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: brilhoFluxo 4s linear infinite; }
+@keyframes brilhoFluxo { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+.neon-label { font-size: 0.8rem; color: #ff3333; text-shadow: 0 0 8px #ff0000; font-weight: bold; text-transform: uppercase;}
+
+.cmd-btn { background: rgba(26, 0, 0, 0.8); color: white; border: 1px solid #ff0000; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; backdrop-filter: blur(2px); }
+.cmd-btn:hover { background: #440000; box-shadow: 0 0 20px #ff0000; }
+.open-btn { width: 100%; padding: 12px 0; font-size: 0.9rem; letter-spacing: 2px; text-align: center; cursor: pointer; background: linear-gradient(to right, #444 20%, #ff0000 50%, #444 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; border: 1px solid #ff0000; animation: brilhoFluxo 4s linear infinite; font-weight: bold; text-transform: uppercase; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);}
+
+/* --- TELAS INICIAIS (AGORA TRANSPARENTES PARA VER O 3D) --- */
+#start-screen { justify-content: center; align-items: center; text-align: center; background: transparent; }
+#hero-screen { align-items: center; justify-content: center; background: transparent;}
+
+.hero-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; width: 95%; padding-top: 60px; }
+.hero-choice { width: 220px; min-height: 280px; background: rgba(5, 5, 5, 0.8); border: 1px solid #330000; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0,0,0,0.5); backdrop-filter: blur(3px);}
+.hero-choice img { width: 80px; height: 80px; margin-bottom: 15px; border: 1px solid #440000; object-fit: cover; background: #111; }
+.hero-choice:hover { transform: translateY(-5px); border-color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.2); }
+.hero-choice.selected { border-color: #ff0000; box-shadow: 0 0 30px rgba(255,0,0,0.4); transform: scale(1.05); }
+
+/* =========================================================
+   🛒 MERCADO E DECK BUILDER (A VITRINE CHIQUE HOLOGRÁFICA)
+   ========================================================= */
+#deck-builder-screen, #market-screen { padding: 20px; justify-content: center; align-items: center; background: transparent;}
+.deck-builder-container { display: flex; width: 95vw; height: 90vh; gap: 20px; background: rgba(10, 10, 10, 0.85); border: 1px solid #440000; padding: 20px; border-radius: 8px; backdrop-filter: blur(5px);}
+.pool-panel { flex: 3; overflow-y: auto; border-right: 1px solid #330000; padding-right: 10px;}
+.deck-panel { flex: 1; min-width: 250px; display: flex; flex-direction: column; }
+
+.deck-item { display: flex; justify-content: space-between; padding: 8px; background: rgba(17, 17, 17, 0.8); border: 1px solid #222; margin-bottom: 5px; font-size: 0.7rem; cursor: pointer; transition: 0.2s;}
+.deck-item:hover { border-color: red; text-decoration: line-through; background: rgba(255,0,0,0.2);}
+
+.pool-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; padding: 10px; width: 100%;}
+
+/* Miniatura Holográfica */
+.pool-card { position: relative; border-radius: 6px; background: #0a0a0a; overflow: hidden; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; border: 1px solid #333; pointer-events: auto !important; }
+.pool-card::before { content: ""; position: absolute; top: -150%; left: -150%; width: 300%; height: 300%; background: linear-gradient(135deg, rgba(255, 255, 255, 0) 0%, rgba(0, 255, 255, 0.05) 45%, rgba(255, 255, 255, 0.2) 50%, rgba(0, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0) 100%); transform: rotate(45deg); transition: all 0.6s ease; z-index: 2; pointer-events: none; }
+.pool-card::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 3; opacity: 0.4; }
+.pool-card:hover { transform: scale(1.05) translateY(-5px); z-index: 10; border-color: #ff0000; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5); }
+.pool-card:hover::before { top: -50%; left: -50%; }
+
+.pool-img { width: 100%; height: 110px; object-fit: cover; border-bottom: 1px solid #222; filter: grayscale(0.8) contrast(1.5); transition: filter 0.4s ease; display: block; }
+.pool-card:hover .pool-img { filter: grayscale(0) contrast(1.1); }
+
+.pool-info { padding: 10px; text-align: center; position: relative; z-index: 5; pointer-events: none;}
+.pool-title { font-size: 0.65rem; color: #fff; font-weight: bold; margin-bottom: 5px; text-transform: uppercase; height: 25px; display: flex; align-items: center; justify-content: center; letter-spacing: 1px; border-bottom: 1px solid #330000; padding-bottom: 5px;}
+.pool-cost { color: #00ffff; font-size: 0.9rem; font-weight: bold; }
+
+.inspect-btn { position: absolute; top: 5px; left: 5px; width: 25px; height: 25px; background: rgba(0,0,0,0.8); border: 1px solid #fff; border-radius: 50%; color: #fff; display: flex; justify-content: center; align-items: center; font-size: 0.8rem; z-index: 20; opacity: 0; transition: 0.2s; cursor: help; pointer-events: auto; }
+.pool-card:hover .inspect-btn { opacity: 1; border-color: #00ffff; color: #00ffff;}
+.inspect-btn:hover { background: #00ffff; color: #000; }
+
+.pool-card.comum { border-color: #555; }
+.pool-card.rara { border-color: #00ffff; box-shadow: 0 0 8px rgba(0, 255, 255, 0.3); }
+.pool-card.epica { border-color: #9c27b0; animation: pulseEpic 2s infinite alternate; }
+.pool-card.lendaria { border-color: #ffca28; animation: pulseLegendary 1.5s infinite alternate; }
+
+@keyframes pulseEpic { 0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.4); } 100% { box-shadow: 0 0 20px rgba(156, 39, 176, 1); } }
+@keyframes pulseLegendary { 0% { box-shadow: 0 0 10px rgba(255, 202, 40, 0.5); } 100% { box-shadow: 0 0 30px rgba(255, 202, 40, 1); } }
+
+/* =========================================================
+   ⚔️ BATTLEFIELD E TABULEIRO REDUZIDO
+   ========================================================= */
+.layout-battle { flex-direction: row; background: transparent; }
+.sidebar { width: 250px; background: rgba(5, 5, 5, 0.85); border-right: 1px solid #440000; padding: 20px; display: flex; flex-direction: column; z-index: 100; box-sizing: border-box; backdrop-filter: blur(5px);}
+.hero-panel-sidebar { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #00ff00; background: rgba(0,255,0,0.1); border-radius: 8px; margin-top: auto; cursor: pointer; transition: 0.2s; }
+.hero-panel-sidebar:hover { box-shadow: 0 0 15px rgba(0,255,0,0.4); }
+.card-back { width: 90px; height: 130px; margin: 0 auto; background: repeating-linear-gradient(45deg, #050505, #050505 5px, #1a1a1a 5px, #1a1a1a 10px); border: 2px solid #00ffff; border-radius: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #00ffff; font-weight: bold; font-size: 0.8rem; box-shadow: 0 0 15px rgba(0,255,255,0.2); }
+
+#board { flex-grow: 1; position: relative; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; transition: 1s; padding-top: 20px; padding-bottom: 120px; }
+#board { --arena-color: #ff0000; }
+#board.arena-neon { --arena-color: #00ffff; }
+#board.arena-toxic { --arena-color: #00ff00; }
+#board.arena-blood { --arena-color: #ff0000; }
+
+.hero-panel { display: flex; align-items: center; gap: 15px; padding: 10px 20px; border: 1px solid #333; background: rgba(0,0,0,0.8); border-radius: 8px; z-index: 50; width: 300px; cursor: pointer; margin-bottom: 10px;}
+.hero-avatar { width: 60px; height: 60px; border: 1px solid #555; object-fit: cover; background: #111; }
+.hero-stats { display: flex; flex-direction: column; }
+
+.field { display: flex; justify-content: center; gap: 8px; width: 100%; height: 165px; z-index: 50; align-items: center;}
+.slot { width: 115px; height: 165px; border: 2px dashed var(--arena-color); opacity: 0.4; display: flex; justify-content: center; align-items: center; position: relative; background: rgba(0,0,0,0.2);}
+.slot:hover { opacity: 1; border-style: solid; background: rgba(255,255,255,0.05); }
+.slot .card-base { position: absolute; top: 50%; left: 50%; margin: 0; transform: translate(-50%, -50%) scale(0.60); }
+
+.field-divider { width: 90%; height: 0px; border-top: 3px dashed var(--arena-color); margin: 15px 0; position: relative; opacity: 0.6; box-shadow: 0 0 10px var(--arena-color); }
+#timeline-bar { position: absolute; top: -3px; left: 0; height: 3px; width: 100%; background: #ff0000; box-shadow: 0 0 15px #ff0000; transition: width 1s linear; }
+
+/* =========================================================
+   🃏 A CARTA EM SI (DESIGN CRACHÁ CYBERPUNK - 170x245)
+   ========================================================= */
+.card-base { width: 170px; height: 245px; background: #000; border: 2px solid #333; border-radius: 8px; position: absolute; transition: 0.2s; user-select: none; overflow: visible; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-family: 'Courier New', sans-serif; z-index: 100; cursor: grab;}
+.card-base:active { cursor: grabbing; }
+
+.card-title { font-size: 0.75rem; text-align: center; color: #fff; padding: 5px; background: linear-gradient(to bottom, #1a1a1a, #000); border-bottom: 1px solid #444; text-transform: uppercase; font-weight: bold; border-radius: 8px 8px 0 0; }
+.card-art-box { width: 100%; height: 120px; background: #111; position: relative; overflow: hidden; mask-image: linear-gradient(to bottom, black 80%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); }
+.card-art { width: 100%; height: 100%; object-fit: cover; object-position: top center; pointer-events: none; }
+.card-body { height: 75px; background: #111; border-top: 2px solid #444; border-radius: 0 0 8px 8px; padding: 5px; display: flex; align-items: center; justify-content: center; text-align: center; box-sizing: border-box; }
+.card-text { font-size: 0.6rem; color: #ccc; line-height: 1.2; }
+
+.card-type-icon { position: absolute; top: 25px; right: 2px; width: 25px; height: 25px; background: #000; border: 2px solid #444; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; z-index: 25; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
+.card-base.tropa .card-type-icon { border-color: #ff3333; }
+.card-base.feitico .card-type-icon { border-color: #b0279b; }
+
+.card-stars { position: absolute; top: 70px; left: 2px; display: flex; flex-direction: column; gap: 2px; z-index: 30; filter: drop-shadow(0 0 2px #000); }
+.star { color: #ffd700; font-size: 0.8rem; line-height: 0.8; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+
+.card-stats { position: absolute; top: 25px; left: -10px; display: flex; flex-direction: column; gap: 5px; z-index: 10; }
+.stat-badge { padding: 2px 5px; color: white; font-weight: bold; font-size: 0.85rem; text-shadow: 1px 1px 0 #000; box-shadow: 2px 2px 5px rgba(0,0,0,0.5); clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 10% 50%); width: 40px; text-align: center; }
+.stat-atk { background: #d32f2f; border-left: 2px solid #ff6659; }
+.stat-def { background: #388e3c; border-left: 2px solid #81c784; }
+.card-cost { position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%); width: 35px; height: 35px; background: #00ffff; color: #000; border: 2px solid #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 1rem; z-index: 20; box-shadow: 0 0 10px #00ffff; }
+
+.card-base.comum { border-color: #555; }
+.card-base.rara { border-color: #00ffff; box-shadow: 0 0 10px rgba(0,255,255,0.2); }
+.card-base.epica { border-color: #9c27b0; box-shadow: 0 0 10px rgba(156,39,176,0.3); }
+.card-base.lendaria { border-color: #ffca28; box-shadow: 0 0 15px rgba(255,202,40,0.4); }
+
+.card-base:hover { transform: translateY(-20px) scale(1.1) !important; z-index: 500 !important; }
+.card-base.attacker-selected { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; transform: translateY(-10px); }
+.card-base.deployment-selected { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; transform: translateY(-10px); }
+.card-base.exhausted { filter: grayscale(1) opacity(0.6); pointer-events: none; }
+.card-base.taunt-card::after { content: "🛡️"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; }
+.card-base.stealth-card::after { content: "💨"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; }
+.card-base.shield-card::after { content: "🔰"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; filter: drop-shadow(0 0 5px cyan); }
+
+/* =========================================================
+   📂 CONTROLE DA MÃO (A PASTA DE ARQUIVOS)
+   ========================================================= */
+#hand { position: fixed; bottom: -280px; left: 250px; width: calc(100% - 250px); height: 300px; display: flex; justify-content: center; z-index: 200; transition: 0.3s; transform-origin: bottom center; transform: scale(0.7); }
+#hand.expanded { bottom: 0; transform: scale(0.9); z-index: 9999 !important; }
+#hand-indicator { position: fixed; bottom: 10px; left: 60%; transform: translateX(-50%); z-index: 10000 !important; cursor: pointer !important; padding: 5px 15px; border: 1px solid #00ffff; background: #000 !important; color: #00ffff; font-size: 0.7rem; pointer-events: auto !important; box-shadow: 0 0 15px #00ffff !important; transition: 0.2s;}
+#hand-indicator:hover { background: #00ffff !important; color: #000; }
+#hand-indicator::before { content: ""; position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: -1; }
+
+/* =========================================================
+   🪟 MODAIS E PARTÍCULAS (VFX ENGINE)
+   ========================================================= */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
+.modal.active { display: flex; }
+.modal-content { background: rgba(10, 10, 10, 0.95); border: 1px solid #ff0000; padding: 30px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(255,0,0,0.2); backdrop-filter: blur(5px);}
+
+.particle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    box-shadow: 0 0 15px currentColor, 0 0 5px white;
+}
+
+/* --- MOBILE RESPONSIVE --- */
+@media (max-width: 768px) {
+    .layout-battle { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #440000; }
+    .sidebar-header, .sidebar-links { display: none; }
+    
+    #board { width: 100%; padding: 10px 0 120px 0; overflow-y: scroll; justify-content: flex-start; }
+    .field { width: 98%; gap: 2px; min-height: 100px; }
+    .slot { width: 19%; height: 26vw; border-width: 1px; }
+    
+    .slot .card-base { transform: translate(-50%, -50%) scale(0.35); }
+    .slot .card-base:active { transform: translate(-50%, -50%) scale(0.65); z-index: 9999; box-shadow: 0 0 50px #000; }
+    
+    #hand { bottom: -280px; width: 100%; left: 0; transform: scale(0.45); }
+    #hand.expanded { bottom: -40px; transform: scale(0.55); }
+    #hand-indicator { left: 50%; width: auto; white-space: nowrap; }
+}
