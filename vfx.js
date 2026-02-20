@@ -42,6 +42,56 @@ const VFX = {
       setTimeout(() => p.remove(), 1000);
     }
   },
+  
+  /* --- NO SEU ARQUIVO VFX.JS, DENTRO DO OBJETO VFX --- */
+
+  particles(el, color) {
+      // (... sua função particles atual continua aqui ...)
+  },
+
+  // 🔥 NOVA FUNÇÃO: EXPLOSÃO DE TELA INTEIRA 🔥
+  bigExplosion(color) {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      for (let i = 0; i < 80; i++) { // 80 Partículas!
+          const p = document.createElement("div");
+          p.style.position = "fixed"; // Fixed para pegar a tela toda
+          p.style.width = (Math.random() * 20 + 10) + "px"; // Tamanhos variados
+          p.style.height = p.style.width;
+          p.style.borderRadius = "50%";
+          p.style.pointerEvents = "none";
+          p.style.zIndex = "99999";
+          p.style.background = color;
+          p.style.boxShadow = `0 0 30px ${color}, 0 0 10px white`;
+          p.style.left = centerX + "px";
+          p.style.top = centerY + "px";
+          document.body.appendChild(p);
+
+          // Explode para muito longe (tela toda)
+          const destX = (Math.random() - 0.5) * window.innerWidth * 1.5;
+          const destY = (Math.random() - 0.5) * window.innerHeight * 1.5;
+
+          p.animate([
+              { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
+              { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
+          ], { duration: 1500 + Math.random() * 1000, easing: "cubic-bezier(0.25, 1, 0.5, 1)" });
+
+          setTimeout(() => p.remove(), 2500);
+      }
+      this.screenFlash(color);
+  },
+
+  screenFlash(color) {
+      const flash = document.createElement("div");
+      flash.style.position = "fixed"; flash.style.top=0; flash.style.left=0; flash.style.width="100vw"; flash.style.height="100vh";
+      flash.style.background = color; flash.style.zIndex = "99990"; flash.style.pointerEvents = "none"; flash.style.mixBlendMode = "screen";
+      document.body.appendChild(flash);
+      flash.animate([{ opacity: 0.8 }, { opacity: 0 }], { duration: 800 });
+      setTimeout(() => flash.remove(), 800);
+  },
+
+/* --- FIM DA INSERÇÃO --- */
 
   /* --- EVENTOS DE JOGO --- */
   onSummon(card, efeito) {
