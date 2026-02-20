@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PROJETO ZEUS: PROTOCOLO DE BATALHA</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="https://files.catbox.moe/wkfzj3.png">
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="tv-noise"></div>
+    <div class="ruido-estatico"></div>
+
+    <div id="start-screen" class="screen active">
+        <h1 class="shimmer-text" style="font-size: 3rem; margin-bottom: 10px;">PROJETO ZEUS</h1>
+        <p style="color: #ff0000; letter-spacing: 3px; font-size: 0.8rem;">[ CARD GAME ]</p>
+        <br><br>
+        <button id="btn-start" class="open-btn" style="width: 200px;">[INICIAR CONEXÃO]</button>
+    </div>
+
+    <div id="hero-screen" class="screen">
+        <div style="position: absolute; top: 20px; width: 100%; text-align: center;">
+            <h2 class="neon-label" style="font-size: 1.5rem;">SELECIONE SEU OPERADOR</h2>
+            <div style="display:flex; justify-content:center; gap:20px; margin-top:10px;">
+                <span style="color:#00ffff; font-weight:bold; border:1px solid #00ffff; padding:2px 10px; background: rgba(0,0,0,0.5);">CRÉDITOS: <span id="fragment-count">0</span>💽</span>
+            </div>
+        </div>
+
+        <div class="hero-container">
+            <div class="hero-choice" data-hero="orc" data-img="https://files.catbox.moe/wkfzj3.png">
+                <img src="https://files.catbox.moe/wkfzj3.png">
+                <h3>COMANDANTE (AGGRO)</h3>
+                <p>Especialidade: Exército Numérico</p>
+            </div>
+            <div class="hero-choice" data-hero="elfo" data-img="https://files.catbox.moe/tl6rvy.png">
+                <img src="https://files.catbox.moe/tl6rvy.png">
+                <h3>TECNOMAGO (CONTROLE)</h3>
+                <p>Especialidade: Hacks & Feitiços</p>
+            </div>
+            <div class="hero-choice" data-hero="clerigo" data-img="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
+                <img src="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
+                <h3>BIOMÉDICO (CURA)</h3>
+                <p>Especialidade: Sobrevivência</p>
+            </div>
+        </div>
+
+        <div id="hero-actions" style="display: none; position: absolute; bottom: 30px; gap: 20px; width: 100%; justify-content: center;">
+            <button id="btn-edit-deck" class="cmd-btn" style="width: 150px;">EDITAR DECK</button>
+            <button id="btn-open-market" class="cmd-btn" style="width: 150px; border-color: #ff00ff; color: #ff00ff;">MERCADO NEGRO</button>
+            <button id="btn-start-battle-direct" class="open-btn" style="width: 200px; border-color:#00ff00; color:#00ff00;">[ INICIAR MISSÃO ]</button>
+        </div>
+    </div>
+
+    <div id="deck-builder-screen" class="screen">
+        <div class="deck-builder-container">
+            <div class="pool-panel">
+                <div class="toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #330000;">
+                    <span style="color: #00ffff; font-weight: bold; align-self: center;">ORDENAR POR:</span>
+                    <button class="cmd-btn" id="sort-cost" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">CUSTO ⚡</button>
+                    <button class="cmd-btn" id="sort-rarity" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">RARIDADE ★</button>
+                    <button class="cmd-btn" id="sort-type" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">TIPO ⚙️</button>
+                </div>
+                <div id="card-pool-grid" class="pool-grid"></div>
+            </div>
+
+            <div class="deck-panel">
+                <h2 id="deck-count" style="color:#fff; text-align:center; margin-top:0;">0 / 15 ARQUIVOS</h2>
+                <div id="current-deck-list" class="deck-list" style="flex-grow: 1; overflow-y: auto; margin-bottom: 15px;"></div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="btn-start-battle" class="open-btn" style="display:none; color: #00ff00; border-color: #00ff00;">[ CONFIRMAR ESQUADRÃO ]</button>
+                    <button id="btn-back-from-deck" class="cmd-btn" style="border-color: #444; color: #777;">VOLTAR AO MENU</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="market-screen" class="screen" style="flex-direction:column; padding:20px; box-sizing:border-box; align-items: center;">
+        <div style="display:flex; justify-content:space-between; width:100%; max-width:1000px; margin-bottom:20px;">
+            <h2 class="neon-label" style="font-size:1.5rem; color:#ff00ff;">MERCADO NEGRO DE DADOS</h2>
+            <button id="btn-leave-market" class="cmd-btn" style="width:150px;">VOLTAR AO MENU</button>
+        </div>
+        <div id="market-grid" class="pool-grid" style="width:100%; max-width:1000px; overflow-y:auto; padding-right:10px;"></div>
+    </div>
+
+    <div id="game-screen" class="screen layout-battle">
+        <div class="sidebar">
+            <div class="sidebar-header">STATUS DO SISTEMA</div>
+            <div class="sidebar-links">
+                <div id="turn-display" style="color: #fff; font-weight: bold; font-size: 1.2rem;">TURNO 1</div>
+                <div id="phase-display" class="neon-label">AGUARDANDO...</div>
+                <div style="margin-top: 10px; color: #00ffff;">RAM (MANA): <span id="mana" style="font-weight:bold; font-size:1.2rem;">0/0</span></div>
+                <div style="margin-top: 5px; color: #ff3333;">TIMER: <span id="timer">30</span>s</div>
+            </div>
+            <button id="actionBtn" class="cmd-btn" style="margin-top: 20px;">[ INICIAR ]</button>
+            <div id="deck-visual" style="margin-top: 30px; text-align: center;">
+                <div class="card-back">DECK<br><span id="cards-in-deck" style="color:#fff; font-size: 1.2rem;">15</span></div>
+            </div>
+            <div id="player-hero" class="hero-panel-sidebar">
+                <img id="player-avatar-img" src="" class="hero-avatar">
+                <div class="hero-stats">
+                    <span style="color:#00ff00; font-weight:bold; font-size: 0.8rem;">OPERADOR</span>
+                    <span style="color:#fff; font-size: 0.8rem;">VIDA: <span id="player-life" style="font-size:1.2rem;">20</span></span>
+                </div>
+            </div>
+            <button id="btn-home" class="cmd-btn" style="margin-top: 10px; border-color: #444; color: #777;">ABORTAR</button>
+        </div>
+
+        <div id="board">
+            <div id="enemy-hero" class="hero-panel" style="border-color: #ff0000; margin-bottom: 20px;">
+                <img src="" class="hero-avatar">
+                <div class="hero-stats">
+                    <span style="color:#ff0000; font-weight:bold; font-size:0.8rem;">AMEAÇA</span>
+                    <span style="color:#fff;">VIDA: <span id="enemy-life" style="font-size:1.5rem;">20</span></span>
+                </div>
+            </div>
+
+            <div id="enemy-field" class="field"></div>
+            <div class="field-divider"><div id="timeline-bar"></div></div>
+            <div id="player-field" class="field"></div>
+        </div>
+
+        <div id="hand-indicator" class="neon-label" style="background:rgba(0,0,0,0.8); border:1px solid #00ffff; cursor:pointer;">[ ABRIR PASTA DE ARQUIVOS ]</div>
+        <div id="hand"></div>
+    </div>
+
+    <svg id="targeting-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9000;">
+        <line id="targeting-line" x1="0" y1="0" x2="0" y2="0" stroke="#ff0000" stroke-width="3" stroke-dasharray="5,5" />
+        <circle id="targeting-dot" cx="0" cy="0" r="5" fill="#ff0000" />
+    </svg>
+
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h1 id="winner-text" class="shimmer-text" style="font-size: 2rem;">FIM DE JOGO</h1>
+            <p style="color: #aaa; margin-bottom: 20px;">Relatório de combate gerado.</p>
+            <button class="open-btn" onclick="location.reload()">[ REINICIAR SISTEMA ]</button>
+        </div>
+    </div>
+
+    <div id="transaction-modal" class="modal" style="z-index: 6000;">
+        <div class="modal-content" style="border-color: #ff00ff;">
+            <h2 id="transact-title" style="color: #ff00ff;">NOME DA CARTA</h2>
+            <p>Você possui: <span id="transact-copies" style="color:#fff; font-weight:bold;">0</span> cópias.</p>
+            <div style="display:flex; gap:10px; flex-direction:column;">
+                <button id="btn-buy-card" class="cmd-btn" style="border-color:#00ffff; color:#00ffff;">COMPRAR</button>
+                <button id="btn-sell-card" class="cmd-btn" style="border-color:#ff3333; color:#ff3333;">VENDER</button>
+                <button id="btn-close-transaction" class="cmd-btn">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mode-selection-modal" class="modal" style="z-index: 7000;">
+        <div class="modal-content" style="border-color: #00ffff; max-width: 500px;">
+            <h2 class="neon-label" style="font-size: 1.5rem; margin-bottom: 20px;">SELECIONE O PROTOCOLO</h2>
+            <button id="btn-mode-story" class="cmd-btn" style="margin-bottom: 15px; border-color: gold; color: gold; height: 60px;">
+                <div style="font-size: 1.1rem; font-weight: bold;">[ CAMPANHA ]</div>
+                <div style="font-size: 0.6rem; color: #fff;">OPERAÇÃO: ALÉM DAS MÁQUINAS</div>
+            </button>
+            <button id="btn-mode-casual" class="cmd-btn" style="margin-bottom: 15px; border-color: #00ffff; color: #00ffff; height: 60px;">
+                <div style="font-size: 1.1rem; font-weight: bold;">[ SIMULAÇÃO ]</div>
+                <div style="font-size: 0.6rem; color: #fff;">COMBATE RÁPIDO (MODO CASUAL)</div>
+            </button>
+            <button id="btn-cancel-mode" class="cmd-btn" style="border-color: #444; color: #777;">CANCELAR</button>
+        </div>
+    </div>
+
+    <div id="inspect-modal" class="modal" style="z-index: 8000;">
+        <div class="modal-content" style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center;">
+            <div id="inspect-card-container" style="transform: scale(1.5); margin-bottom: 60px; pointer-events: none;"></div>
+            <button class="cmd-btn" id="btn-close-inspect" style="width: 200px; border-color: #00ffff; color: #00ffff;">FECHAR ARQUIVO</button>
+        </div>
+    </div>
+
+    <script src="vfx.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
