@@ -169,7 +169,19 @@
             <button id="btn-cancel-mode" class="cmd-btn" style="border-color: #444; color: #777;">CANCELAR</button>
         </div>
     </div>
+    <div id="arena-selection-modal" class="modal" style="z-index: 7500;">
+        <div class="modal-content" style="border-color: #00ff00; max-width: 600px;">
+            <h2 class="neon-label" style="font-size: 1.5rem; margin-bottom: 20px; color: #00ff00;">SELECIONE O SETOR DE COMBATE</h2>
+            
+            <div style="display:flex; flex-direction: column; gap:15px; justify-content:center;">
+                <button class="cmd-btn btn-arena" data-arena="theme-lab" style="border-color: #00ffc8; color: #00ffc8; font-size: 1.1rem;">🧪 SETOR BIOLAB</button>
+                <button class="cmd-btn btn-arena" data-arena="theme-war" style="border-color: #ff3c3c; color: #ff3c3c; font-size: 1.1rem;">🔥 ZONA DE CONFLITO</button>
+                <button class="cmd-btn btn-arena" data-arena="theme-void" style="border-color: #7800ff; color: #7800ff; font-size: 1.1rem;">🌌 DIMENSÃO DE DADOS</button>
+            </div>
 
+            <button id="btn-cancel-arena" class="cmd-btn" style="margin-top: 20px; border-color: #444; color: #777;">VOLTAR</button>
+        </div>
+    </div>
     <div id="inspect-modal" class="modal" style="z-index: 8000;">
         <div class="modal-content" style="background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; align-items: center;">
             <div id="inspect-card-container" style="transform: scale(1.5); margin-bottom: 60px; pointer-events: none;"></div>
