@@ -2,8 +2,13 @@ console.log("Conexão JS Estabelecida. MOTOR V7.1: Seta de Mira, Brilho de Turno
 
 window.onerror = function(msg) { if (msg.includes("gsap is not defined")) return true; return false; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-let toast = document.getElementById("cyber-toast");
-// Se o balão ainda não existir, nós o criamos e injetamos o CSS nele
+/* =========================================================
+   MÓDULO DE COMUNICAÇÃO (O FIM DOS POPUPS FEIOS)
+   ========================================================= */
+window.alert = function(msg) {
+    let toast = document.getElementById("cyber-toast");
+    
+    // Se o balão ainda não existir, nós o criamos e injetamos o CSS nele
     if (!toast) {
         toast = document.createElement("div");
         toast.id = "cyber-toast";
