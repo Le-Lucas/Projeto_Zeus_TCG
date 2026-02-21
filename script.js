@@ -173,13 +173,43 @@ function bootTerminal() {
         };
     });
 
-    const btnMission = document.getElementById("btn-start-battle-direct");
+  const btnMission = document.getElementById("btn-start-battle-direct");
     const modalMode = document.getElementById("mode-selection-modal");
-    if(btnMission) btnMission.onclick = () => { playSound("click"); if(modalMode) modalMode.classList.add("active"); else startGameDirect("casual"); };
-    if(document.getElementById("btn-mode-story")) document.getElementById("btn-mode-story").onclick = () => { modalMode.classList.remove("active"); startGameDirect("campaign"); };
-    if(document.getElementById("btn-mode-casual")) document.getElementById("btn-mode-casual").onclick = () => { modalMode.classList.remove("active"); startGameDirect("casual"); };
+    
+    // 👇 ESTA É A LINHA QUE FALTAVA! (Ação de clique do botão Iniciar Missão) 👇
+    if(btnMission) btnMission.onclick = () => { 
+        playSound("click"); 
+        if(modalMode) modalMode.classList.add("active"); else startGameDirect("casual", "theme-lab"); 
+    };
+    // 👆 ==================================================================== 👆
+
+    if(document.getElementById("btn-mode-story")) document.getElementById("btn-mode-story").onclick = () => { 
+        modalMode.classList.remove("active"); 
+        startGameDirect("campaign", null); // Campanha tem a arena definida pela lore
+    };
+    
+    // O Jogo Casual agora abre a escolha de Arena
+    if(document.getElementById("btn-mode-casual")) document.getElementById("btn-mode-casual").onclick = () => { 
+        modalMode.classList.remove("active"); 
+        document.getElementById("arena-selection-modal").classList.add("active");
+    };
+    
     if(document.getElementById("btn-cancel-mode")) document.getElementById("btn-cancel-mode").onclick = () => modalMode.classList.remove("active");
 
+    // Lógica dos Botões de Arena
+    if(document.getElementById("btn-cancel-arena")) document.getElementById("btn-cancel-arena").onclick = () => {
+        document.getElementById("arena-selection-modal").classList.remove("active");
+        modalMode.classList.add("active");
+    };
+
+    document.querySelectorAll(".btn-arena").forEach(btn => {
+        btn.onclick = (e) => {
+            playSound("click");
+            document.getElementById("arena-selection-modal").classList.remove("active");
+            startGameDirect("casual", e.target.dataset.arena); // Passa a arena escolhida para o motor
+        };
+    });
+    /* --------------------------------------------------- */
     const btnDeck = document.getElementById("btn-edit-deck");
     if(btnDeck) btnDeck.onclick = () => { document.getElementById("hero-screen").classList.remove("active"); document.getElementById("deck-builder-screen").classList.add("active"); initDeckBuilder(); };
     const btnMarket = document.getElementById("btn-open-market");
@@ -406,11 +436,14 @@ function createCard(item) {
     return c; 
 }
 
-function startGameDirect(mode) {
-    document.getElementById("hero-screen").classList.remove("active"); document.getElementById("game-screen").classList.add("active");
+function startGameDirect(mode, arenaClass) {
+    document.getElementById("hero-screen").classList.remove("active"); 
+    document.getElementById("game-screen").classList.add("active");
     if(selectedHeroObj) document.getElementById("player-avatar-img").src = selectedHeroObj.imgUrl;
-    gameMode = mode; currentLevel = 0; initGame(mode === "campaign" ? 0 : "casual");
+    gameMode = mode; currentLevel = 0; 
+    initGame(mode === "campaign" ? 0 : "casual", arenaClass);
 }
+
 
 function advancePhase() {
     if (gameIsOver) return;
@@ -487,14 +520,23 @@ async function aiCombatPhase() {
     await sleep(500); if (!gameIsOver) advancePhase();
 }
 
-function initGame(levelIndex) {
-    let levelData = levelIndex === "casual" ? { name: "SIMULAÇÃO", bossName: "SIMULACRO", bossHp: 20, bossImg: campaignData[0].bossImg, arena: "arena-neon", briefing: null } : campaignData[levelIndex];
+function initGame(levelIndex, arenaClass) {
+    let levelData = levelIndex === "casual" 
+        ? { name: "SIMULAÇÃO", bossName: "SIMULACRO", bossHp: 20, bossImg: campaignData[0].bossImg, arena: arenaClass, briefing: null } 
+        : campaignData[levelIndex];
+    
+    // A mágica acontece aqui: O painel principal recebe o CSS que você criou!
     document.getElementById("board").className = levelData.arena;
-    const enHero = document.getElementById("enemy-hero"); enHero.querySelector(".hero-avatar").src = levelData.bossImg; enHero.querySelector(".hero-stats span:first-child").innerText = levelData.bossName;
-    enHero.onclick = () => handleHeroClick(enHero, "enemy"); document.getElementById("player-hero").onclick = () => handleHeroClick(document.getElementById("player-hero"), "player");
+    
+    const enHero = document.getElementById("enemy-hero"); 
+    enHero.querySelector(".hero-avatar").src = levelData.bossImg; 
+    enHero.querySelector(".hero-stats span:first-child").innerText = levelData.bossName;
+    enHero.onclick = () => handleHeroClick(enHero, "enemy"); 
+    document.getElementById("player-hero").onclick = () => handleHeroClick(document.getElementById("player-hero"), "player");
 
     enemyLife = levelData.bossHp; playerLife = 20; maxMana = 3; playerMana = 3; currentTurn = 1; gameIsOver = false; isSystemLocked = false;
-    playerDeck = [...customDeck]; for (let i = playerDeck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [playerDeck[i], playerDeck[j]] = [playerDeck[j], playerDeck[i]]; }
+    playerDeck = [...customDeck]; 
+    for (let i = playerDeck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [playerDeck[i], playerDeck[j]] = [playerDeck[j], playerDeck[i]]; }
     graveyard = { player: [], enemy: [] };
     
     document.getElementById("player-field").innerHTML = ""; document.getElementById("enemy-field").innerHTML = ""; document.getElementById("hand").innerHTML = "";
