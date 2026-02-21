@@ -262,7 +262,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 #board.theme-void {
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%),
-          url("ligth.png");
+        url("ligth.png");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5);
