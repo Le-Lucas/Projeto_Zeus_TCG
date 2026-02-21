@@ -225,7 +225,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     /* Gradiente quase transparente, escurecendo só no final para ler os textos */
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%),
-        url("lab.png"); 
+          background-image: url("lab.png"); 
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 60px rgba(0, 255, 200, 0.4);
@@ -236,7 +236,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     /* Vinheta sutil: Escurece as bordas, mas o centro fica nítido */
     background: 
         radial-gradient(circle at center, rgba(0,0,0,0) 20%, rgba(10,0,0,0.85) 100%),
-        url("war.png");
+        background-image: url("war.png");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.5);
@@ -246,7 +246,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 #board.theme-void {
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%),
-        url(ligth.png");
+          background-image: url(ligth.png");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5);
