@@ -3,6 +3,68 @@ console.log("Conexão JS Estabelecida. MOTOR V7.1: Seta de Mira, Brilho de Turno
 window.onerror = function(msg) { if (msg.includes("gsap is not defined")) return true; return false; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+// Se o balão ainda não existir, nós o criamos e injetamos o CSS nele
+    if (!toast) {
+        toast = document.createElement("div");
+        toast.id = "cyber-toast";
+        document.body.appendChild(toast);
+        
+        const style = document.createElement("style");
+        style.innerHTML = `
+            #cyber-toast {
+                position: fixed;
+                bottom: 150px; /* Fica flutuando logo acima da sua mão de cartas */
+                right: 20px;
+                background: rgba(10, 5, 5, 0.95);
+                border: 1px solid #ff0000;
+                border-left: 5px solid #ff0000;
+                color: #ff4444;
+                padding: 15px 20px;
+                border-radius: 4px;
+                font-family: 'Courier New', Courier, monospace;
+                font-weight: bold;
+                font-size: 0.8rem;
+                box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+                z-index: 99999;
+                transform: translateX(120%);
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                pointer-events: none;
+                text-transform: uppercase;
+                max-width: 280px;
+                line-height: 1.4;
+                backdrop-filter: blur(4px);
+            }
+            #cyber-toast.show {
+                transform: translateX(0);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Se a mensagem for algo bom (Recompensa), fica Ciano. Se for erro, fica Vermelho.
+    if (msg.includes("Recompensa") || msg.includes("Reciclada") || msg.includes("MISSÃO")) {
+        toast.style.borderColor = "#00ffff";
+        toast.style.color = "#00ffff";
+        toast.style.boxShadow = "0 0 20px rgba(0, 255, 255, 0.6)";
+        toast.style.borderLeft = "5px solid #00ffff";
+    } else {
+        toast.style.borderColor = "#ff0000";
+        toast.style.color = "#ff4444";
+        toast.style.boxShadow = "0 0 20px rgba(255, 0, 0, 0.6)";
+        toast.style.borderLeft = "5px solid #ff0000";
+    }
+
+    // Escreve a mensagem e faz deslizar para a tela
+    toast.innerHTML = `<span style="color:#fff;">[ ALERTA DE SISTEMA ]</span><br><br>${msg}`;
+    toast.classList.add("show");
+
+    // Remove depois de 3.5 segundos
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3500);
+};
+
 const sfx = { 
     bgm: new Audio("https://files.catbox.moe/5j62nk.mp3"), 
     click: new Audio("https://files.catbox.moe/nslg07.wav"), 
