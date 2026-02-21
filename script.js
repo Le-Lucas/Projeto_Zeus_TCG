@@ -2,6 +2,7 @@ console.log("Conexão JS Estabelecida. MOTOR V7.1: Seta de Mira, Brilho de Turno
 
 window.onerror = function(msg) { if (msg.includes("gsap is not defined")) return true; return false; };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 /* =========================================================
    MÓDULO DE COMUNICAÇÃO (O FIM DOS POPUPS FEIOS)
    ========================================================= */
