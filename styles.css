@@ -182,3 +182,72 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     #hand.expanded { bottom: -40px; transform: scale(0.55); }
     #hand-indicator { left: 50%; width: auto; white-space: nowrap; }
 }
+/* =========================================================
+   TELA FINAL DRAMÁTICA (PROTOCOLO HOLLYWOOD)
+   ========================================================= */
+.final-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-width: 3px;
+    box-shadow: 0 0 50px currentColor; /* Brilho intenso na cor da vitória/derrota */
+    background: rgba(0,0,0,0.95) !important;
+}
+
+.final-gif {
+    width: 100%;
+    max-height: 250px;
+    object-fit: cover;
+    border: 2px solid currentColor;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px currentColor;
+}
+
+.final-title {
+    font-size: 3.5rem;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px currentColor;
+    animation: pulseEpic 1s infinite alternate;
+}
+
+/* =========================================================
+   ARENAS DE COMBATE (LORE & AMBIENTAÇÃO)
+   ========================================================= */
+
+/* 🧪 /* =========================================================
+   ARENAS DE COMBATE (LORE & AMBIENTAÇÃO) - CORRIGIDAS
+   ========================================================= */
+
+/* 🧪 LABORATÓRIO BIOTECNOLÓGICO */
+#board.theme-lab {
+    /* Gradiente quase transparente, escurecendo só no final para ler os textos */
+    background: 
+        linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%),
+        url("https://files.catbox.moe/iszcz2.png"); 
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 60px rgba(0, 255, 200, 0.4);
+}
+
+/* 🔥 ZONA DE GUERRA (APOCALIPSE) */
+#board.theme-war {
+    /* Vinheta sutil: Escurece as bordas, mas o centro fica nítido */
+    background: 
+        radial-gradient(circle at center, rgba(0,0,0,0) 20%, rgba(10,0,0,0.85) 100%),
+        url("https://files.catbox.moe/zv8myn.png");
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.5);
+}
+
+/* 🌌 DIMENSÃO SOMBRIA (CIBERNÉTICA) */
+#board.theme-void {
+    background: 
+        linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%),
+        url("https://files.catbox.moe/n0kqle.png");
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5);
+}
