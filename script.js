@@ -154,15 +154,16 @@ function loadSaveData() {
 
 function bootTerminal() {
     loadSaveData();
-        const btnStart = document.getElementById("btn-start");
+            const btnStart = document.getElementById("btn-start"); // 👈 Letra 'c' minúscula aqui!
     if(btnStart) btnStart.onclick = () => { 
-        ativarModoImersivo(); // 👈 INJEÇÃO DA EXPANSÃO DE TELA AQUI!
+        ativarModoImersivo(); // INJEÇÃO DA EXPANSÃO DE TELA AQUI!
         
         document.getElementById("start-screen").classList.remove("active"); 
         document.getElementById("hero-screen").classList.add("active"); 
         playSound("click"); playSound("bgm"); 
         document.getElementById("fragment-count").innerText = playerFragments;
     };
+
 
     if(document.getElementById("btn-home")) document.getElementById("btn-home").onclick = () => location.reload();
 
