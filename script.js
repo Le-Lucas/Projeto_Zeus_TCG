@@ -965,7 +965,7 @@ function arrangeHand() {
 bootTerminal();
 
 /* =========================================================
-   📡 MÓDULO DE REDE P2P (PEERJS) - VERSÃO BLINDADA
+   📡 MÓDULO DE REDE P2P (BLINDAGEM NÍVEL ÔMEGA)
    ========================================================= */
 console.log("MÓDULO DE REDE P2P INICIADO.");
 
@@ -973,35 +973,33 @@ let peer;
 let conexao;
 let isHost = false;
 
-function conectarNaSala() {
-    let codigo = document.getElementById("id-alvo").value.toUpperCase().trim();
-    if(!codigo) { playSound("error"); alert("SISTEMA: Digite o código do Host."); return; }
+// 1. CRAVANDO A FUNÇÃO NO WINDOW (O HTML SEMPRE VAI ACHAR)
+window.criarSala = function() {
+    console.log("SISTEMA: Iniciando protocolo de Host...");
+    let codigoSala = 'ZEUS-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+    
+    peer = new Peer(codigoSala);
+    
+    document.getElementById("meu-status").innerText = "Conectando ao satélite...";
+    document.getElementById("meu-status").style.color = "yellow";
 
-    console.log("CLIENTE: Tentando contato com o Host " + codigo);
-    peer = new Peer(); 
-    document.getElementById("meu-status").innerText = "Conectando ao terminal " + codigo + "...";
-
-    peer.on('open', function(meuId) {
-        console.log("CLIENTE: Conectado ao satélite. Meu ID temporário: " + meuId);
-        conexao = peer.connect(codigo);
-        
-        conexao.on('open', function() {
-            console.log("CLIENTE: O Host abriu a porta!");
-            prepararBatalha();
-        });
-
-        conexao.on('error', function(err) {
-            console.error("CLIENTE: A conexão falhou ou foi rejeitada:", err);
-        });
+    peer.on('open', function(id) {
+        console.log("SISTEMA: Conexão estabelecida! ID: " + id);
+        const statusEl = document.getElementById("meu-status");
+        statusEl.innerText = "AGUARDANDO INIMIGO... SEU CÓDIGO: " + id;
+        statusEl.style.color = "#00ffcc";
+        statusEl.style.fontWeight = "bold";
+        isHost = true;
     });
 
-    peer.on('error', function(err) {
-        console.error("CLIENTE: Erro no servidor PeerJS:", err);
-        alert("ERRO DE REDE: " + err.type);
+    peer.on('connection', function(conn) {
+        conexao = conn;
+        window.prepararBatalha();
     });
-}
+};
 
-function conectarNaSala() {
+// 2. CRAVANDO A FUNÇÃO DE CONECTAR
+window.conectarNaSala = function() {
     let codigo = document.getElementById("id-alvo").value.toUpperCase().trim();
     if(!codigo) { playSound("error"); alert("SISTEMA: Digite o código do Host."); return; }
 
@@ -1011,12 +1009,13 @@ function conectarNaSala() {
     peer.on('open', function() {
         conexao = peer.connect(codigo);
         conexao.on('open', function() {
-            prepararBatalha();
+            window.prepararBatalha();
         });
     });
-}
+};
 
-function prepararBatalha() {
+// 3. O APERTO DE MÃO
+window.prepararBatalha = function() {
     playSound("deploy");
     document.getElementById("p2p-modal").classList.remove("active");
     alert("Conexão P2P Estabelecida! Sincronizando Matrizes...");
@@ -1024,17 +1023,18 @@ function prepararBatalha() {
     conexao.on('data', function(pacote) {
         console.log("SINAL INIMIGO INTERCEPTADO:", pacote);
     });
-}
+};
 
-function enviarPacote(dados) {
+// 4. DISPARADOR DE PACOTES
+window.enviarPacote = function(dados) {
     if(conexao && conexao.open) conexao.send(dados);
-}
+};
 
-// 👇 A BLINDAGEM MÁXIMA: Amarra os botões direto no JS, assim o HTML não se perde!
+// 5. TRAVA DE SEGURANÇA DUPLA: Amarra os botões por ID também!
 setTimeout(() => {
     const btnHost = document.getElementById("btn-host");
-    if(btnHost) btnHost.onclick = criarSala;
+    if(btnHost) btnHost.onclick = window.criarSala;
 
     const btnClient = document.getElementById("btn-client");
-    if(btnClient) btnClient.onclick = conectarNaSala;
-}, 500); // Um pequeno delay para garantir que o HTML já carregou na tela
+    if(btnClient) btnClient.onclick = window.conectarNaSala;
+}, 500);
