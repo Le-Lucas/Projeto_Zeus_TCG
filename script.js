@@ -1043,3 +1043,21 @@ setTimeout(() => {
     const btnClient = document.getElementById("btn-client");
     if(btnClient) btnClient.onclick = window.conectarNaSala;
 }, 500);
+
+
+/* =========================================================
+   🖥️ MÓDULO DE TELA CHEIA (FULLSCREEN API)
+   ========================================================= */
+window.ativarModoImersivo = function() {
+    const doc = document.documentElement; // Pega o HTML inteiro
+    
+    // Tenta forçar o Fullscreen com suporte a todos os navegadores
+    try {
+        if (doc.requestFullscreen) { doc.requestFullscreen(); } 
+        else if (doc.webkitRequestFullscreen) { doc.webkitRequestFullscreen(); } // Safari Mobile
+        else if (doc.msRequestFullscreen) { doc.msRequestFullscreen(); } // Edge Antigo
+    } catch (erro) {
+        console.warn("SISTEMA: O navegador bloqueou o Fullscreen automático.", erro);
+    }
+};
+
