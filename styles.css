@@ -1,15 +1,19 @@
 /* =========================================================
-   VARIÁVEIS DE SISTEMA (CORES DINÂMICAS)
+   VARIÁVEIS DE SISTEMA (CORES DINÂMICAS RGB)
    ========================================================= */
 :root {
-    --theme-color: #00ffff; /* Ciano padrão */
-    --theme-glow: rgba(0, 255, 255, 0.4);
+    /* Definimos a cor base em números RGB para facilitar o Canvas */
+    --theme-rgb: 0, 255, 255; /* Ciano Padrão */
+    
+    /* Aqui montamos as cores usáveis no CSS */
+    --theme-color: rgb(var(--theme-rgb)); 
+    --theme-glow: rgba(var(--theme-rgb), 0.6);
 }
 
-/* Quando a arena muda, as cores do sistema mudam junto! */
-body.theme-lab { --theme-color: #00ffc8; --theme-glow: rgba(0, 255, 200, 0.4); }
-body.theme-war { --theme-color: #ff3c3c; --theme-glow: rgba(255, 60, 60, 0.4); }
-body.theme-void { --theme-color: #7800ff; --theme-glow: rgba(120, 0, 255, 0.4); }
+/* Quando a arena muda, os números RGB mudam junto! */
+body.theme-lab { --theme-rgb: 0, 255, 200; }   /* Verde Tóxico */
+body.theme-war { --theme-rgb: 255, 60, 60; }   /* Vermelho Guerra */
+body.theme-void { --theme-rgb: 120, 0, 255; }  /* Roxo Cibernético */
 
 /* Aplicando a variável nos textos dinâmicos da Sidebar */
 #phase-display, .neon-text, #mana { color: var(--theme-color) !important; }
@@ -17,6 +21,7 @@ body.theme-void { --theme-color: #7800ff; --theme-glow: rgba(120, 0, 255, 0.4); 
 /* =========================================================
    🎨 ESTILO GERAL & EFEITOS VISUAIS (PROJETO ZEUS V7.0 - WEBGL)
    ========================================================= */
+   
 body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; overflow-x: hidden; touch-action: none; }
 .screen { display: none; width: 100vw; height: 100vh; position: relative; z-index: 10; flex-direction: column; }
 .screen.active { display: flex; }
@@ -160,7 +165,27 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
    ========================================================= */
 #hand { position: fixed; bottom: -280px; left: 250px; width: calc(100% - 250px); height: 300px; display: flex; justify-content: center; z-index: 200; transition: 0.3s; transform-origin: bottom center; transform: scale(0.7); }
 #hand.expanded { bottom: 0; transform: scale(0.9); z-index: 9999 !important; }
-#hand-indicator { position: fixed; bottom: 10px; left: 60%; transform: translateX(-50%); z-index: 10000 !important; cursor: pointer !important; padding: 5px 15px; border: 1px solid #00ffff; background: #000 !important; color: #00ffff; font-size: 0.7rem; pointer-events: auto !important; box-shadow: 0 0 15px #00ffff !important; transition: 0.2s;}
+/* MOVENDO O BOTÃO DA MÃO PARA A DIREITA */
+/* MOVENDO O BOTÃO DA MÃO PARA A DIREITA E ARRUMANDO A ÁREA DE CLIQUE (HITBOX) */
+#hand-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 40px; 
+    left: auto;   
+    transform: none; 
+    z-index: 100;
+    cursor: pointer; /* Garante a mãozinha do mouse */
+    display: flex; /* Melhora o alinhamento do texto interno */
+    justify-content: center;
+    align-items: center;
+    min-width: 250px; /* Garante que o botão seja largo o suficiente */
+}
+
+/* 👇 O TRUQUE DE MESTRE: Impede que o texto ou os pontinhos roubem o clique! 👇 */
+#hand-indicator * {
+    pointer-events: none; 
+}
+
 #hand-indicator:hover { background: #00ffff !important; color: #000; }
 #hand-indicator::before { content: ""; position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: -1; }
 
@@ -241,7 +266,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     /* Gradiente quase transparente, escurecendo só no final para ler os textos */
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%),
-        url("lab.png"); 
+        url("https://files.catbox.moe/iszcz2.png"); 
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 60px rgba(0, 255, 200, 0.4);
@@ -249,21 +274,420 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 
 /* 🔥 ZONA DE GUERRA (APOCALIPSE) */
 #board.theme-war {
-    /* Vinheta sutil: Escurece as bordas, mas o centro fica nítido */
+    position: relative;
+    overflow: hidden;
+
+    /* Vinheta + fundo */
     background: 
         radial-gradient(circle at center, rgba(0,0,0,0) 20%, rgba(10,0,0,0.85) 100%),
-        url("war.png");
+        url("https://i.postimg.cc/9FNVzQmH/war.png");
+
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 80px rgba(255, 0, 0, 0.5);
+    z-index: 0;
+}
+
+/* 🌫️ FUMAÇA DISTANTE */
+#board.theme-war::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 20% 80%, rgba(255,255,255,0.06), transparent 40%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.05), transparent 45%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04), transparent 50%);
+
+    animation: smoke-drift 30s linear infinite;
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    z-index: 1;
+}
+
+/* 💥 FLASH DE EXPLOSÃO DISTANTE */
+#board.theme-war::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+
+    background:
+        radial-gradient(circle at 70% 60%, rgba(255,120,0,0.35), transparent 25%);
+
+    animation: distant-explosion 14s infinite;
+    opacity: 0;
+    z-index: 2;
+}
+
+/* 🚗 SOMBRA DE VEÍCULO PASSANDO */
+#board.theme-war .vehicle-shadow {
+    position: absolute;
+    top: 65%;
+    left: -100%;
+    width: 200%;
+    height: 120px;
+
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(0,0,0,0.5),
+        transparent
+    );
+
+    animation: vehicle-pass 25s linear infinite;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* ===================== */
+/* 🎞️ ANIMAÇÕES */
+/* ===================== */
+
+@keyframes smoke-drift {
+    0% {
+        transform: translate(0, 0) scale(1);
+    }
+    100% {
+        transform: translate(40px, -30px) scale(1.05);
+    }
+}
+
+@keyframes distant-explosion {
+    0%, 92%, 100% { opacity: 0; }
+    94% { opacity: 0.6; }
+    96% { opacity: 0; }
+}
+
+@keyframes vehicle-pass {
+    0% {
+        transform: translateX(-120%);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.15;
+    }
+    90% {
+        opacity: 0.15;
+    }
+    100% {
+        transform: translateX(120%);
+        opacity: 0;
+    }
 }
 
 /* 🌌 DIMENSÃO SOMBRIA (CIBERNÉTICA) */
 #board.theme-void {
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%),
-        url("ligth.png");
+        url("https://files.catbox.moe/n0kqle.png");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5);
 }
+
+/* =========================================================
+   PATCH V8.1: CORREÇÕES DO LAYOUT DA MADRUGADA
+   ========================================================= */
+
+/* 1. MOVENDO O INIMIGO PARA A DIREITA */
+/* 1. O CONTAINER DO INIMIGO (Blindado e no topo de tudo) */
+#enemy-hero {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    flex-direction: row-reverse; 
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+    
+    /* AS 4 REGRAS DE OURO PARA CORRIGIR O CLIQUE: */
+    position: fixed !important; /* Prende na tela, ignora os slots! */
+    top: 20px !important;
+    right: 30px !important;
+    left: auto !important;
+    transform: none !important;
+    
+    z-index: 9999 !important; /* Fica por cima de QUALQUER camada invisível */
+    pointer-events: auto !important; /* Força o navegador a aceitar o clique */
+    cursor: crosshair !important; /* Transforma o mouse numa mira para confirmar que é clicável */
+}
+
+/* 2. O RETRATO REDONDO DO INIMIGO (A Borda) */
+#enemy-hero .hero-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* É isso aqui que deixa redondo! */
+    border: 3px solid #ff0000; /* Vermelho ameaçador */
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+    object-fit: cover;
+}
+
+/* 3. O TEXTO DO INIMIGO (Alinhado perto da foto) */
+#enemy-hero .hero-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Empurra o texto de vida para grudar na foto */
+    font-size: 1.1rem;
+    color: #fff;
+    text-shadow: 0 0 10px #ff0000;
+}
+/* 2. O NOVO LAYOUT DO HERÓI ALIADO (LIMPO E RPG) */
+#player-hero {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    flex-direction: row; 
+    align-items: center;
+    gap: 15px;
+    padding: 0;
+}
+#player-hero .hero-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid var(--theme-color);
+    box-shadow: 0 0 15px var(--theme-glow);
+    object-fit: cover;
+}
+#player-hero .hero-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1.1rem;
+    color: #fff;
+    text-shadow: 0 0 10px var(--theme-color);
+}
+
+/* 3. VERSO DO DECK COM IMAGEM (Substituindo o listrado) */
+.card-back {
+    /* Mudei de .deck-area para .card-back para bater com o seu HTML */
+    background: url("https://img.freepik.com/vetores-gratis/textura-abstrata-do-favo-de-mel_23-2148275711.jpg") !important; 
+    background-size: cover !important;
+    background-position: center !important;
+    border: 2px solid var(--theme-color) !important;
+    box-shadow: 0 0 15px var(--theme-glow) !important;
+}
+
+/* =========================================================
+   VFX: MOLDURA DINÂMICA DOS HERÓIS
+   ========================================================= */
+.hero-avatar-frame {
+  position: relative;
+  width: 80px; /* Tamanho ajustado para o nosso layout */
+  height: 80px;
+  border-radius: 50%;
+  padding: 4px; /* Espaço para a borda brilhar */
+  
+  /* O fundo agora usa a cor do tema! */
+  background: linear-gradient(135deg, var(--theme-color), #000);
+  box-shadow: 0 0 20px var(--theme-glow);
+  animation: frameGlow 3s infinite alternate;
+}
+
+/* A imagem fica por cima do canvas */
+.hero-avatar-frame .hero-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+  z-index: 2; /* Garante que a foto fique na frente das partículas */
+}
+
+/* O canvas das partículas fica no fundo */
+.hero-avatar-frame canvas {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes frameGlow {
+  0% { box-shadow: 0 0 10px var(--theme-glow); }
+  100% { box-shadow: 0 0 25px var(--theme-glow), 0 0 5px var(--theme-color); }
+}
+
+/* Removemos a borda antiga dos containers principais para não duplicar */
+#player-hero .hero-avatar, #enemy-hero .hero-avatar {
+    border: none !important; box-shadow: none !important;
+}
+
+/* =========================================================
+   AJUSTE TÁTICO: CAMPO DE BATALHA CENTRALIZADO (A LINHA VERMELHA)
+   ========================================================= */
+#board {
+    justify-content: center !important; /* Força as duas linhas de cartas pro equador da tela */
+    padding-top: 0 !important; /* Remove o empurrão do teto */
+    padding-bottom: 0 !important; /* Remove o espaço fantasma do rodapé */
+}
+
+/* Dá um respiro maior na linha divisória do meio (Timeline) */
+.field-divider {
+    margin: 40px 0 !important; 
+}
+
+/* =========================================================
+   ✨ VFX DE PALAVRAS-CHAVES (A ALMA DO PROJETO ZEUS)
+   ========================================================= */
+
+/* 🛡️ 1. PROVOCAR (Laranja/Amarelo - Ameaça de Tanque) */
+.card-base[data-effect="provocar"], .card-base[data-effect="disciplinado"] {
+    box-shadow: 0 0 15px rgba(255, 150, 0, 0.8), inset 0 0 20px rgba(255, 100, 0, 0.5) !important;
+    border-color: #ff9900 !important;
+    animation: pulseTaunt 2s infinite alternate;
+}
+@keyframes pulseTaunt { 100% { box-shadow: 0 0 25px rgba(255, 150, 0, 1), inset 0 0 30px rgba(255, 100, 0, 0.8); border-color: #ffaa00 !important; } }
+
+/* 💨 2. FURTIVIDADE E SABOTAGEM (Invisibilidade / Glitch Roxo) */
+.card-base[data-effect="furtividade"], .card-base[data-effect="espionagem"] {
+    opacity: 0.75;
+    border-color: #7800ff !important;
+    box-shadow: 0 0 15px rgba(120, 0, 255, 0.5) !important;
+    animation: glitchStealth 4s infinite linear;
+}
+@keyframes glitchStealth {
+    0%, 96%, 100% { transform: skewX(0deg); filter: hue-rotate(0deg); }
+    97% { transform: skewX(5deg) translateX(2px); filter: hue-rotate(90deg); opacity: 0.4; }
+    98% { transform: skewX(-5deg) translateX(-2px); opacity: 0.9; }
+    99% { transform: skewX(0deg); opacity: 0.5; }
+}
+
+/* 🔰 3. ESCUDOS E BARREIRAS (Bolha de Energia Ciano) */
+.card-base[data-effect="escudo"], .card-base[data-effect="escudo_divino"] {
+    border-color: #00ffff !important;
+    box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.6) !important;
+}
+/* Bolha visual por cima da imagem da carta */
+.card-base[data-effect="escudo"] .card-art-box::after, .card-base[data-effect="escudo_divino"] .card-art-box::after {
+    content: ""; position: absolute; inset: 0; 
+    background: radial-gradient(circle, rgba(0,255,255,0.1) 0%, rgba(0,255,255,0.4) 100%); 
+    pointer-events: none; z-index: 5;
+}
+
+/* ⚡ 4. FÚRIA, INVESTIDA E SOBRECARGA (Vermelho Frenesi) */
+.card-base[data-effect="ataque_duplo"], .card-base[data-effect="furia"], .card-base[data-effect="investida"], .card-base[data-effect="sobrecarga"] {
+    border-color: #ff0000 !important;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8) !important;
+    animation: frenzyPulse 0.4s infinite alternate;
+}
+@keyframes frenzyPulse { 100% { box-shadow: 0 0 30px rgba(255, 0, 0, 1); border-color: #ff3333 !important; } }
+
+/* 🧪 5. CURA, REGENERAÇÃO E SOROS (Verde Tóxico) */
+.card-base[data-effect*="cura"], .card-base[data-effect="regeneracao"], .card-base[data-effect="buff_atk"] {
+    border-color: #00ff00 !important;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.6) !important;
+    animation: bioPulse 2s infinite alternate;
+}
+@keyframes bioPulse { 100% { box-shadow: 0 0 25px rgba(0, 255, 0, 0.9); } }
+
+/* 🔌 6. ATORDOAR, HACKS E CHOQUE (Magenta / Eletricidade) */
+.card-base[data-effect*="atordoar"], .card-base[data-effect="hack"], .card-base[data-effect="controle_mental"] {
+    border-color: #ff00ff !important;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.6) !important;
+    animation: shockPulse 0.8s infinite alternate;
+}
+@keyframes shockPulse { 100% { box-shadow: 0 0 30px rgba(255, 0, 255, 0.9); } }
+
+/* 👑 7. AURAS E LIDERANÇA (Dourado Emissor) */
+.card-base[data-effect*="aura"], .card-base[data-effect="comando"], .card-base[data-effect="inspirar"], .card-base[data-effect="origem"] {
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6) !important;
+    animation: auraPulse 3s infinite alternate;
+}
+@keyframes auraPulse { 
+    0% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.4); } 
+    100% { box-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 10px white; } 
+}
+
+/* ⚠️ 8. DEFEITO (Instável) */
+.card-base[data-effect="instavel"] {
+    border-color: #880000 !important;
+    filter: grayscale(0.5) contrast(1.2);
+    animation: shakeDefect 0.5s infinite;
+}
+@keyframes shakeDefect {
+    0%, 100% { transform: translate(0,0) rotate(0deg); }
+    50% { transform: translate(1px, -1px) rotate(0.5deg); }
+}
+/* =========================================================
+   📱 PROTOCOLO DE ROTAÇÃO OBRIGATÓRIA (MOBILE)
+   ========================================================= */
+
+/* Por padrão, o alerta fica desligado (invisível) */
+#protocolo-orientacao {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh;
+    background: radial-gradient(circle, #1a0033 0%, #050510 100%); /* Fundo roxo escuro da matriz */
+    z-index: 999999; /* Cobre tudo, até os modais */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: monospace;
+    color: #00ffff; /* Ciano padrão do jogo */
+}
+
+/* A caixa de texto no meio da tela */
+.alerta-matriz {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ff0055;
+    box-shadow: 0 0 20px rgba(255, 0, 85, 0.5), inset 0 0 15px rgba(255, 0, 85, 0.3);
+    padding: 30px;
+    border-radius: 10px;
+    width: 85%;
+    max-width: 400px;
+}
+
+.icone-alerta { font-size: 3rem; margin-bottom: 10px; }
+
+/* Efeito de título do erro */
+.glitch-text {
+    color: #ff0055;
+    text-shadow: 2px 2px 0px #00ffff, -2px -2px 0px #7800ff;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.comando-destaque {
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: #ffd700; /* Dourado para chamar atenção */
+    font-weight: bold;
+}
+
+/* Animação do ícone girando */
+.icone-girar {
+    font-size: 3.5rem;
+    margin-top: 25px;
+    color: #00ffff;
+    animation: rotacaoCelular 2s ease-in-out infinite;
+}
+
+@keyframes rotacaoCelular {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(-90deg); } /* Vira de lado */
+    100% { transform: rotate(-90deg); } /* Fica um tempo deitado */
+}
+
+/* 🚨 O GATILHO: Se a tela for menor que 900px E estiver em PÉ (Portrait), liga o alerta! */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+    #protocolo-orientacao {
+        display: flex; /* Liga a tela de bloqueio */
+    }
+    
+    /* Trava o fundo para o jogador não conseguir rolar a página por trás do aviso */
+    body {
+        overflow: hidden !important; 
+    }
+}
+
