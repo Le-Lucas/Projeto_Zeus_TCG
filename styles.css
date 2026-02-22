@@ -253,9 +253,6 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     animation: pulseEpic 1s infinite alternate;
 }
 
-/* =========================================================
-   ARENAS DE COMBATE (LORE & AMBIENTAÇÃO)
-   ========================================================= */
 
 /* 🧪 /* =========================================================
    ARENAS DE COMBATE (LORE & AMBIENTAÇÃO) - CORRIGIDAS
@@ -266,7 +263,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     /* Gradiente quase transparente, escurecendo só no final para ler os textos */
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.8) 100%),
-        url("lab.png"); 
+        url("https://files.catbox.moe/iszcz2.png"); 
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 60px rgba(0, 255, 200, 0.4);
@@ -280,7 +277,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     /* Vinheta + fundo */
     background: 
         radial-gradient(circle at center, rgba(0,0,0,0) 20%, rgba(10,0,0,0.85) 100%),
-        url("war.png");
+        url("https://i.postimg.cc/9FNVzQmH/war.png");
 
     background-size: cover;
     background-position: center;
@@ -381,7 +378,7 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 #board.theme-void {
     background: 
         linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%),
-        url("ligth.png");
+        url("https://files.catbox.moe/n0kqle.png");
     background-size: cover;
     background-position: center;
     box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5);
@@ -471,48 +468,43 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 }
 
 /* =========================================================
-   VFX: MOLDURA DINÂMICA DOS HERÓIS
+   VFX: MOLDURA DINÂMICA DOS HERÓIS (BLINDADA)
    ========================================================= */
 .hero-avatar-frame {
-  position: relative;
-  width: 80px; /* Tamanho ajustado para o nosso layout */
-  height: 80px;
-  border-radius: 50%;
-  padding: 4px; /* Espaço para a borda brilhar */
-  
-  /* O fundo agora usa a cor do tema! */
-  background: linear-gradient(135deg, var(--theme-color), #000);
-  box-shadow: 0 0 20px var(--theme-glow);
-  animation: frameGlow 3s infinite alternate;
+    position: relative;
+    width: 80px; 
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, var(--theme-color), #000);
+    box-shadow: 0 0 20px var(--theme-glow);
+    box-sizing: border-box;
+    border: 2px solid var(--theme-color);
 }
 
-/* A imagem fica por cima do canvas */
+/* A foto um pouco menor para mostrar o fundo neon brilhante */
 .hero-avatar-frame .hero-avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  background: #111;
-  border: 2px solid rgba(255,255,255,0.2);
-  position: relative;
-  z-index: 2; /* Garante que a foto fique na frente das partículas */
+    width: 68px; 
+    height: 68px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #151515; /* Cor cinza se o servidor do Catbox cair */
+    z-index: 1; 
 }
 
-/* O canvas das partículas fica no fundo */
+/* O TRUQUE DE MESTRE: O canvas agora fica por CIMA da foto! */
 .hero-avatar-frame canvas {
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 1;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 2; 
 }
 
-@keyframes frameGlow {
-  0% { box-shadow: 0 0 10px var(--theme-glow); }
-  100% { box-shadow: 0 0 25px var(--theme-glow), 0 0 5px var(--theme-color); }
-}
-
-/* Removemos a borda antiga dos containers principais para não duplicar */
+/* Removemos as bordas antigas */
 #player-hero .hero-avatar, #enemy-hero .hero-avatar {
     border: none !important; box-shadow: none !important;
 }
