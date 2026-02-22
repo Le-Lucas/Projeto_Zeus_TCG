@@ -683,3 +683,51 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     }
 }
 
+/* =========================================================
+   📱 MODO PAISAGEM MOBILE (COMPACTAÇÃO TÁTICA)
+   ========================================================= */
+@media screen and (max-height: 600px) and (orientation: landscape) {
+    /* Força o layout lado a lado para garantir que não quebre */
+    .layout-battle { flex-direction: row !important; }
+    
+    /* Estreita a Sidebar para sobrar mais tela pro jogo */
+    .sidebar { width: 180px !important; padding: 10px !important; }
+    .sidebar-links { font-size: 0.8rem; margin-top: 5px; }
+    #turn-display { font-size: 1rem !important; }
+    
+    /* Encolhe o Deck */
+    .card-back { width: 70px !important; height: 100px !important; }
+    
+    /* Ajusta o painel do Operador (Você) para não cortar embaixo */
+    .hero-panel-sidebar { padding: 5px !important; gap: 5px !important; }
+    .hero-avatar-frame { width: 50px !important; height: 50px !important; }
+    .hero-avatar-frame .hero-avatar { width: 40px !important; height: 40px !important; }
+    
+    /* Aproxima as linhas de combate e diminui os espaços (Slots) */
+    #board { padding-top: 5px !important; padding-bottom: 50px !important; }
+    .field { height: 110px !important; gap: 4px !important; }
+    .slot { width: 80px !important; height: 110px !important; }
+    
+    /* Encolhe as cartas que estão dentro da mesa */
+    .slot .card-base { transform: translate(-50%, -50%) scale(0.40) !important; }
+    
+    /* Linha do tempo mais espremida */
+    .field-divider { margin: 15px 0 !important; }
+    
+    /* Painel do Inimigo no topo direito mais compacto */
+    #enemy-hero { top: 5px !important; right: 10px !important; gap: 5px !important; }
+    
+    /* Encolhe a Pasta de Arquivos para não tampar a tela toda ao abrir */
+    #hand { transform: scale(0.5) !important; }
+    #hand.expanded { transform: scale(0.65) !important; bottom: -20px !important; }
+    
+    /* Botão da Mão menor e colado no canto inferior direito */
+    #hand-indicator { 
+        bottom: 5px !important; 
+        right: 10px !important; 
+        min-width: 150px !important; 
+        font-size: 0.7rem !important; 
+        padding: 5px !important; 
+    }
+}
+
