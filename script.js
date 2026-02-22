@@ -267,6 +267,8 @@ document.getElementById("btn-cancel-arena").onclick = () => {
             dot.setAttribute("fill", cor);
         } else { overlay.style.display = "none"; }
     });
+        const btnP2P = document.getElementById("btn-open-p2p");
+    if(btnP2P) btnP2P.onclick = () => { playSound("click"); document.getElementById("p2p-modal").classList.add("active"); };
 }
 
 /* =========================================================
@@ -516,16 +518,15 @@ function updateUIState() {
     updateLifeAndMana(); clearInterval(timerInterval); document.getElementById("turn-display").innerText = `TURNO ${currentTurn}`;
     const btn = document.getElementById("actionBtn"); const phaseDisp = document.getElementById("phase-display");
     
-    // Liga o Brilho de quem é o turno
-    const pHero = document.getElementById("player-hero");
-    const eHero = document.getElementById("enemy-hero");
-    if(pHero && eHero) {
-        pHero.style.boxShadow = "none"; eHero.style.boxShadow = "none";
-        pHero.style.borderColor = "#333"; eHero.style.borderColor = "#333";
-        if(attackToken === "player") { pHero.style.boxShadow = "0 0 30px #00ffff"; pHero.style.borderColor = "#00ffff"; } 
-        else { eHero.style.boxShadow = "0 0 30px #ff0000"; eHero.style.borderColor = "#ff0000"; }
+   // Liga o Brilho MÁXIMO na moldura de quem é o turno
+    const pFrame = document.querySelector("#player-hero .hero-avatar-frame");
+    const eFrame = document.querySelector("#enemy-hero .hero-avatar-frame");
+    if(pFrame && eFrame) {
+        pFrame.style.boxShadow = "0 0 10px var(--theme-glow)"; 
+        eFrame.style.boxShadow = "0 0 10px rgba(255,0,0,0.3)";
+        if(attackToken === "player") { pFrame.style.boxShadow = "0 0 35px #00ffff"; } 
+        else { eFrame.style.boxShadow = "0 0 35px #ff0000"; }
     }
-
     // Textos Claros
     if (currentStep === "deploy_attacker") {
         if (attackToken === "player") { phaseDisp.innerText = "FASE: DESCER CARTAS (SUA VEZ)"; phaseDisp.style.color = "#00ffff"; btn.innerText = "IR PARA ATAQUE"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
@@ -962,3 +963,83 @@ function arrangeHand() {
 }
 
 bootTerminal();
+
+/* =========================================================
+   📡 MÓDULO DE REDE P2P (PEERJS) - VERSÃO BLINDADA
+   ========================================================= */
+console.log("MÓDULO DE REDE P2P INICIADO.");
+
+let peer;
+let conexao;
+let isHost = false;
+
+function criarSala() {
+    console.log("SISTEMA: Iniciando protocolo de Host...");
+    try {
+        let codigoSala = 'ZEUS-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        console.log("SISTEMA: Código local gerado: " + codigoSala);
+        
+        peer = new Peer(codigoSala);
+        
+        document.getElementById("meu-status").innerText = "Conectando ao satélite...";
+        document.getElementById("meu-status").style.color = "yellow";
+
+        peer.on('open', function(id) {
+            console.log("SISTEMA: Conexão com satélite estabelecida! ID: " + id);
+            const statusEl = document.getElementById("meu-status");
+            statusEl.innerText = "AGUARDANDO INIMIGO... SEU CÓDIGO: " + id;
+            statusEl.style.color = "#00ffcc";
+            statusEl.style.fontWeight = "bold";
+            isHost = true;
+        });
+
+        peer.on('error', function(err) {
+            console.error("ERRO CRÍTICO DE REDE:", err);
+            document.getElementById("meu-status").innerText = "FALHA DE REDE: " + err.type;
+            document.getElementById("meu-status").style.color = "#ff0000";
+        });
+
+        peer.on('connection', function(conn) {
+            conexao = conn;
+            prepararBatalha();
+        });
+    } catch (e) { console.error("ERRO DE SINTAXE NO SCRIPT:", e); }
+}
+
+function conectarNaSala() {
+    let codigo = document.getElementById("id-alvo").value.toUpperCase().trim();
+    if(!codigo) { playSound("error"); alert("SISTEMA: Digite o código do Host."); return; }
+
+    peer = new Peer(); 
+    document.getElementById("meu-status").innerText = "Conectando ao terminal " + codigo + "...";
+
+    peer.on('open', function() {
+        conexao = peer.connect(codigo);
+        conexao.on('open', function() {
+            prepararBatalha();
+        });
+    });
+}
+
+function prepararBatalha() {
+    playSound("deploy");
+    document.getElementById("p2p-modal").classList.remove("active");
+    alert("Conexão P2P Estabelecida! Sincronizando Matrizes...");
+    
+    conexao.on('data', function(pacote) {
+        console.log("SINAL INIMIGO INTERCEPTADO:", pacote);
+    });
+}
+
+function enviarPacote(dados) {
+    if(conexao && conexao.open) conexao.send(dados);
+}
+
+// 👇 A BLINDAGEM MÁXIMA: Amarra os botões direto no JS, assim o HTML não se perde!
+setTimeout(() => {
+    const btnHost = document.getElementById("btn-host");
+    if(btnHost) btnHost.onclick = criarSala;
+
+    const btnClient = document.getElementById("btn-client");
+    if(btnClient) btnClient.onclick = conectarNaSala;
+}, 500); // Um pequeno delay para garantir que o HTML já carregou na tela
