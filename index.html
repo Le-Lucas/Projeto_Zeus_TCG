@@ -12,7 +12,15 @@
     <link rel="icon" href="https://files.catbox.moe/wkfzj3.png">
 </head>
 <body>
-
+<div id="protocolo-orientacao">
+    <div class="alerta-matriz">
+        <div class="icone-alerta">⚠️</div>
+        <h2 class="glitch-text">FALHA DE RESOLUÇÃO</h2>
+        <p>A interface tática do <strong>Projeto Zeus</strong> requer um campo de visão expandido.</p>
+        <p class="comando-destaque">Gire o seu terminal para a HORIZONTAL para estabelecer conexão.</p>
+        <div class="icone-girar">🔄</div>
+    </div>
+</div>
     <canvas id="bg-canvas"></canvas>
 
     <div class="tv-noise"></div>
@@ -35,17 +43,17 @@
 
         <div class="hero-container">
             <div class="hero-choice" data-hero="orc" data-img="https://files.catbox.moe/wkfzj3.png">
-                <img src="guerra.png">
+                <img src="https://files.catbox.moe/wkfzj3.png">
                 <h3>COMANDANTE (AGGRO)</h3>
                 <p>Especialidade: Exército Numérico</p>
             </div>
             <div class="hero-choice" data-hero="elfo" data-img="https://files.catbox.moe/tl6rvy.png">
-                <img src="estrategia.png">
+                <img src="https://files.catbox.moe/tl6rvy.png">
                 <h3>TECNOMAGO (CONTROLE)</h3>
                 <p>Especialidade: Hacks & Feitiços</p>
             </div>
             <div class="hero-choice" data-hero="clerigo" data-img="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
-                <img src="medico.png">
+                <img src="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
                 <h3>BIOMÉDICO (CURA)</h3>
                 <p>Especialidade: Sobrevivência</p>
             </div>
@@ -102,19 +110,24 @@
             <div id="deck-visual" style="margin-top: 30px; text-align: center;">
                 <div class="card-back">DECK<br><span id="cards-in-deck" style="color:#fff; font-size: 1.2rem;">15</span></div>
             </div>
-            <div id="player-hero" class="hero-panel-sidebar">
-                <img id="player-avatar-img" src="" class="hero-avatar">
+           <div id="player-hero" class="hero-panel-sidebar">
+                <div class="hero-avatar-frame">
+                    <canvas></canvas>
+                    <img id="player-avatar-img" src="" class="hero-avatar">
+                </div>
                 <div class="hero-stats">
                     <span style="color:#00ff00; font-weight:bold; font-size: 0.8rem;">OPERADOR</span>
                     <span style="color:#fff; font-size: 0.8rem;">VIDA: <span id="player-life" style="font-size:1.2rem;">20</span></span>
                 </div>
             </div>
+            
             <button id="btn-home" class="cmd-btn" style="margin-top: 10px; border-color: #444; color: #777;">ABORTAR</button>
-        </div>
-
-        <div id="board">
-            <div id="enemy-hero" class="hero-panel" style="border-color: #ff0000; margin-bottom: 20px;">
-                <img src="" class="hero-avatar">
+        </div> <div id="board">
+           <div id="enemy-hero" class="hero-panel" style="border-color: #ff0000; margin-bottom: 20px;">
+                <div class="hero-avatar-frame">
+                    <canvas></canvas>
+                    <img src="" class="hero-avatar">
+                </div>
                 <div class="hero-stats">
                     <span style="color:#ff0000; font-weight:bold; font-size:0.8rem;">AMEAÇA</span>
                     <span style="color:#fff;">VIDA: <span id="enemy-life" style="font-size:1.5rem;">20</span></span>
