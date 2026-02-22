@@ -14,16 +14,16 @@ const VFX = {
   },
 
   particles(el, color) {
-    for (let i = 0; i < 20; i++) { // Mais partículas (20)
+    for (let i = 0; i < 20; i++) { 
       const p = document.createElement("div");
       p.style.position = "absolute";
-      p.style.width = "12px"; // Partículas Maiores
+      p.style.width = "12px"; 
       p.style.height = "12px";
       p.style.borderRadius = "50%";
       p.style.pointerEvents = "none";
       p.style.zIndex = "9999";
       p.style.background = color;
-      p.style.boxShadow = `0 0 15px ${color}, 0 0 5px white`; // Brilho Intenso
+      p.style.boxShadow = `0 0 15px ${color}, 0 0 5px white`; 
 
       document.body.appendChild(p);
 
@@ -34,30 +34,24 @@ const VFX = {
       p.animate([
         { transform: "translate(0,0) scale(1.5)", opacity: 1 },
         {
-          transform: `translate(${Math.random()*250-125}px, ${Math.random()*250-125}px) scale(0)`, // Explode mais longe
+          transform: `translate(${Math.random()*250-125}px, ${Math.random()*250-125}px) scale(0)`, 
           opacity: 0
         }
-      ], { duration: 1000 }); // Ficam mais tempo na tela
+      ], { duration: 1000 }); 
 
       setTimeout(() => p.remove(), 1000);
     }
   },
-  
-  /* --- NO SEU ARQUIVO VFX.JS, DENTRO DO OBJETO VFX --- */
 
-  particles(el, color) {
-      // (... sua função particles atual continua aqui ...)
-  },
-
-  // 🔥 NOVA FUNÇÃO: EXPLOSÃO DE TELA INTEIRA 🔥
+  // 🔥 EXPLOSÃO DE TELA INTEIRA (FIM DE JOGO) 🔥
   bigExplosion(color) {
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
 
-      for (let i = 0; i < 80; i++) { // 80 Partículas!
+      for (let i = 0; i < 80; i++) { 
           const p = document.createElement("div");
-          p.style.position = "fixed"; // Fixed para pegar a tela toda
-          p.style.width = (Math.random() * 20 + 10) + "px"; // Tamanhos variados
+          p.style.position = "fixed"; 
+          p.style.width = (Math.random() * 20 + 10) + "px"; 
           p.style.height = p.style.width;
           p.style.borderRadius = "50%";
           p.style.pointerEvents = "none";
@@ -68,7 +62,6 @@ const VFX = {
           p.style.top = centerY + "px";
           document.body.appendChild(p);
 
-          // Explode para muito longe (tela toda)
           const destX = (Math.random() - 0.5) * window.innerWidth * 1.5;
           const destY = (Math.random() - 0.5) * window.innerHeight * 1.5;
 
@@ -91,8 +84,6 @@ const VFX = {
       setTimeout(() => flash.remove(), 800);
   },
 
-/* --- FIM DA INSERÇÃO --- */
-
   /* --- EVENTOS DE JOGO --- */
   onSummon(card, efeito) {
     this.pulse(card, "#00ffff", 1.4, 600);
@@ -101,7 +92,6 @@ const VFX = {
   },
 
   onAttack(attacker, defender, efeito) {
-    // Pulo de ataque MUITO mais agressivo
     attacker.animate([
       { transform: "translateY(0) scale(1)", zIndex: 999 },
       { transform: "translateY(-60px) scale(1.2)", zIndex: 999 }, 
@@ -115,7 +105,6 @@ const VFX = {
   },
 
   onDamage(target, efeito) {
-    // Flash violento de dano (Vermelho/Amarelo)
     target.animate([
       { filter: "brightness(1) sepia(0)", transform: "translateX(0)" },
       { filter: "brightness(3) sepia(1) hue-rotate(-50deg) saturate(10)", transform: "translateX(-10px)" }, 
@@ -150,13 +139,13 @@ const VFX = {
 /* =========================================================
    2. VISUAL FX ENGINE (THREE.JS - CHUVA DE DADOS CYBERPUNK)
    ========================================================= */
-const canvas = document.getElementById('bg-canvas');
-if (canvas && typeof THREE !== 'undefined') {
+const canvasBg = document.getElementById('bg-canvas');
+if (canvasBg && typeof THREE !== 'undefined') {
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.02);
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 30;
-    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -192,4 +181,59 @@ if (canvas && typeof THREE !== 'undefined') {
         renderer.render(scene, camera);
     }
     animateVFX();
+}
+
+/* =========================================================
+   ✨ VFX ENGINE: PARTÍCULAS DINÂMICAS (CANVAS DE HERÓIS)
+   ========================================================= */
+let activeAvatarAnimations = []; // Guarda as animações para podermos limpá-las!
+
+function initAvatarParticles() {
+    // Primeiro, desliga as animações antigas se houver, para não duplicar!
+    activeAvatarAnimations.forEach(id => cancelAnimationFrame(id));
+    activeAvatarAnimations = [];
+
+    const frames = document.querySelectorAll(".hero-avatar-frame");
+    if (frames.length === 0) return;
+
+    frames.forEach(frame => {
+        const canvas = frame.querySelector("canvas");
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext("2d");
+        const size = frame.offsetWidth || 80;
+        canvas.width = size;
+        canvas.height = size;
+
+        const particles = [];
+        for (let i = 0; i < 18; i++) { 
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                r: Math.random() * 1.8 + 0.5,
+                speed: Math.random() * 0.4 + 0.1,
+                alpha: Math.random() * 0.7 + 0.3
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const themeRgb = getComputedStyle(document.body).getPropertyValue('--theme-rgb').trim() || "0, 255, 255";
+
+            particles.forEach(p => {
+                p.y -= p.speed;
+                if (p.y < 0) p.y = canvas.height;
+
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${themeRgb}, ${p.alpha})`; 
+                ctx.fill();
+            });
+
+            // Salva o ID da animação para podermos desligar na próxima partida
+            const frameId = requestAnimationFrame(animate);
+            activeAvatarAnimations.push(frameId);
+        }
+        animate();
+    });
 }
