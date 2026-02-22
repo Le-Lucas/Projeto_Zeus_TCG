@@ -164,7 +164,6 @@ function bootTerminal() {
         document.getElementById("fragment-count").innerText = playerFragments;
     };
 
-    };
     if(document.getElementById("btn-home")) document.getElementById("btn-home").onclick = () => location.reload();
 
     document.querySelectorAll(".hero-choice").forEach(choice => {
