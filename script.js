@@ -173,42 +173,51 @@ function bootTerminal() {
         };
     });
 
-  const btnMission = document.getElementById("btn-start-battle-direct");
-    const modalMode = document.getElementById("mode-selection-modal");
-    
-    // 👇 ESTA É A LINHA QUE FALTAVA! (Ação de clique do botão Iniciar Missão) 👇
-    if(btnMission) btnMission.onclick = () => { 
-        playSound("click"); 
-        if(modalMode) modalMode.classList.add("active"); else startGameDirect("casual", "theme-lab"); 
+ /* =========================================================
+   🎛️ ROTEAMENTO DE MISSÕES (NAVEGAÇÃO DOS MENUS)
+   ========================================================= */
+const btnMission = document.getElementById("btn-start-battle-direct");
+// 1. Botão [ INICIAR MISSÃO ] -> Abre a Janela de Modo (Campanha/Simulação)
+if (btnMission) {
+    btnMission.onclick = () => {
+        playSound("click");
+        document.getElementById("mode-selection-modal").classList.add("active");
     };
-    // 👆 ==================================================================== 👆
+}
 
-    if(document.getElementById("btn-mode-story")) document.getElementById("btn-mode-story").onclick = () => { 
-        modalMode.classList.remove("active"); 
-        startGameDirect("campaign", null); // Campanha tem a arena definida pela lore
-    };
-    
-    // O Jogo Casual agora abre a escolha de Arena
-    if(document.getElementById("btn-mode-casual")) document.getElementById("btn-mode-casual").onclick = () => { 
-        modalMode.classList.remove("active"); 
-        document.getElementById("arena-selection-modal").classList.add("active");
-    };
-    
-    if(document.getElementById("btn-cancel-mode")) document.getElementById("btn-cancel-mode").onclick = () => modalMode.classList.remove("active");
+// 2. Botão [ CAMPANHA ] -> Vai direto para a História (Lê o nosso Banco de Dados)
+document.getElementById("btn-mode-story").onclick = () => {
+    playSound("click");
+    document.getElementById("mode-selection-modal").classList.remove("active");
+    startGameDirect("campaign", "theme-lab"); // A arena certa é puxada automaticamente da Lore!
+};
 
-    // Lógica dos Botões de Arena
-    if(document.getElementById("btn-cancel-arena")) document.getElementById("btn-cancel-arena").onclick = () => {
+// 3. Botão [ SIMULAÇÃO ] -> Abre a Janela de Escolha de Arena
+document.getElementById("btn-mode-casual").onclick = () => {
+    playSound("click");
+    document.getElementById("mode-selection-modal").classList.remove("active");
+    document.getElementById("arena-selection-modal").classList.add("active");
+};
+
+// 4. Botões de Escolher a Arena (🧪 Biolab, 🔥 Guerra, 🌌 Dados) -> Inicia o Casual
+document.querySelectorAll(".btn-arena").forEach(btn => {
+    btn.onclick = () => {
+        playSound("click");
         document.getElementById("arena-selection-modal").classList.remove("active");
-        modalMode.classList.add("active");
+        const arenaEscolhida = btn.getAttribute("data-arena");
+        startGameDirect("casual", arenaEscolhida);
     };
+});
 
-    document.querySelectorAll(".btn-arena").forEach(btn => {
-        btn.onclick = (e) => {
-            playSound("click");
-            document.getElementById("arena-selection-modal").classList.remove("active");
-            startGameDirect("casual", e.target.dataset.arena); // Passa a arena escolhida para o motor
-        };
-    });
+// 5. Botões de "CANCELAR/VOLTAR" nos modais
+document.getElementById("btn-cancel-mode").onclick = () => {
+    playSound("click");
+    document.getElementById("mode-selection-modal").classList.remove("active");
+};
+document.getElementById("btn-cancel-arena").onclick = () => {
+    playSound("click");
+    document.getElementById("arena-selection-modal").classList.remove("active");
+};
     /* --------------------------------------------------- */
     const btnDeck = document.getElementById("btn-edit-deck");
     if(btnDeck) btnDeck.onclick = () => { document.getElementById("hero-screen").classList.remove("active"); document.getElementById("deck-builder-screen").classList.add("active"); initDeckBuilder(); };
@@ -397,9 +406,16 @@ function openMarketModal(card, copies) {
    ========================================================= */
 function createCard(item) { 
     if(!item) return document.createElement("div"); 
-    const c = document.createElement("div"); 
-    c.className = `card-base ${item.raridade || 'comum'} ${item.tipo || 'tropa'}`;
     
+    // 👇 REGRA BINÁRIA: É magia ou vai pra mesa. Fim. 👇
+    let isMagic = (item.tipo === 'feitico');
+    let baseClass = isMagic ? "feitico" : "tropa"; 
+    
+    const c = document.createElement("div"); 
+    // Garante que a classe 'tropa' esteja cravada na carta para o Slot aceitar
+    c.className = `card-base ${item.raridade || 'comum'} ${baseClass}`;
+    
+    // Efeitos visuais
     if (item.efeito === "provocar") c.classList.add("taunt-card"); 
     if (item.efeito === "ataque_duplo") c.classList.add("double-attack-card"); 
     if (item.efeito === "roubo_vida") c.classList.add("lifesteal-card");
@@ -415,27 +431,62 @@ function createCard(item) {
     c.dataset.attack = safeAtk; 
     c.dataset.hp = safeDef; 
     c.dataset.cost = safeCost; 
-    c.dataset.type = item.tipo; 
+    
+    // O passaporte de entrada para o Tabuleiro
+    c.dataset.type = baseClass; 
+    c.dataset.raca = item.tipo; // Salva se é humano, mecanizado, ciborgue...
+
     c.dataset.effect = item.efeito; 
     c.dataset.hasAttacked = "false";
     
-    let typeIcon = item.tipo === "tropa" ? "⚔️" : "⚡"; if(item.tipo === "mecanizado" || item.tipo === "drone" || item.tipo === "ciborgue") typeIcon = "⚙️"; if(item.tipo === "humano" || item.tipo === "medico" || item.tipo === "soldado") typeIcon = "🧬"; if(item.tipo === "estrutura") typeIcon = "🏗️";
+    // Ícones visuais de acordo com o seu Banco de Dados
+    let typeIcon = "⚔️"; 
+    if(item.tipo === "mecanizado" || item.tipo === "drone" || item.tipo === "ciborgue") typeIcon = "⚙️"; 
+    if(item.tipo === "humano" || item.tipo === "medico" || item.tipo === "soldado") typeIcon = "🧬"; 
+    if(item.tipo === "estrutura") typeIcon = "🏗️";
+    if(isMagic) typeIcon = "💣"; // Usa a bomba para todos os feitiços
+    
     let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1));
     let starsHTML = '<div class="card-stars">'; for(let i=0; i<starsCount; i++) starsHTML += '<div class="star">★</div>'; starsHTML += '</div>';
     
-    let statsHTML = item.tipo !== 'feitico' ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">MAG</div></div>`;
+    let statsHTML = !isMagic 
+        ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` 
+        : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">MAG</div></div>`;
+    
     const imgUrl = item.img ? item.img : `https://placehold.co/200x150/111/ff0000?text=IMG`;
     c.innerHTML = `<div class="card-title">${item.title}</div><div class="card-art-box"><img src="${imgUrl}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}<div class="card-body"><div class="card-text">${item.text || ""}</div></div>${statsHTML}<div class="card-cost">${safeCost}</div>`;
     
     c.onclick = handleCardClick; 
+
+    // 👇 A MÁGICA DA INTERFACE ACONTECE AQUI 👇
     c.ondragstart = (e) => { 
+        e.dataTransfer.setData('text/plain', 'carta_zeus'); // Passaporte do Drag & Drop
+
         if(isSystemLocked || c.parentElement.id !== "hand") { e.preventDefault(); return; } 
-        if(c.dataset.type === "feitico") { e.preventDefault(); playSound("error"); alert("MAGIAS: Clique nela na mão e depois clique no alvo."); return; }
+        if(isMagic) { 
+            e.preventDefault(); 
+            if(typeof playSound === 'function') playSound("error"); 
+            alert("SISTEMA: Clique na magia e depois clique no alvo."); 
+            return; 
+        }
         draggedCard = c; 
+
+        // Retrai a pasta imediatamente para revelar a mesa
+        const mao = document.getElementById("hand");
+        if(mao) mao.classList.remove("expanded");
     };
+
+    // Caso a jogada seja abortada (soltou no lugar errado), a pasta reabre
+    c.ondragend = (e) => {
+        if (draggedCard) { 
+            const mao = document.getElementById("hand");
+            if(mao) mao.classList.add("expanded"); 
+            draggedCard = null;
+        }
+    };
+
     return c; 
 }
-
 function startGameDirect(mode, arenaClass) {
     document.getElementById("hero-screen").classList.remove("active"); 
     document.getElementById("game-screen").classList.add("active");
@@ -526,6 +577,7 @@ function initGame(levelIndex, arenaClass) {
         : campaignData[levelIndex];
     
     // A mágica acontece aqui: O painel principal recebe o CSS que você criou!
+    document.body.className = levelData.arena;
     document.getElementById("board").className = levelData.arena;
     
     const enHero = document.getElementById("enemy-hero"); 
@@ -542,26 +594,82 @@ function initGame(levelIndex, arenaClass) {
     document.getElementById("player-field").innerHTML = ""; document.getElementById("enemy-field").innerHTML = ""; document.getElementById("hand").innerHTML = "";
     createSlots(document.getElementById("player-field"), "player"); createSlots(document.getElementById("enemy-field"), "enemy");
 
-    drawCard(); drawCard(); drawCard(); attackToken = "player"; updateUIState(); updateLifeAndMana();
-    if(gameMode === "campaign" && levelData.briefing) alert(`>>> MISSÃO: ${levelData.name} <<<\n${levelData.briefing}`); else playSound("deploy");
+    drawCard(); drawCard(); drawCard(); 
+    attackToken = "player"; 
+    
+    // Atualiza a interface (uma vez só!)
+    updateUIState(); 
+    updateLifeAndMana();
+    
+    // Inicia os efeitos visuais dos retratos (VFX)
+    setTimeout(initAvatarParticles, 200); 
+
+   
 }
+
 
 function updateLifeAndMana() {
     document.getElementById("mana").innerText = `${playerMana}/${maxMana}`; document.getElementById("player-life").innerText = playerLife; document.getElementById("enemy-life").innerText = enemyLife;
     if(document.getElementById("cards-in-deck")) document.getElementById("cards-in-deck").innerText = playerDeck.length;
 }
 
+/* =========================================================
+   🔲 CRIAÇÃO DOS SLOTS DO TABULEIRO (COM BLINDAGEM DRAG & DROP)
+   ========================================================= */
 function createSlots(f, o) { 
     for(let i=0; i<5; i++) { 
-        const s = document.createElement("div"); s.className = "slot"; s.dataset.owner = o; 
+        const s = document.createElement("div"); 
+        s.className = "slot"; 
+        s.dataset.owner = o; 
+
         if(o === "player") { 
-            s.onclick = (e) => { if(selectedCardFromHand) executePlayCard(e.currentTarget, selectedCardFromHand); }; 
-            s.ondragover = (e) => e.preventDefault();
-            s.ondrop = (e) => { 
-                if (isSystemLocked || !draggedCard) return; 
-                if(draggedCard.dataset.type === "feitico") { playSound("error"); alert("Magias: Clique nela e depois no Alvo!"); return; }
-                executePlayCard(e.currentTarget, draggedCard); 
+            // 1. O clique simples (já estava funcionando)
+            s.onclick = (e) => { 
+                if(selectedCardFromHand) executePlayCard(e.currentTarget, selectedCardFromHand); 
+            }; 
+
+            // 2. Avisa o navegador que ele PODE passar por cima (Remove o 🚫 parcial)
+            s.ondragenter = (e) => {
+                e.preventDefault();
             };
+
+            // 3. Acende o Slot em CIANO quando a carta passa por cima (O Feedback Visual!)
+            s.ondragover = (e) => { 
+                e.preventDefault(); 
+                if (!isSystemLocked && draggedCard) {
+                    s.style.backgroundColor = "rgba(0, 255, 255, 0.2)";
+                    s.style.borderStyle = "solid";
+                    s.style.borderColor = "#00ffff";
+                }
+            };
+
+            // 4. Apaga o Slot se o jogador desistir e tirar o mouse de cima
+            s.ondragleave = (e) => {
+                s.style.backgroundColor = "";
+                s.style.borderStyle = "";
+                s.style.borderColor = "";
+            };
+
+            // 5. O momento do pouso da carta (A CHAVE MESTRA QUE TIRA O 🚫)
+            s.ondrop = (e) => { 
+                e.preventDefault(); // <-- SEM ISSO A CARTA NÃO DESCE!
+                
+                // Reseta o visual do slot
+                s.style.backgroundColor = "";
+                s.style.borderStyle = "";
+                s.style.borderColor = "";
+
+                if (isSystemLocked || !draggedCard) return; 
+                
+                if(draggedCard.dataset.type === "feitico") { 
+                    if(typeof playSound === 'function') playSound("error"); 
+                    alert("SISTEMA: Magias não vão pra mesa. Clique nela na mão e depois no alvo!"); 
+                    return; 
+                } 
+                
+                // Aciona a descida da carta na mesa
+                executePlayCard(e.currentTarget, draggedCard); 
+            }; 
         } 
         f.appendChild(s); 
     } 
@@ -640,27 +748,58 @@ function executeSpell(spellCard, targetElement, targetOwner) {
     spellCard.remove(); document.getElementById("hand").classList.remove("expanded"); arrangeHand();
 }
 
+/* =========================================================
+   A DESCIDA DA CARTA (BLINDADA E UNIVERSAL)
+   ========================================================= */
 function executePlayCard(slot, card) {
     if(card.dataset.type === "feitico") return; 
     let cst = parseInt(card.dataset.cost) || 0;
+    let donoDoSlot = slot.dataset.owner; // 👈 O SEGREDO: Descobre de quem é a mesa!
+    
     if(playerMana >= cst) {
+        if (typeof isSystemLocked !== 'undefined') isSystemLocked = true;
         
-        // --- 💀 O RITUAL DE SACRIFÍCIO (Override) 💀 ---
-        const existingCard = slot.querySelector('.card-base');
-        if (existingCard) {
-            existingCard.dataset.dead = "true"; processCardEffect("UltimoSuspiro", existingCard, "player"); 
-            if(typeof VFX !== 'undefined') VFX.death(existingCard); else existingCard.remove();
-        }
+        try {
+            const existingCard = slot.querySelector('.card-base');
+            if (existingCard) {
+                existingCard.dataset.dead = "true"; 
+                if (typeof processCardEffect === 'function') processCardEffect("UltimoSuspiro", existingCard, donoDoSlot); // 👈 Universal
+                if(typeof VFX !== 'undefined' && VFX.death) VFX.death(existingCard); else existingCard.remove();
+            }
 
-        playerMana -= cst; slot.appendChild(card); card.classList.remove("deployment-selected");
-        card.style.position = "absolute"; card.style.top = "50%"; card.style.left = "50%"; card.style.margin = "0"; card.style.transform = "translate(-50%, -50%) scale(0.60)";
-        if (card.dataset.effect === "investida") card.dataset.hasAttacked = "false"; else { card.dataset.hasAttacked = "true"; card.classList.add("exhausted"); }
-        selectedCardFromHand = null; draggedCard = null; playSound("deploy"); updateLifeAndMana();
-        
-        if(typeof VFX !== 'undefined') VFX.onSummon(card, card.dataset.effect);
-        processCardEffect("AoJogar", card, "player"); setTimeout(updateAuras, 100); 
-        document.getElementById("hand").classList.remove("expanded"); arrangeHand();
-    } else { playSound("error"); alert("RAM INSUFICIENTE!"); }
+            playerMana -= cst; 
+            slot.appendChild(card); 
+            card.classList.remove("deployment-selected");
+            card.style.position = "absolute"; 
+            card.style.top = "50%"; 
+            card.style.left = "50%"; 
+            card.style.margin = "0"; 
+            card.style.transform = "translate(-50%, -50%) scale(0.60)";
+            
+            if (card.dataset.effect === "investida") card.dataset.hasAttacked = "false"; 
+            else { card.dataset.hasAttacked = "true"; card.classList.add("exhausted"); }
+            
+            playSound("deploy"); 
+            updateLifeAndMana();
+            
+            if(typeof VFX !== 'undefined' && VFX.onSummon) VFX.onSummon(card, card.dataset.effect);
+            if(typeof processCardEffect === 'function') processCardEffect("AoJogar", card, donoDoSlot); // 👈 Universal
+            
+            setTimeout(updateAuras, 100); 
+            
+        } catch (erro) {
+            console.warn("SISTEMA: Erro em um efeito ignorado para manter o jogo rodando.", erro);
+        } finally {
+            selectedCardFromHand = null; 
+            draggedCard = null; 
+            document.getElementById("hand").classList.remove("expanded"); 
+            if(typeof arrangeHand === 'function') arrangeHand();
+            if (typeof isSystemLocked !== 'undefined') isSystemLocked = false;
+        }
+    } else { 
+        playSound("error"); 
+        alert("RAM INSUFICIENTE!"); 
+    }
 }
 
 function resolveCombat(atkCard, defCard, isPlayer) {
