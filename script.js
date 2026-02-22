@@ -973,37 +973,32 @@ let peer;
 let conexao;
 let isHost = false;
 
-function criarSala() {
-    console.log("SISTEMA: Iniciando protocolo de Host...");
-    try {
-        let codigoSala = 'ZEUS-' + Math.random().toString(36).substr(2, 4).toUpperCase();
-        console.log("SISTEMA: Código local gerado: " + codigoSala);
+function conectarNaSala() {
+    let codigo = document.getElementById("id-alvo").value.toUpperCase().trim();
+    if(!codigo) { playSound("error"); alert("SISTEMA: Digite o código do Host."); return; }
+
+    console.log("CLIENTE: Tentando contato com o Host " + codigo);
+    peer = new Peer(); 
+    document.getElementById("meu-status").innerText = "Conectando ao terminal " + codigo + "...";
+
+    peer.on('open', function(meuId) {
+        console.log("CLIENTE: Conectado ao satélite. Meu ID temporário: " + meuId);
+        conexao = peer.connect(codigo);
         
-        peer = new Peer(codigoSala);
-        
-        document.getElementById("meu-status").innerText = "Conectando ao satélite...";
-        document.getElementById("meu-status").style.color = "yellow";
-
-        peer.on('open', function(id) {
-            console.log("SISTEMA: Conexão com satélite estabelecida! ID: " + id);
-            const statusEl = document.getElementById("meu-status");
-            statusEl.innerText = "AGUARDANDO INIMIGO... SEU CÓDIGO: " + id;
-            statusEl.style.color = "#00ffcc";
-            statusEl.style.fontWeight = "bold";
-            isHost = true;
-        });
-
-        peer.on('error', function(err) {
-            console.error("ERRO CRÍTICO DE REDE:", err);
-            document.getElementById("meu-status").innerText = "FALHA DE REDE: " + err.type;
-            document.getElementById("meu-status").style.color = "#ff0000";
-        });
-
-        peer.on('connection', function(conn) {
-            conexao = conn;
+        conexao.on('open', function() {
+            console.log("CLIENTE: O Host abriu a porta!");
             prepararBatalha();
         });
-    } catch (e) { console.error("ERRO DE SINTAXE NO SCRIPT:", e); }
+
+        conexao.on('error', function(err) {
+            console.error("CLIENTE: A conexão falhou ou foi rejeitada:", err);
+        });
+    });
+
+    peer.on('error', function(err) {
+        console.error("CLIENTE: Erro no servidor PeerJS:", err);
+        alert("ERRO DE REDE: " + err.type);
+    });
 }
 
 function conectarNaSala() {
