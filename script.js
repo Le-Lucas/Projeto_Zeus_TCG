@@ -693,10 +693,6 @@ function createSlots(f, o) {
 }
 
 function handleCardClick(e) {
-    if(isSystemLocked) return; const c = e.currentTarget; const p = c.parentElement; 
-    const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.type === "feitico";
-
-  function handleCardClick(e) {
     if(isSystemLocked) return; 
     const c = e.currentTarget; 
     const p = c.parentElement; 
