@@ -696,12 +696,30 @@ function handleCardClick(e) {
     if(isSystemLocked) return; const c = e.currentTarget; const p = c.parentElement; 
     const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.type === "feitico";
 
+  function handleCardClick(e) {
+    if(isSystemLocked) return; 
+    const c = e.currentTarget; 
+    const p = c.parentElement; 
+    const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.type === "feitico";
+
     if(p.id==="hand"){ 
         playSound("click"); 
-        if(selectedCardFromHand===c){ selectedCardFromHand=null; c.classList.remove("deployment-selected"); } 
-        else { if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected"); selectedCardFromHand=c; c.classList.add("deployment-selected"); } 
+        if(selectedCardFromHand===c){ 
+            selectedCardFromHand=null; 
+            c.classList.remove("deployment-selected"); 
+        } 
+        else { 
+            if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected"); 
+            selectedCardFromHand=c; 
+            c.classList.add("deployment-selected"); 
+            
+            // 👇 A MÁGICA DO MOBILE: Recolhe a pasta na mesma hora para revelar a mesa!
+            document.getElementById("hand").classList.remove("expanded");
+        } 
     } 
+    // ... O restante da função continua igualzinho para baixo!
     else if (isSpellSelected) { executeSpell(selectedCardFromHand, c, p.dataset.owner); }
+    // ...
     else if(p.dataset.owner==="player" && currentStep==="combat" && attackToken==="player"){ 
         if(selectedAttacker===c) { selectedAttacker=null; c.classList.remove("attacker-selected"); } 
         else { if(selectedAttacker) selectedAttacker.classList.remove("attacker-selected"); selectedAttacker=c; c.classList.add("attacker-selected"); } 
