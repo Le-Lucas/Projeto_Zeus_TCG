@@ -1054,12 +1054,17 @@ function conectarNaSala() {
 function prepararBatalha() {
     playSound("deploy");
     document.getElementById("p2p-modal").classList.remove("active");
-    alert("Conexão P2P Estabelecida! Sincronizando Matrizes...");
     
+    // Alerta alterado para fazer sentido com o teletransporte
+    alert("Conexão P2P Estabelecida! Transferindo Operadores para a Arena...");
+    
+    // 👇 O TELETRANSPORTE SIMULTÂNEO 👇
+    // Inicia a partida para os dois ao mesmo tempo na Arena Neon (ou a que você preferir)
+    startGameDirect("casual", "arena-neon");
+
     // 👇 APENAS UM OUVINTE DE DADOS PARA A REDE INTEIRA 👇
     conexao.on('data', function(pacote) {
         console.log("SINAL INIMIGO INTERCEPTADO:", pacote);
-
         // --- REGRA 1: O INIMIGO PASSOU O TURNO ---
         if(pacote.acao === "PASSAR_TURNO") {
             console.log("SISTEMA P2P: O inimigo devolveu o controle. A matriz é sua!");
