@@ -735,3 +735,43 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     }
 }
 
+/* =========================================================
+   ✨ EFEITOS DE CAMPO E CARTAS CANSADAS
+   ========================================================= */
+
+/* 1. Cores mais nítidas e vivas APENAS quando estão no tabuleiro (slots) */
+.slot .card-base {
+    filter: brightness(1.2) contrast(1.2) saturate(1.1);
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); /* Leve brilho neon ao fundo */
+}
+
+/* 2. A Carta Cansada (Exhausted) - Fica escura e perde o brilho */
+.card-base.exhausted {
+    filter: grayscale(0.5) brightness(0.6) contrast(1.1) !important; 
+    pointer-events: none; /* Impede o jogador de clicar nela novamente */
+}
+
+/* 3. A Animação do ZzZ... flutuando */
+.card-base.exhausted::after {
+    content: "ZzZ...";
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #00ffcc;
+    font-size: 1.8rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffcc, 0 0 20px #000;
+    z-index: 20;
+    animation: flutuarZ 2s infinite ease-in-out;
+    pointer-events: none;
+}
+
+/* O Motor da Animação (Faz o texto subir e desaparecer) */
+@keyframes flutuarZ {
+    0%   { transform: translateY(0) scale(0.8); opacity: 0.8; }
+    50%  { transform: translateY(-15px) scale(1.1); opacity: 1; }
+    100% { transform: translateY(-30px) scale(0.8); opacity: 0; }
+}
+
+
