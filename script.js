@@ -1011,6 +1011,23 @@ function arrangeHand() {
     } 
 }
 
+/* =========================================================
+   🖥️ MÓDULO DE TELA CHEIA (FULLSCREEN API)
+   ========================================================= */
+window.ativarModoImersivo = function() {
+    const doc = document.documentElement; // Pega o seu jogo inteiro
+    
+    // Tenta forçar o Fullscreen com suporte a todos os navegadores de celular
+    try {
+        if (doc.requestFullscreen) { doc.requestFullscreen(); } // Padrão
+        else if (doc.webkitRequestFullscreen) { doc.webkitRequestFullscreen(); } // Safari Mobile (iPhone)
+        else if (doc.msRequestFullscreen) { doc.msRequestFullscreen(); } // Edge Antigo
+    } catch (erro) {
+        console.warn("SISTEMA: O navegador bloqueou o Fullscreen automático.", erro);
+    }
+};
+
+
 bootTerminal();
 
 /* =========================================================
