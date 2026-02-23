@@ -154,17 +154,12 @@ function loadSaveData() {
 
 function bootTerminal() {
     loadSaveData();
-            const btnStart = document.getElementById("btn-start"); // 👈 Letra 'c' minúscula aqui!
+    const btnStart = document.getElementById("btn-start");
     if(btnStart) btnStart.onclick = () => { 
-        ativarModoImersivo(); // INJEÇÃO DA EXPANSÃO DE TELA AQUI!
-        
-        document.getElementById("start-screen").classList.remove("active"); 
-        document.getElementById("hero-screen").classList.add("active"); 
+        document.getElementById("start-screen").classList.remove("active"); document.getElementById("hero-screen").classList.add("active"); 
         playSound("click"); playSound("bgm"); 
         document.getElementById("fragment-count").innerText = playerFragments;
     };
-
-
     if(document.getElementById("btn-home")) document.getElementById("btn-home").onclick = () => location.reload();
 
     document.querySelectorAll(".hero-choice").forEach(choice => {
@@ -328,7 +323,7 @@ function generateRandomDeck() {
     
     // Pesca 15 cartas respeitando o limite de 3 cópias
     for(let card of pool) {
-        if(customDeck.length >= 15) break;
+        if(customDeck.length >= 20) break;
         if(customDeck.filter(c => c.title === card.title).length < 3) {
             customDeck.push({...card});
         }
@@ -513,12 +508,22 @@ function advancePhase() {
 function handleActionBtn() { if(isSystemLocked) return; playSound("click"); advancePhase(); }
 
 function startNewRound() {
-    if(gameIsOver) return; currentTurn++; attackToken = (attackToken === "player") ? "enemy" : "player"; currentStep = "deploy_attacker";
+    if(gameIsOver) return; 
+    currentTurn++; 
+    attackToken = (attackToken === "player") ? "enemy" : "player"; 
+    currentStep = "deploy_attacker";
     document.querySelectorAll('.card-base').forEach(c => { c.dataset.hasAttacked = "false"; c.classList.remove("exhausted"); processCardEffect("FimDeTurno", c, c.parentElement.dataset.owner); });
-    if(maxMana < 10) maxMana++; playerMana = maxMana; drawCard(); updateUIState();
+    if(maxMana < 10) maxMana++; playerMana = maxMana; drawCard(); 
+    updateUIState();
+
+    // 👇 SE O TURNO FOI PARA O INIMIGO E ESTAMOS ONLINE, ENVIA O PACOTE! 👇
+    if(typeof conexao !== 'undefined' && conexao && conexao.open && attackToken === "enemy") {
+        enviarPacote({ acao: "PASSAR_TURNO" });
+        console.log("SISTEMA P2P: O seu turno acabou. Aguardando o adversário real jogar.");
+    }
 }
 
-// 🔥 CONTROLE DE BRILHO (UX de Turnos) 🔥
+// 🔥 CONTROLE DE BRILHO (UX de Turnos) E BLOQUEIO DE IA 🔥
 function updateUIState() {
     updateLifeAndMana(); clearInterval(timerInterval); document.getElementById("turn-display").innerText = `TURNO ${currentTurn}`;
     const btn = document.getElementById("actionBtn"); const phaseDisp = document.getElementById("phase-display");
@@ -532,18 +537,24 @@ function updateUIState() {
         if(attackToken === "player") { pFrame.style.boxShadow = "0 0 35px #00ffff"; } 
         else { eFrame.style.boxShadow = "0 0 35px #ff0000"; }
     }
-    // Textos Claros
+    
+    // 👇 A MÁGICA: Verifica se há um humano conectado do outro lado 👇
+    let isP2P = (typeof conexao !== 'undefined' && conexao && conexao.open); 
+
+    // Textos Claros e Trava de Segurança
     if (currentStep === "deploy_attacker") {
         if (attackToken === "player") { phaseDisp.innerText = "FASE: DESCER CARTAS (SUA VEZ)"; phaseDisp.style.color = "#00ffff"; btn.innerText = "IR PARA ATAQUE"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
-        else { phaseDisp.innerText = "IA: DESCENDO CARTAS"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiDeployPhase(); }
+        else { phaseDisp.innerText = isP2P ? "INIMIGO: DESCENDO CARTAS" : "IA: DESCENDO CARTAS"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; if(!isP2P) aiDeployPhase(); }
     } else if (currentStep === "deploy_defender") {
         if (attackToken === "enemy") { phaseDisp.innerText = "FASE: DEFESA (SUA VEZ)"; phaseDisp.style.color = "#00ffff"; btn.innerText = "ENCERRAR DEFESA"; btn.style.opacity = 1; isSystemLocked = false; startTimer(80); } 
-        else { phaseDisp.innerText = "IA: DEFENDENDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiDeployPhase(); }
+        else { phaseDisp.innerText = isP2P ? "INIMIGO: DEFENDENDO" : "IA: DEFENDENDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; if(!isP2P) aiDeployPhase(); }
     } else if (currentStep === "combat") {
         if (attackToken === "player") { phaseDisp.innerText = "FASE: ATACAR INIMIGOS"; phaseDisp.style.color = "#ff9900"; btn.innerText = "ENCERRAR TURNO"; btn.style.opacity = 1; isSystemLocked = false; startTimer(60); } 
-        else { phaseDisp.innerText = "IA: ATACANDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; aiCombatPhase(); }
+        else { phaseDisp.innerText = isP2P ? "INIMIGO: ATACANDO" : "IA: ATACANDO"; phaseDisp.style.color = "#ff0000"; btn.innerText = "AGUARDE"; btn.style.opacity = 0.5; isSystemLocked = true; if(!isP2P) aiCombatPhase(); }
     }
 }
+
+
 function startTimer(s){ turnTime=s; document.getElementById("timer").innerText=turnTime; timerInterval=setInterval(()=>{ if(!isSystemLocked && !gameIsOver){ turnTime--; document.getElementById("timer").innerText=turnTime; if(turnTime<=0) handleActionBtn(); } },1000); }
 
 async function aiDeployPhase() {
@@ -773,8 +784,22 @@ function executePlayCard(slot, card) {
                 if(typeof VFX !== 'undefined' && VFX.death) VFX.death(existingCard); else existingCard.remove();
             }
 
-            playerMana -= cst; 
+           playerMana -= cst; 
             slot.appendChild(card); 
+            
+            // 👇 TRANSMISSOR P2P: Grita para a rede qual carta você jogou! 👇
+            if(donoDoSlot === "player" && typeof conexao !== 'undefined' && conexao && conexao.open) {
+                // Descobre em qual dos 5 slots (0 a 4) você soltou a carta
+                let slotIndex = Array.from(slot.parentElement.children).indexOf(slot);
+                window.enviarPacote({
+                    acao: "JOGAR_CARTA",
+                    cardName: card.dataset.name,
+                    slotIndex: slotIndex
+                });
+                console.log(`SISTEMA P2P: Carta enviada -> ${card.dataset.name} no Slot ${slotIndex}`);
+            }
+            // 👆 FIM DO TRANSMISSOR 👆
+
             card.classList.remove("deployment-selected");
             card.style.position = "absolute"; 
             card.style.top = "50%"; 
@@ -970,7 +995,7 @@ function arrangeHand() {
 bootTerminal();
 
 /* =========================================================
-   📡 MÓDULO DE REDE P2P (BLINDAGEM NÍVEL ÔMEGA)
+   📡 MÓDULO DE REDE P2P (PEERJS) - VERSÃO BLINDADA
    ========================================================= */
 console.log("MÓDULO DE REDE P2P INICIADO.");
 
@@ -978,33 +1003,40 @@ let peer;
 let conexao;
 let isHost = false;
 
-// 1. CRAVANDO A FUNÇÃO NO WINDOW (O HTML SEMPRE VAI ACHAR)
-window.criarSala = function() {
+function criarSala() {
     console.log("SISTEMA: Iniciando protocolo de Host...");
-    let codigoSala = 'ZEUS-' + Math.random().toString(36).substr(2, 4).toUpperCase();
-    
-    peer = new Peer(codigoSala);
-    
-    document.getElementById("meu-status").innerText = "Conectando ao satélite...";
-    document.getElementById("meu-status").style.color = "yellow";
+    try {
+        let codigoSala = 'ZEUS-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+        console.log("SISTEMA: Código local gerado: " + codigoSala);
+        
+        peer = new Peer(codigoSala);
+        
+        document.getElementById("meu-status").innerText = "Conectando ao satélite...";
+        document.getElementById("meu-status").style.color = "yellow";
 
-    peer.on('open', function(id) {
-        console.log("SISTEMA: Conexão estabelecida! ID: " + id);
-        const statusEl = document.getElementById("meu-status");
-        statusEl.innerText = "AGUARDANDO INIMIGO... SEU CÓDIGO: " + id;
-        statusEl.style.color = "#00ffcc";
-        statusEl.style.fontWeight = "bold";
-        isHost = true;
-    });
+        peer.on('open', function(id) {
+            console.log("SISTEMA: Conexão com satélite estabelecida! ID: " + id);
+            const statusEl = document.getElementById("meu-status");
+            statusEl.innerText = "AGUARDANDO INIMIGO... SEU CÓDIGO: " + id;
+            statusEl.style.color = "#00ffcc";
+            statusEl.style.fontWeight = "bold";
+            isHost = true;
+        });
 
-    peer.on('connection', function(conn) {
-        conexao = conn;
-        window.prepararBatalha();
-    });
-};
+        peer.on('error', function(err) {
+            console.error("ERRO CRÍTICO DE REDE:", err);
+            document.getElementById("meu-status").innerText = "FALHA DE REDE: " + err.type;
+            document.getElementById("meu-status").style.color = "#ff0000";
+        });
 
-// 2. CRAVANDO A FUNÇÃO DE CONECTAR
-window.conectarNaSala = function() {
+        peer.on('connection', function(conn) {
+            conexao = conn;
+            prepararBatalha();
+        });
+    } catch (e) { console.error("ERRO DE SINTAXE NO SCRIPT:", e); }
+}
+
+function conectarNaSala() {
     let codigo = document.getElementById("id-alvo").value.toUpperCase().trim();
     if(!codigo) { playSound("error"); alert("SISTEMA: Digite o código do Host."); return; }
 
@@ -1014,50 +1046,72 @@ window.conectarNaSala = function() {
     peer.on('open', function() {
         conexao = peer.connect(codigo);
         conexao.on('open', function() {
-            window.prepararBatalha();
+            prepararBatalha();
         });
     });
-};
+}
 
-// 3. O APERTO DE MÃO
-window.prepararBatalha = function() {
+function prepararBatalha() {
     playSound("deploy");
     document.getElementById("p2p-modal").classList.remove("active");
     alert("Conexão P2P Estabelecida! Sincronizando Matrizes...");
     
+    // 👇 APENAS UM OUVINTE DE DADOS PARA A REDE INTEIRA 👇
     conexao.on('data', function(pacote) {
         console.log("SINAL INIMIGO INTERCEPTADO:", pacote);
-    });
-};
 
-// 4. DISPARADOR DE PACOTES
-window.enviarPacote = function(dados) {
+        // --- REGRA 1: O INIMIGO PASSOU O TURNO ---
+        if(pacote.acao === "PASSAR_TURNO") {
+            console.log("SISTEMA P2P: O inimigo devolveu o controle. A matriz é sua!");
+            currentTurn++;
+            attackToken = "player"; 
+            currentStep = "deploy_attacker";
+            document.querySelectorAll('.card-base').forEach(c => { c.dataset.hasAttacked = "false"; c.classList.remove("exhausted"); });
+            if(maxMana < 10) maxMana++; playerMana = maxMana; drawCard();
+            
+            updateUIState();
+            playSound("deploy"); 
+        }
+
+        // --- REGRA 2: O INIMIGO DESCEU UMA CARTA NA MESA ---
+        if(pacote.acao === "JOGAR_CARTA") {
+            console.log("SISTEMA P2P: Inimigo jogou ->", pacote.cardName);
+            playSound("deploy");
+            
+            const cardData = baseDeck.find(c => c.title === pacote.cardName);
+            if(cardData) {
+                const enemyCard = createCard(cardData);
+                enemyCard.dataset.owner = "enemy";
+                enemyCard.ondragstart = (e) => e.preventDefault(); // Trava a carta inimiga
+                
+                // Acha o slot espelhado 
+                const slotInimigo = document.getElementById("enemy-field").children[4 - pacote.slotIndex];
+                
+                if(slotInimigo) {
+                    slotInimigo.appendChild(enemyCard);
+                    enemyCard.style.position = "absolute"; 
+                    enemyCard.style.top = "50%"; enemyCard.style.left = "50%"; 
+                    enemyCard.style.margin = "0"; 
+                    enemyCard.style.transform = "translate(-50%, -50%) scale(0.60)";
+                    
+                    if(typeof VFX !== 'undefined' && VFX.onSummon) VFX.onSummon(enemyCard, enemyCard.dataset.effect);
+                    if(typeof processCardEffect === 'function') processCardEffect("AoJogar", enemyCard, "enemy");
+                    setTimeout(updateAuras, 100);
+                }
+            }
+        }
+    }); // Fim do ouvinte de dados
+} // Fim da função
+
+function enviarPacote(dados) {
     if(conexao && conexao.open) conexao.send(dados);
-};
+}
 
-// 5. TRAVA DE SEGURANÇA DUPLA: Amarra os botões por ID também!
+// 👇 A BLINDAGEM MÁXIMA: Amarra os botões direto no JS, assim o HTML não se perde!
 setTimeout(() => {
     const btnHost = document.getElementById("btn-host");
-    if(btnHost) btnHost.onclick = window.criarSala;
+    if(btnHost) btnHost.onclick = criarSala;
 
     const btnClient = document.getElementById("btn-client");
-    if(btnClient) btnClient.onclick = window.conectarNaSala;
-}, 500);
-
-
-/* =========================================================
-   🖥️ MÓDULO DE TELA CHEIA (FULLSCREEN API)
-   ========================================================= */
-window.ativarModoImersivo = function() {
-    const doc = document.documentElement; // Pega o HTML inteiro
-    
-    // Tenta forçar o Fullscreen com suporte a todos os navegadores
-    try {
-        if (doc.requestFullscreen) { doc.requestFullscreen(); } 
-        else if (doc.webkitRequestFullscreen) { doc.webkitRequestFullscreen(); } // Safari Mobile
-        else if (doc.msRequestFullscreen) { doc.msRequestFullscreen(); } // Edge Antigo
-    } catch (erro) {
-        console.warn("SISTEMA: O navegador bloqueou o Fullscreen automático.", erro);
-    }
-};
-
+    if(btnClient) btnClient.onclick = conectarNaSala;
+}, 500); // Um pequeno delay para garantir que o HTML já carregou na tela
