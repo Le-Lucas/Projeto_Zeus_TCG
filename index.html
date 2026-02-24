@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PROJETO ZEUS: PROTOCOLO DE BATALHA</title>
-    
-   <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.2/peerjs.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
@@ -13,22 +12,15 @@
     <link rel="icon" href="https://files.catbox.moe/wkfzj3.png">
 </head>
 <body>
-  
-<div id="protocolo-orientacao">
-    <div class="alerta-matriz">
-        <div class="icone-alerta">⚠️</div>
-        <h2 class="glitch-text">FALHA DE RESOLUÇÃO</h2>
-        <p>A interface tática do <strong>Projeto Zeus</strong> requer um campo de visão expandido.</p>
-        <p class="comando-destaque">Gire o seu terminal para a HORIZONTAL para estabelecer conexão.</p>
-        <div class="icone-girar">🔄</div>
-    </div>
-</div>
+    <div id="video-transition-screen">
+            <video id="transition-video" autoplay muted playsinline></video>
+            <div id="skip-video-hint">[ CLIQUE PARA PULAR ]</div>
+        </div>
+    
     <canvas id="bg-canvas"></canvas>
 
     <div class="tv-noise"></div>
     <div class="ruido-estatico"></div>
-    
-   
 
     <div id="start-screen" class="screen active">
         <h1 class="shimmer-text" style="font-size: 3rem; margin-bottom: 10px;">PROJETO ZEUS</h1>
@@ -46,18 +38,18 @@
         </div>
 
         <div class="hero-container">
-            <div class="hero-choice" data-hero="orc" data-img="https://files.catbox.moe/wkfzj3.png">
-                <img src="https://files.catbox.moe/wkfzj3.png">
+            <div class="guerra.png">
+                <img src="guerra.png">
                 <h3>COMANDANTE (AGGRO)</h3>
                 <p>Especialidade: Exército Numérico</p>
             </div>
-            <div class="hero-choice" data-hero="elfo" data-img="https://files.catbox.moe/tl6rvy.png">
-                <img src="https://files.catbox.moe/tl6rvy.png">
+            <div class="estrategista.png">
+                <img src="estrategista.png">
                 <h3>TECNOMAGO (CONTROLE)</h3>
                 <p>Especialidade: Hacks & Feitiços</p>
             </div>
-            <div class="hero-choice" data-hero="clerigo" data-img="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
-                <img src="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
+            <div class="medico.png">
+                <img src="medico.png">
                 <h3>BIOMÉDICO (CURA)</h3>
                 <p>Especialidade: Sobrevivência</p>
             </div>
@@ -66,7 +58,6 @@
         <div id="hero-actions" style="display: none; position: absolute; bottom: 30px; gap: 20px; width: 100%; justify-content: center;">
             <button id="btn-edit-deck" class="cmd-btn" style="width: 150px;">EDITAR DECK</button>
             <button id="btn-open-market" class="cmd-btn" style="width: 150px; border-color: #ff00ff; color: #ff00ff;">MERCADO NEGRO</button>
-            <button id="btn-open-p2p" class="cmd-btn" style="width: 150px; border-color: #00ffcc; color: #00ffcc;">MULTIPLAYER P2P</button>
             <button id="btn-start-battle-direct" class="open-btn" style="width: 200px; border-color:#00ff00; color:#00ff00;">[ INICIAR MISSÃO ]</button>
         </div>
     </div>
@@ -207,33 +198,8 @@
         </div>
     </div>
     
-    <div id="p2p-modal" class="modal" style="z-index: 8500;">
-        <div class="modal-content" style="border-color: #00ffcc; max-width: 400px;">
-            <h2 class="neon-label" style="font-size: 1.5rem; color: #00ffcc; margin-bottom: 10px;">📡 TERMINAL DE REDE P2P</h2>
-            <p id="meu-status" style="color: #aaa; margin-bottom: 25px;">Status: Desconectado</p>
-            
-            <button id="btn-host" class="cmd-btn" style="border-color: #00ffcc; color: #00ffcc; height: 50px; font-size: 1.1rem; margin-bottom: 20px;">
-                [ GERAR CÓDIGO DE HOST ]
-            </button>
-            
-            <div style="border-top: 1px dashed #444; padding-top: 20px; margin-top: 10px;">
-                <input type="text" id="id-alvo" placeholder="CÓDIGO DO INIMIGO" style="width: 90%; padding: 10px; background: #111; color: #fff; border: 1px solid #ff0055; text-align: center; margin-bottom: 15px; font-family: monospace; font-size: 1.2rem; text-transform: uppercase;">
-                
-                <button id="btn-client" class="cmd-btn" style="border-color: #ff0055; color: #ff0055; height: 50px; font-size: 1.1rem;">
-                    [ CONECTAR (CLIENT) ]
-                </button>
-            </div>
-
-            <button class="cmd-btn" onclick="document.getElementById('p2p-modal').classList.remove('active')" style="border-color: #444; color: #777; margin-top: 25px;">CANCELAR</button>
-        </div>
-    </div>
-
-            <button class="cmd-btn" onclick="document.getElementById('p2p-modal').classList.remove('active')" style="border-color: #444; color: #777; margin-top: 25px;">CANCELAR</button>
-        </div>
-    </div>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="vfx.js"></script>
     <script src="script.js"></script>
-    <script src="redes.js"></script>
 </body>
 </html>
