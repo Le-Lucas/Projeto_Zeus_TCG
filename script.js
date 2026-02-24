@@ -494,8 +494,58 @@ function createCard(item) {
 
     return c; 
 }
+/* =========================================================
+   🚀 INÍCIO DE JOGO E TRANSIÇÃO CINEMATOGRÁFICA
+   ========================================================= */
 function startGameDirect(mode, arenaClass) {
     document.getElementById("hero-screen").classList.remove("active"); 
+    
+    // Dicionário de Vídeos: Qual arena puxa qual vídeo?
+    const videosDaArena = {
+        "arena-toxic": "https://files.catbox.moe/orbe0e.mp4" 
+    };
+
+    const videoSrc = videosDaArena[arenaClass];
+
+    // Se a arena tiver um vídeo mapeado, roda o cinema. Se não tiver, vai direto pro jogo!
+    if (videoSrc) {
+        playCinematicTransition(mode, arenaClass, videoSrc);
+    } else {
+        enterGameScreen(mode, arenaClass);
+    }
+}
+
+function playCinematicTransition(mode, arenaClass, videoSrc) {
+    const screen = document.getElementById("video-transition-screen");
+    const vid = document.getElementById("transition-video");
+
+    if (!screen || !vid) { enterGameScreen(mode, arenaClass); return; } // Segurança anti-bug
+
+    vid.src = videoSrc;
+    screen.classList.add("active");
+
+    let skipTimeout;
+    
+    // A função que encerra o vídeo e entra na pancadaria
+    const skipTransition = () => {
+        clearTimeout(skipTimeout);
+        vid.pause();
+        screen.classList.remove("active");
+        screen.onclick = null; // Remove o clique
+        enterGameScreen(mode, arenaClass);
+    };
+
+    // Permite ao jogador clicar na tela para pular o vídeo na hora
+    screen.onclick = skipTransition;
+
+    // Dá o play no vídeo e programa o corte exato para 2.8 segundos!
+    vid.load(); // 👈 Força o navegador a carregar o link
+    vid.play().catch(() => { skipTransition(); }); 
+    skipTimeout = setTimeout(skipTransition, 2800); 
+}
+
+// 👇 A FUNÇÃO QUE TINHA SUMIDO E CAUSADO O ERRO DE SINTAXE 👇
+function enterGameScreen(mode, arenaClass) {
     document.getElementById("game-screen").classList.add("active");
     if(selectedHeroObj) document.getElementById("player-avatar-img").src = selectedHeroObj.imgUrl;
     gameMode = mode; currentLevel = 0; 
@@ -569,6 +619,16 @@ async function aiDeployPhase() {
         const c = baseDeck.filter(x=>x.tipo!=="feitico")[Math.floor(Math.random() * 5)]; 
         const el = createCard(c); el.dataset.owner="enemy"; slots[0].appendChild(el); playSound("deploy");
         el.style.position = "absolute"; el.style.top = "50%"; el.style.left = "50%"; el.style.transform = "translate(-50%, -50%) scale(0.60)"; el.style.margin = "0";
+        
+        // 👇 A COLEIRA DA IA (IMPEDE A BATOTA) 👇
+        if (el.dataset.effect === "investida") {
+            el.dataset.hasAttacked = "false"; // Pode atacar agora
+        } else {
+            el.dataset.hasAttacked = "true";  // Nasce cansada
+            el.classList.add("exhausted");    // Recebe o ZzZ...
+        }
+        // 👆 FIM DA COLEIRA 👆
+
         if(typeof VFX !== 'undefined') VFX.onSummon(el, el.dataset.effect); processCardEffect("AoJogar", el, "enemy"); updateAuras();
     } 
     await sleep(1000); if (!gameIsOver) advancePhase();
@@ -703,34 +763,67 @@ function handleCardClick(e) {
     const p = c.parentElement; 
     const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.type === "feitico";
 
+    // --- CLIQUE NA MÃO ---
     if(p.id==="hand"){ 
         playSound("click"); 
-        if(selectedCardFromHand===c){ 
-            selectedCardFromHand=null; 
+        if(selectedCardFromHand === c){ 
+            selectedCardFromHand = null; 
             c.classList.remove("deployment-selected"); 
+            arrangeHand(); 
         } 
         else { 
-            if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected"); 
-            selectedCardFromHand=c; 
+            if(selectedCardFromHand) {
+                selectedCardFromHand.classList.remove("deployment-selected");
+            }
+            selectedCardFromHand = c; 
             c.classList.add("deployment-selected"); 
-            
-            // 👇 A MÁGICA DO MOBILE: Recolhe a pasta na mesma hora para revelar a mesa!
-            document.getElementById("hand").classList.remove("expanded");
+
+            gsap.to(c, {
+                scale: 1.3,         
+                y: -120,            
+                rotation: 0,        
+                zIndex: 100,        
+                duration: 0.3,      
+                ease: "back.out(1.7)" 
+            });
+            arrangeHand(c); 
         } 
     } 
-    // ... O restante da função continua igualzinho para baixo!
-    else if (isSpellSelected) { executeSpell(selectedCardFromHand, c, p.dataset.owner); }
-    // ...
-    else if(p.dataset.owner==="player" && currentStep==="combat" && attackToken==="player"){ 
-        if(selectedAttacker===c) { selectedAttacker=null; c.classList.remove("attacker-selected"); } 
-        else { if(selectedAttacker) selectedAttacker.classList.remove("attacker-selected"); selectedAttacker=c; c.classList.add("attacker-selected"); } 
+    // --- CLIQUE PARA LANÇAR MAGIA ---
+    else if (isSpellSelected) { 
+        executeSpell(selectedCardFromHand, c, p.dataset.owner); 
     }
+    // --- CLIQUE PARA SELECIONAR A SUA TROPA PARA ATACAR ---
+    else if(p.dataset.owner==="player" && currentStep==="combat" && attackToken==="player"){ 
+        
+        // A trava do sono:
+        if(c.dataset.hasAttacked === "true") {
+            playSound("error"); 
+            return;             
+        }
+
+        if(selectedAttacker===c) { 
+            selectedAttacker=null; 
+            c.classList.remove("attacker-selected"); 
+        } 
+        else { 
+            if(selectedAttacker) selectedAttacker.classList.remove("attacker-selected"); 
+            selectedAttacker=c; 
+            c.classList.add("attacker-selected"); 
+        } 
+    }
+    // 👇 A PARTE QUE TINHA SUMIDO: CLIQUE NO INIMIGO PARA DAR O BOTE 👇
     else if(p.dataset.owner==="enemy" && selectedAttacker){ 
         const taunts = document.getElementById("enemy-field").querySelectorAll('.taunt-card');
-        if (taunts.length > 0 && !c.classList.contains('taunt-card')) { playSound("error"); alert("ALVO INVÁLIDO! Há tropas com Provocar protegendo o campo."); return; }
+        if (taunts.length > 0 && !c.classList.contains('taunt-card')) { 
+            playSound("error"); 
+            alert("ALVO INVÁLIDO! Há tropas com Provocar protegendo o campo."); 
+            return; 
+        }
         resolveCombat(selectedAttacker, c, true); 
     } 
 }
+
 
 function handleHeroClick(heroElement, owner) {
     if (isSystemLocked || gameIsOver) return;
@@ -819,12 +912,22 @@ function executePlayCard(slot, card) {
             }
             // 👆 FIM DO TRANSMISSOR 👆
 
+           // ... (código do Transmissor P2P que já está lá) ...
+
             card.classList.remove("deployment-selected");
+            
+            // 👇 A LAVAGEM CEREBRAL DO GSAP 👇
+            gsap.killTweensOf(card);               // Para qualquer animação que ainda estivesse a correr
+            gsap.set(card, { clearProps: "all" }); // Apaga a memória de rotação, left e bottom da mão!
+            // 👆 FIM DA LAVAGEM CEREBRAL 👆
+
             card.style.position = "absolute"; 
             card.style.top = "50%"; 
             card.style.left = "50%"; 
             card.style.margin = "0"; 
             card.style.transform = "translate(-50%, -50%) scale(0.60)";
+            
+            // ... (o resto da função continua igualzinho)
             
             if (card.dataset.effect === "investida") card.dataset.hasAttacked = "false"; 
             else { card.dataset.hasAttacked = "true"; card.classList.add("exhausted"); }
@@ -853,32 +956,74 @@ function executePlayCard(slot, card) {
 }
 
 function resolveCombat(atkCard, defCard, isPlayer) {
-    if(typeof VFX !== 'undefined') VFX.onAttack(atkCard, defCard, atkCard.dataset.effect);
-    if(atkCard.dataset.somAtaque) { let a = new Audio(atkCard.dataset.somAtaque); a.play().catch(e=>{}); } else { playSound("hit"); }
+    // 1. O CÁLCULO DE TRAJETÓRIA (Matemática de Colisão)
+    const rectAtk = atkCard.getBoundingClientRect();
+    const rectDef = defCard.getBoundingClientRect();
     
-    setTimeout(() => {
-        let dmgToDef = parseInt(atkCard.dataset.attack) || 0; let dmgToAtk = 0;
-        if(!defCard.id.includes("hero")) { dmgToAtk = parseInt(defCard.dataset.attack) || 0; }
-        
-        if(defCard.id.includes("hero")) { if(isPlayer) enemyLife -= dmgToDef; else playerLife -= dmgToDef; screenShake(); } 
-        else { applyDamage(defCard, dmgToDef); }
-        
-        if (dmgToAtk > 0) { applyDamage(atkCard, dmgToAtk); }
-        if (atkCard.dataset.effect === "roubo_vida" && isPlayer) playerLife = Math.min(playerLife + dmgToDef, maxLife);
+    // Calcula quantos pixels a carta tem de viajar nos eixos X e Y
+    const moveX = rectDef.left - rectAtk.left;
+    const moveY = rectDef.top - rectAtk.top;
 
-        checkGameOver(); updateLifeAndMana(); 
-        
-        let attackerAlive = (parseInt(atkCard.dataset.hp) || 0) > 0;
-        let defenderDied = !defCard.id.includes("hero") && (parseInt(defCard.dataset.hp) || 0) <= 0;
+    // Traz a carta atacante para a frente de tudo para não passar por baixo das outras
+    atkCard.style.zIndex = "100";
 
-        if (attackerAlive && atkCard.dataset.effect === "furia" && defenderDied) {
-            atkCard.dataset.hasAttacked = "false"; atkCard.classList.remove("exhausted"); if(typeof VFX !== 'undefined') VFX.fury(atkCard);
-        } else if (attackerAlive) { atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); }
-        
-        atkCard.classList.remove("attacker-selected"); selectedAttacker = null;
-    }, 450); 
+  // 2. A MÁGICA DO GSAP: O BOTE
+    gsap.to(atkCard, {
+        x: moveX,
+        y: moveY,
+        duration: 0.28, // 👈 Aumentamos de 0.15 para 0.28 (Quase o dobro do tempo, bote mais denso)
+        ease: "power3.in", // 👈 Troque para power3.in (Ele começa mais devagar e esmaga no final)
+        onComplete: () => {
+            // --- 💥 O MOMENTO EXATO DO IMPACTO 💥 ---
+            if(typeof VFX !== 'undefined') VFX.onAttack(atkCard, defCard, atkCard.dataset.effect);
+            if(atkCard.dataset.somAtaque) { let a = new Audio(atkCard.dataset.somAtaque); a.play().catch(e=>{}); } else { playSound("hit"); }
+            
+            let dmgToDef = parseInt(atkCard.dataset.attack) || 0; 
+            let dmgToAtk = 0;
+            if(!defCard.id.includes("hero")) { dmgToAtk = parseInt(defCard.dataset.attack) || 0; }
+            
+            // Aplica o dano no alvo
+            if(defCard.id.includes("hero")) { 
+                if(isPlayer) enemyLife -= dmgToDef; else playerLife -= dmgToDef; 
+                screenShake(); // Tremer o ecrã inteiro se bater no Herói
+            } else { 
+                applyDamage(defCard, dmgToDef); 
+                // Nova animação: Faz a carta que apanhou tremer com o impacto!
+                gsap.fromTo(defCard, {x: -5}, {x: 5, duration: 0.05, yoyo: true, repeat: 5});
+            }
+            
+            // Retaliação (A carta que atacou também sofre dano)
+            if (dmgToAtk > 0) { applyDamage(atkCard, dmgToAtk); }
+            if (atkCard.dataset.effect === "roubo_vida" && isPlayer) playerLife = Math.min(playerLife + dmgToDef, maxLife);
+
+            checkGameOver(); updateLifeAndMana(); 
+            
+            let attackerAlive = (parseInt(atkCard.dataset.hp) || 0) > 0;
+            let defenderDied = !defCard.id.includes("hero") && (parseInt(defCard.dataset.hp) || 0) <= 0;
+
+            if (attackerAlive && atkCard.dataset.effect === "furia" && defenderDied) {
+                atkCard.dataset.hasAttacked = "false"; atkCard.classList.remove("exhausted"); if(typeof VFX !== 'undefined') VFX.fury(atkCard);
+            } else if (attackerAlive) { 
+                atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); 
+            }
+            
+            atkCard.classList.remove("attacker-selected"); 
+            selectedAttacker = null;
+
+            // --- 3. O RECUO (Voltar à posição original) ---
+            if (attackerAlive) {
+                gsap.to(atkCard, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.45, // 👈 Aumentamos de 0.3 para 0.45 (Um recuo mais cansado e realista)
+                    ease: "power2.out", 
+                    onComplete: () => { atkCard.style.zIndex = ""; }
+            
+                });
+            }
+        }
+    });
 }
-
 function applyDamage(target, dmg) {
     if(target.dataset.dead === "true") return; 
     if(target.dataset.effect === "escudo_divino" && !target.dataset.shieldBroken) {
@@ -1002,12 +1147,70 @@ function checkGameOver() {
     }, 1000); // Espera 1 segundo para a explosão acontecer antes de abrir a janela
 }
 
-function drawCard(){ if(playerDeck.length>0){ document.getElementById("hand").appendChild(createCard(playerDeck.pop())); arrangeHand(); updateLifeAndMana(); } }
-function arrangeHand() { 
+/* =========================================================
+   🃏 SISTEMA DE COMPRA DE CARTAS E LEQUE (COM GSAP 3D)
+   ========================================================= */
+
+function drawCard() { 
+    if(playerDeck.length > 0) { 
+        const novaCarta = createCard(playerDeck.pop());
+        document.getElementById("hand").appendChild(novaCarta); 
+        
+        // 1. GSAP SETUP: A carta nasce escondida, fora da tela, e VIRADA DE COSTAS
+        gsap.set(novaCarta, { 
+            y: -500,          // Nasce bem alto (fora da tela)
+            x: 200,           // Nasce puxada para a direita (como se estivesse no deck)
+            rotationY: 180,   // EFEITO 3D: Carta virada para baixo (verso)
+            scale: 0.2,       // Nasce bem pequena
+            opacity: 0        // Invisível
+        });
+
+        // 2. Chama o organizador (que vai calcular onde ela deve pousar e puxar ela)
+        arrangeHand(); 
+        
+        // 3. O VOÔ E O FLIP 3D: Desvira a carta enquanto ela viaja para a mão
+        gsap.to(novaCarta, {
+            rotationY: 0,     // Gira em 3D revelando a arte e os atributos
+            opacity: 1,       // Fica 100% visível
+            duration: 0.8,    // Tempo do voo (0.8s dá um peso dramático)
+            ease: "back.out(1.5)" // Passa um pouquinho do ponto e volta (efeito de freio)
+        });
+
+        updateLifeAndMana(); 
+    } 
+}
+
+// Agora a função aceita um parâmetro opcional: a carta que deve ser ignorada
+function arrangeHand(cartaParaIgnorar = null) { 
     const cards = Array.from(document.getElementById("hand").children); 
     for (let i = 0; i < cards.length; i++) { 
+        const card = cards[i];
+        
+        // 👇 SE FOR A CARTA COM ZOOM, ***** ELA (Não reposiciona no leque)
+        if (card === cartaParaIgnorar) continue;
+
+        // Restaure o z-index padrão para as cartas no leque
+        gsap.set(card, { zIndex: i }); 
+
+        // Calcula a angulação do leque
         const angle = -15 + (30) * (cards.length > 1 ? i / (cards.length - 1) : 0.5); 
-        cards[i].style.left = `calc(50% + ${(i - (cards.length - 1) / 2) * 120}px)`; cards[i].style.bottom = `${Math.abs(angle) * 2}px`; cards[i].style.transform = `translateX(-50%) rotate(${angle}deg) scale(0.7)`; 
+        const targetLeft = `calc(50% + ${(i - (cards.length - 1) / 2) * 110}px)`; // Reduzi um pouco o espaço entre elas (120 -> 110)
+        
+        // 👇 AJUSTE TÁTICO: Empurramos as cartas mais para baixo
+        // Usamos um valor negativo (-30px) para afundá-las na borda inferior
+        const targetBottom = `${(Math.abs(angle) * 2) - 30}px`; 
+
+        // O deslize suave para a posição do leque
+        gsap.to(card, {
+            left: targetLeft,
+            bottom: targetBottom,
+            y: 0,                 // Garante que o "y" do zoom seja resetado
+            rotation: angle,      // Gira a carta no eixo 2D (leque)
+            xPercent: -50,        // Mantém centralizada
+            scale: 0.7,           // Escala padrão na mão
+            duration: 0.4,
+            ease: "power2.out"
+        });
     } 
 }
 
