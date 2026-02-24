@@ -502,7 +502,7 @@ function startGameDirect(mode, arenaClass) {
     
     // Dicionário de Vídeos: Qual arena puxa qual vídeo?
     const videosDaArena = {
-        "arena-toxic": "https://files.catbox.moe/orbe0e.mp4" 
+        "arena-toxic": "lab.mp4" 
     };
 
     const videoSrc = videosDaArena[arenaClass];
