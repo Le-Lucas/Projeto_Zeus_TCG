@@ -166,26 +166,14 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 #hand { position: fixed; bottom: -280px; left: 250px; width: calc(100% - 250px); height: 300px; display: flex; justify-content: center; z-index: 200; transition: 0.3s; transform-origin: bottom center; transform: scale(0.7); }
 #hand.expanded { bottom: 0; transform: scale(0.9); z-index: 9999 !important; }
 /* MOVENDO O BOTÃO DA MÃO PARA A DIREITA */
-/* MOVENDO O BOTÃO DA MÃO PARA A DIREITA E ARRUMANDO A ÁREA DE CLIQUE (HITBOX) */
 #hand-indicator {
     position: absolute;
     bottom: 20px;
-    right: 40px; 
-    left: auto;   
-    transform: none; 
+    right: 40px;  /* Puxado para a direita */
+    left: auto;   /* Desliga a centralização antiga */
+    transform: none; /* Desliga a centralização antiga */
     z-index: 100;
-    cursor: pointer; /* Garante a mãozinha do mouse */
-    display: flex; /* Melhora o alinhamento do texto interno */
-    justify-content: center;
-    align-items: center;
-    min-width: 250px; /* Garante que o botão seja largo o suficiente */
 }
-
-/* 👇 O TRUQUE DE MESTRE: Impede que o texto ou os pontinhos roubem o clique! 👇 */
-#hand-indicator * {
-    pointer-events: none; 
-}
-
 #hand-indicator:hover { background: #00ffff !important; color: #000; }
 #hand-indicator::before { content: ""; position: absolute; top: -20px; left: -20px; right: -20px; bottom: -20px; z-index: -1; }
 
@@ -253,6 +241,9 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
     animation: pulseEpic 1s infinite alternate;
 }
 
+/* =========================================================
+   ARENAS DE COMBATE (LORE & AMBIENTAÇÃO)
+   ========================================================= */
 
 /* 🧪 /* =========================================================
    ARENAS DE COMBATE (LORE & AMBIENTAÇÃO) - CORRIGIDAS
@@ -468,43 +459,48 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 }
 
 /* =========================================================
-   VFX: MOLDURA DINÂMICA DOS HERÓIS (BLINDADA)
+   VFX: MOLDURA DINÂMICA DOS HERÓIS
    ========================================================= */
 .hero-avatar-frame {
-    position: relative;
-    width: 80px; 
-    height: 80px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, var(--theme-color), #000);
-    box-shadow: 0 0 20px var(--theme-glow);
-    box-sizing: border-box;
-    border: 2px solid var(--theme-color);
+  position: relative;
+  width: 80px; /* Tamanho ajustado para o nosso layout */
+  height: 80px;
+  border-radius: 50%;
+  padding: 4px; /* Espaço para a borda brilhar */
+  
+  /* O fundo agora usa a cor do tema! */
+  background: linear-gradient(135deg, var(--theme-color), #000);
+  box-shadow: 0 0 20px var(--theme-glow);
+  animation: frameGlow 3s infinite alternate;
 }
 
-/* A foto um pouco menor para mostrar o fundo neon brilhante */
+/* A imagem fica por cima do canvas */
 .hero-avatar-frame .hero-avatar {
-    width: 68px; 
-    height: 68px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #151515; /* Cor cinza se o servidor do Catbox cair */
-    z-index: 1; 
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #111;
+  border: 2px solid rgba(255,255,255,0.2);
+  position: relative;
+  z-index: 2; /* Garante que a foto fique na frente das partículas */
 }
 
-/* O TRUQUE DE MESTRE: O canvas agora fica por CIMA da foto! */
+/* O canvas das partículas fica no fundo */
 .hero-avatar-frame canvas {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 2; 
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Removemos as bordas antigas */
+@keyframes frameGlow {
+  0% { box-shadow: 0 0 10px var(--theme-glow); }
+  100% { box-shadow: 0 0 25px var(--theme-glow), 0 0 5px var(--theme-color); }
+}
+
+/* Removemos a borda antiga dos containers principais para não duplicar */
 #player-hero .hero-avatar, #enemy-hero .hero-avatar {
     border: none !important; box-shadow: none !important;
 }
@@ -684,94 +680,117 @@ body { background-color: #050505; color: #b3b3b3; font-family: 'Courier New', Co
 }
 
 /* =========================================================
-   📱 MODO PAISAGEM MOBILE (COMPACTAÇÃO TÁTICA)
-   ========================================================= */
-@media screen and (max-height: 600px) and (orientation: landscape) {
-    /* Força o layout lado a lado para garantir que não quebre */
-    .layout-battle { flex-direction: row !important; }
-    
-    /* Estreita a Sidebar para sobrar mais tela pro jogo */
-    .sidebar { width: 180px !important; padding: 10px !important; }
-    .sidebar-links { font-size: 0.8rem; margin-top: 5px; }
-    #turn-display { font-size: 1rem !important; }
-    
-    /* Encolhe o Deck */
-    .card-back { width: 70px !important; height: 100px !important; }
-    
-    /* Ajusta o painel do Operador (Você) para não cortar embaixo */
-    .hero-panel-sidebar { padding: 5px !important; gap: 5px !important; }
-    .hero-avatar-frame { width: 50px !important; height: 50px !important; }
-    .hero-avatar-frame .hero-avatar { width: 40px !important; height: 40px !important; }
-    
-    /* Aproxima as linhas de combate e diminui os espaços (Slots) */
-    #board { padding-top: 5px !important; padding-bottom: 50px !important; }
-    .field { height: 110px !important; gap: 4px !important; }
-    .slot { width: 80px !important; height: 110px !important; }
-    
-    /* Encolhe as cartas que estão dentro da mesa */
-    .slot .card-base { transform: translate(-50%, -50%) scale(0.40) !important; }
-    
-    /* Linha do tempo mais espremida */
-    .field-divider { margin: 15px 0 !important; }
-    
-    /* Painel do Inimigo no topo direito mais compacto */
-    #enemy-hero { top: 5px !important; right: 10px !important; gap: 5px !important; }
-    
-    /* Encolhe a Pasta de Arquivos para não tampar a tela toda ao abrir */
-  /* Encolhe a Pasta de Arquivos para não tampar a tela toda ao abrir */
-    #hand { transform: scale(0.45) !important; } /* Deixei a mão fechada menorzinha também */
-    #hand.expanded { 
-        transform: scale(0.55) !important; /* Diminuímos de 0.65 para 0.55 */
-        bottom: -35px !important; /* Empurramos mais para o fundo da tela */
-    }
-    
-    /* Botão da Mão menor e colado no canto inferior direito */
-    #hand-indicator { 
-        bottom: 5px !important; 
-        right: 10px !important; 
-        min-width: 150px !important; 
-        font-size: 0.7rem !important; 
-        padding: 5px !important; 
-    }
-}
-
-/* =========================================================
-   ✨ EFEITOS DE CAMPO E CARTAS CANSADAS
+   ✨ EFEITOS DE CAMPO E CARTAS CANSADAS (ATUALIZADO)
    ========================================================= */
 
-/* 1. Cores mais nítidas e vivas APENAS quando estão no tabuleiro (slots) */
+/* 1. O BRILHO DA MESA: Cores estourando quando estão no campo */
 .slot .card-base {
-    filter: brightness(1.2) contrast(1.2) saturate(1.1);
-    box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); /* Leve brilho neon ao fundo */
+    filter: brightness(1.2) contrast(1.2) saturate(1.2) !important; 
+    box-shadow: 0 0 12px rgba(0, 255, 204, 0.3); 
 }
 
-/* 2. A Carta Cansada (Exhausted) - Fica escura e perde o brilho */
+/* 2. O CANSAÇO: Agora a carta CONTINUA colorida e clicável! */
 .card-base.exhausted {
-    filter: grayscale(0.5) brightness(0.6) contrast(1.1) !important; 
-    pointer-events: none; /* Impede o jogador de clicar nela novamente */
+    /* O !important diz ao navegador: OBRIGUE A CARTA A FICAR COLORIDA! */
+    filter: brightness(1.2) contrast(1.2) saturate(1.2) !important; 
+    pointer-events: auto !important; /* Garante que o clique funcione nela */
 }
 
-/* 3. A Animação do ZzZ... flutuando */
+/* 3. A ANIMAÇÃO DO SONO: O ZzZ gigante */
 .card-base.exhausted::after {
     content: "ZzZ...";
     position: absolute;
-    top: 15px;
-    right: 15px;
-    color: #00ffcc;
-    font-size: 1.8rem;
+    top: -30px;
+    right: -10px;
+    color: #00ffcc; 
+    font-size: 4.2rem; 
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
-    text-shadow: 0 0 10px #00ffcc, 0 0 20px #000;
+    text-shadow: 0 0 15px #00ffcc, 0 0 30px #000, 0 0 5px #fff;
     z-index: 20;
-    animation: flutuarZ 2s infinite ease-in-out;
+    animation: flutuarZTurbinado 2.5s infinite ease-in-out; 
+    /*pointer-events: none; /* Apenas o TEXTO ZzZ é intocável, a carta em si não! */
+}
+
+/* 4. O MOTOR DO SONO TURBINADO */
+@keyframes flutuarZTurbinado {
+    0%   { transform: translateY(0) scale(0.8) rotate(5deg); opacity: 0.8; }
+    50%  { transform: translateY(-25px) scale(1.3) rotate(-5deg); opacity: 1; }
+    100% { transform: translateY(-50px) scale(0.8) rotate(10deg); opacity: 0; }
+}
+
+
+/* =========================================================
+   🃏 AJUSTES DA MÃO FLUTUANTE PERMANENTE
+   ========================================================= */
+
+/* 1. Esconde o botão antigo de abrir/fechar pasta */
+#hand-indicator, .hand-toggle-btn {
+    display: none !important;
+}
+
+/* 2. Prende o container da mão no rodapé da tela */
+#hand {
+    position: fixed !important;
+    bottom: 0 !important;       /* Cola no fundo */
+    left: 50% !important;
+    transform: translateX(-50%) !important; /* Centraliza horizontalmente */
+    width: 100%;                /* Ocupa a largura toda para ter espaço */
+    height: 150px;              /* Altura da área de toque */
+    z-index: 50;                /* Fica acima do tabuleiro */
+    
+    /* O SEGREDO DO ZOOM: Permite que a carta saia da caixa quando cresce */
+    overflow: visible !important; 
+    
+    /* Removemos a transição antiga do CSS, o GSAP cuida disso agora */
+    transition: none !important; 
+    background: none !important; /* Remove o fundo de pasta se ainda tiver */
+    border: none !important;     /* Remove bordas da pasta */
+}
+
+/* Garantir que a mão não mude de estado (já que removemos o botão) */
+#hand.expanded {
+    bottom: 0 !important;
+    transform: translateX(-50%) !important;
+}
+
+/* =========================================================
+   🎬 TRANSIÇÃO CINEMATOGRÁFICA
+   ========================================================= */
+#video-transition-screen {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh;
+    background: #000;
+    z-index: 999999; /* Fica por cima de TUDO no jogo */
+    display: none;   /* Escondido por padrão */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#video-transition-screen.active { display: flex; }
+
+#transition-video {
+    width: 100%; height: 100%;
+    object-fit: cover; /* Faz o vídeo preencher a tela sem distorcer */
+}
+
+#skip-video-hint {
+    position: absolute;
+    bottom: 40px;
+    color: rgba(0, 255, 204, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 2px;
     pointer-events: none;
+    animation: piscarSkip 1.5s infinite;
 }
 
-/* O Motor da Animação (Faz o texto subir e desaparecer) */
-@keyframes flutuarZ {
-    0%   { transform: translateY(0) scale(0.8); opacity: 0.8; }
-    50%  { transform: translateY(-15px) scale(1.1); opacity: 1; }
-    100% { transform: translateY(-30px) scale(0.8); opacity: 0; }
+@keyframes piscarSkip { 
+    0% { opacity: 0.2; } 
+    50% { opacity: 1; text-shadow: 0 0 10px #00ffcc; } 
+    100% { opacity: 0.2; } 
 }
-
-
