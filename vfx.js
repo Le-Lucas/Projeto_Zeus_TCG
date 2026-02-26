@@ -1,4 +1,4 @@
-console.log("MÓDULO VFX INICIADO: MOTOR 3D & EFEITOS DE CARTAS (TURBINADO).");
+console.log("MÓDULO VFX INICIADO: MOTOR 3D & EFEITOS DE CARTAS (V8.5 - OTIMIZADO PARA ESCALA).");
 
 /* =========================================================
    1. SISTEMA DE EFEITOS DE CARTAS (DOM ANIMATIONS)
@@ -6,6 +6,7 @@ console.log("MÓDULO VFX INICIADO: MOTOR 3D & EFEITOS DE CARTAS (TURBINADO).");
 const VFX = {
   /* --- UTILIDADES --- */
   pulse(el, color, scale = 1.3, time = 600) { 
+    if (!el) return;
     el.animate([
       { transform: "scale(1)", boxShadow: "none", zIndex: 1000 },
       { transform: `scale(${scale})`, boxShadow: `0 0 50px ${color}, 0 0 20px #fff`, zIndex: 1000 },
@@ -14,6 +15,8 @@ const VFX = {
   },
 
   particles(el, color) {
+    if (!el) return;
+    
     for (let i = 0; i < 20; i++) { 
       const p = document.createElement("div");
       p.style.position = "absolute";
@@ -25,16 +28,15 @@ const VFX = {
       p.style.background = color;
       p.style.boxShadow = `0 0 15px ${color}, 0 0 5px white`; 
 
-      document.body.appendChild(p);
-
-      const r = el.getBoundingClientRect();
-      p.style.left = r.left + r.width / 2 + "px";
-      p.style.top = r.top + r.height / 2 + "px";
+      // MÁGICA: Injeta DENTRO do elemento para respeitar a Escala (Scale) do Mobile
+      p.style.left = "50%";
+      p.style.top = "50%";
+      el.appendChild(p);
 
       p.animate([
-        { transform: "translate(0,0) scale(1.5)", opacity: 1 },
+        { transform: "translate(-50%, -50%) scale(1.5)", opacity: 1 },
         {
-          transform: `translate(${Math.random()*250-125}px, ${Math.random()*250-125}px) scale(0)`, 
+          transform: `translate(calc(-50% + ${Math.random()*250-125}px), calc(-50% + ${Math.random()*250-125}px)) scale(0)`, 
           opacity: 0
         }
       ], { duration: 1000 }); 
@@ -43,7 +45,7 @@ const VFX = {
     }
   },
 
-  // 🔥 EXPLOSÃO DE TELA INTEIRA (FIM DE JOGO) 🔥
+  // 🔥 EXPLOSÃO DE TELA INTEIRA 🔥
   bigExplosion(color) {
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
@@ -136,16 +138,18 @@ const VFX = {
   fury(card) { this.pulse(card, "#ff0000", 1.5, 600); }
 };
 
+window.VFX = VFX; // Garante que o script principal enxergue o VFX
+
 /* =========================================================
    2. VISUAL FX ENGINE (THREE.JS - CHUVA DE DADOS CYBERPUNK)
    ========================================================= */
-const canvasBg = document.getElementById('bg-canvas');
-if (canvasBg && typeof THREE !== 'undefined') {
+const canvas = document.getElementById('bg-canvas');
+if (canvas && typeof THREE !== 'undefined') {
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.02);
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 30;
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasBg, alpha: true, antialias: true });
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -184,17 +188,22 @@ if (canvasBg && typeof THREE !== 'undefined') {
 }
 
 /* =========================================================
-   ✨ VFX ENGINE: PARTÍCULAS DINÂMICAS (CANVAS DE HERÓIS)
+   ✨ VFX ENGINE: PARTÍCULAS DINÂMICAS (AVATARES CORRIGIDO)
    ========================================================= */
-let activeAvatarAnimations = []; // Guarda as animações para podermos limpá-las!
+let avatarAnimationFrame = null; // Agora a animação pode ser controlada e parada
 
 function initAvatarParticles() {
-    // Primeiro, desliga as animações antigas se houver, para não duplicar!
-    activeAvatarAnimations.forEach(id => cancelAnimationFrame(id));
-    activeAvatarAnimations = [];
+    // 1. Limpa qualquer animação antiga (Evita o Bug do Reset)
+    if (avatarAnimationFrame) {
+        cancelAnimationFrame(avatarAnimationFrame);
+        avatarAnimationFrame = null;
+    }
 
     const frames = document.querySelectorAll(".hero-avatar-frame");
     if (frames.length === 0) return;
+
+    // Guarda os dados de cada avatar num Array
+    const particleSystems = [];
 
     frames.forEach(frame => {
         const canvas = frame.querySelector("canvas");
@@ -215,25 +224,30 @@ function initAvatarParticles() {
                 alpha: Math.random() * 0.7 + 0.3
             });
         }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const themeRgb = getComputedStyle(document.body).getPropertyValue('--theme-rgb').trim() || "0, 255, 255";
-
-            particles.forEach(p => {
-                p.y -= p.speed;
-                if (p.y < 0) p.y = canvas.height;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(${themeRgb}, ${p.alpha})`; 
-                ctx.fill();
-            });
-
-            // Salva o ID da animação para podermos desligar na próxima partida
-            const frameId = requestAnimationFrame(animate);
-            activeAvatarAnimations.push(frameId);
-        }
-        animate();
+        particleSystems.push({ ctx, canvas, particles });
     });
+
+    // 2. Loop único para todos os avatares na tela
+    function animate() {
+        avatarAnimationFrame = requestAnimationFrame(animate);
+
+        const themeRgb = getComputedStyle(document.body).getPropertyValue('--theme-rgb').trim() || "0, 255, 255";
+
+        particleSystems.forEach(sys => {
+            sys.ctx.clearRect(0, 0, sys.canvas.width, sys.canvas.height);
+
+            sys.particles.forEach(p => {
+                p.y -= p.speed;
+                if (p.y < 0) p.y = sys.canvas.height;
+                sys.ctx.beginPath();
+                sys.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                sys.ctx.fillStyle = `rgba(${themeRgb}, ${p.alpha})`; 
+                sys.ctx.fill();
+            });
+        });
+    }
+    
+    animate(); // Dispara o motor
 }
+
+window.initAvatarParticles = initAvatarParticles; // Garante que o script principal consiga chamá-la
