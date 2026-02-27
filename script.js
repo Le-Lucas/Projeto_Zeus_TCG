@@ -86,20 +86,20 @@ const baseDeck = [
     { title: "Pacificador V.9", tipo: "mecanizado", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
     { title: "Interceptor de Zeus", tipo: "drone", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
     { title: "Agente da PIDE-Tec", tipo: "humano", raridade: "rara", custo: 3, atk: 2, def: 4, efeito: "nenhum", img: "https://files.catbox.moe/nifj2x.png" },
-    { title: "Pulso Eletromagnético", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "atordoar", text: "Atordoa unidade inimiga.", img: "" },
-    { title: "Injeção de Nanobots", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "cura_2", text: "Cura 2 de uma unidade aliada.", img: "injecao_nanobots.png" },
+    { title: "Pulso Eletromagnético", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "atordoar", text: "Atordoa unidade inimiga.", img: "Pulso.png" },
+    { title: "Injeção de Nanobots", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "cura_2", text: "Cura 2 de uma unidade aliada.", img: "Injecao_Nanobots.png" },
     { title: "Sobrecarga de Sistema", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "dano_2", text: "Causa 2 de dano a uma unidade.", img: "" },
-    { title: "Campo de Força Portátil", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "escudo_divino", text: "Concede Escudo Divino.", img: "campo_de_forca.png" },
+    { title: "Campo de Força Portátil", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "escudo_divino", text: "Concede Escudo Divino.", img: "campo_de_forca_portatil.png" },
     { title: "Drone de Sucata", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "nenhum", text: "Máquina simples.", img: "" },
     { title: "Sonda de Vigilância", tipo: "automato", raridade: "comum", custo: 1, atk: 0, def: 3, efeito: "sentinela", text: "Ataca Furtivos.", img: "" },
     { title: "Módulo de Escudo", tipo: "automato", raridade: "comum", custo: 2, atk: 0, def: 4, efeito: "provocar", text: "Provocar.", img: "" },
     { title: "Guardião de Protocolo", tipo: "automato", raridade: "rara", custo: 3, atk: 3, def: 4, efeito: "anti_feitico", text: "Imune a magias.", img: "" },
-    { title: "Demolidor Série-X", tipo: "automato", raridade: "rara", custo: 4, atk: 5, def: 3, efeito: "nenhum", text: "Puro dano.", img: "" },
-    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "" },
-    { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "" },
+    { title: "Demolidor Série-X", tipo: "automato", raridade: "rara", custo: 4, atk: 5, def: 3, efeito: "nenhum", text: "Puro dano.", img: "demolidor_x.png" },
+    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "Colete_kevlar.png" },
+    { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "rifle.png" },
     { title: "Escudo de Energia", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 3, efeito: "escudo_divino", text: "Concede +3 HP e Escudo Divino.", img: "" },
-    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "" },
-    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "" }
+    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "Chip_berserker.png" },
+    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "manto_camuflagem.png" }
 ];
 
 let currentLevel = 0, playerCollection = [], customDeck = [], playerDeck = [];
