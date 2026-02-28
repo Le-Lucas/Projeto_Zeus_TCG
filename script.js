@@ -50,58 +50,71 @@ const campaignData = [
 ];
 
 const baseDeck = [
+    // === TROPAS COMUNS ===
     { title: "Agente Novato", tipo: "tropa", raridade: "comum", custo: 1, atk: 1, def: 2, efeito: "nenhum", img: "https://i.postimg.cc/3JgCTq5Q/soldado-novato.png" },
     { title: "Drone de Varredura", tipo: "tropa", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "nenhum", img: "https://i.postimg.cc/pXDYHSbN/Drone-de-Varredura.png" },
     { title: "Segurança Aegis", tipo: "tropa", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "https://i.postimg.cc/284FDtps/Seguranca-Aegis.png" },
     { title: "Atirador Furtivo", tipo: "tropa", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "nenhum", img: "https://i.postimg.cc/Fsjg46t8/Atirador-Furtivo.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
     { title: "Ciborgue Falho", tipo: "tropa", raridade: "comum", custo: 3, atk: 3, def: 3, efeito: "nenhum", img: "https://i.postimg.cc/65dLXPsS/Ciborgue-Falho.png" },
     { title: "Mercenário", tipo: "tropa", raridade: "comum", custo: 3, atk: 4, def: 2, efeito: "nenhum", img: "https://i.postimg.cc/4Nzbg0C2/Mercenario.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
-    { title: "Protocolo: EMP", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano_2", img: "https://i.postimg.cc/fTxjNP4H/Protocolo-EMP.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
-    { title: "Kit Médico Tático", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "cura_3", img: "https://i.postimg.cc/DyqdTNV5/Kit-Medico-Tatico.png" },
-    { title: "Cobaia Estágio 1", tipo: "tropa", raridade: "rara", custo: 4, atk: 3, def: 6, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
-    { title: "Sobrevivente Rebelde", tipo: "tropa", raridade: "rara", custo: 4, atk: 5, def: 2, efeito: "ataque_duplo", img: "https://i.postimg.cc/bNQHh5Xx/Sobrevivente-Rebelde.png" },
-    { title: "Especialista em Explosivos", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 4, efeito: "nenhum", img: "https://i.postimg.cc/kXrFLmHs/Especialista-em-Explosivos.png" },
-    { title: "Protocolo: Purga", tipo: "feitico", raridade: "rara", custo: 4, atk: 0, def: 0, efeito: "dano_area", img: "https://i.postimg.cc/ZKkFXSQV/Protocolo-Purga.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
-    { title: "Exoesqueleto Mk.II", tipo: "tropa", raridade: "rara", custo: 6, atk: 5, def: 5, efeito: "nenhum", img: "https://i.postimg.cc/qMfXWTFQ/Exoesqueleto-Mk-II.png" },
-    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
-    { title: "Mutante Instável", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
-    { title: "Hack de Sobrecarga", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "dano_4", img: "https://files.catbox.moe/tl6rvy.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
-    { title: "Quimera Alada", tipo: "tropa", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "voar", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
-    { title: "Ceifador da Unidade", tipo: "tropa", raridade: "epica", custo: 6, atk: 6, def: 5, efeito: "roubo_vida", img: "https://i.postimg.cc/pLcvXqzj/Ceifador-da-Unidade.png" },
-    { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "https://i.postimg.cc/q7tTtyx1/Sentinela-Omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
-    { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "https://i.postimg.cc/0yXv2cDX/Projeto-Zeus-Alfa.png" },
     { title: "Infiltrador das Sombras", tipo: "humano", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "furtividade", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZoPOtDbsR6X1lPe9V86rfBHlh2Q9TrW7sg&s" },
     { title: "Sucateiro da Zona Sul", tipo: "humano", raridade: "comum", custo: 2, atk: 1, def: 3, efeito: "reciclar", img: "https://files.catbox.moe/dbnyi2.png" },
     { title: "Cadete de Patrulha", tipo: "soldado", raridade: "comum", custo: 1, atk: 1, def: 3, efeito: "provocar", img: "https://files.catbox.moe/ui0skk.png" },
     { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "https://files.catbox.moe/ebt0u6.png" },
-    { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
     { title: "Barreira Eletrônica", tipo: "estrutura", raridade: "comum", custo: 2, atk: 0, def: 7, efeito: "provocar", img: "https://files.catbox.moe/b097ur.png" },
+    { title: "Unidade K-9 Cibernética", tipo: "ciborgue", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
+    { title: "Interceptor de Zeus", tipo: "drone", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
+    { title: "Drone de Sucata", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "nenhum", text: "Máquina simples.", img: "https://i.postimg.cc/tgnW7p32/Drone-de-Varredura.png" },
+    { title: "Sonda de Vigilância", tipo: "automato", raridade: "comum", custo: 1, atk: 0, def: 3, efeito: "sentinela", text: "Ataca Furtivos.", img: "https://i.postimg.cc/MGfVXq0T/Varredura-de-Satelite.png" },
+    { title: "Módulo de Escudo", tipo: "automato", raridade: "comum", custo: 2, atk: 0, def: 4, efeito: "provocar", text: "Provocar.", img: "modulo_escudo.png" },
+
+    // === TROPAS RARAS ===
+    { title: "Cobaia Estágio 1", tipo: "tropa", raridade: "rara", custo: 4, atk: 3, def: 6, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
+    { title: "Sobrevivente Rebelde", tipo: "tropa", raridade: "rara", custo: 4, atk: 5, def: 2, efeito: "ataque_duplo", img: "https://i.postimg.cc/bNQHh5Xx/Sobrevivente-Rebelde.png" },
+    { title: "Especialista em Explosivos", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 4, efeito: "nenhum", img: "https://i.postimg.cc/kXrFLmHs/Especialista-em-Explosivos.png" },
+    { title: "Exoesqueleto Mk.II", tipo: "tropa", raridade: "rara", custo: 6, atk: 5, def: 5, efeito: "nenhum", img: "https://i.postimg.cc/qMfXWTFQ/Exoesqueleto-Mk-II.png" },
+    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
+    { title: "Mutante Instável", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
+    { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
     { title: "Atirador de Supressão", tipo: "soldado", raridade: "rara", custo: 4, atk: 4, def: 3, efeito: "reduzir_atk", img: "https://files.catbox.moe/vynjlp.png" },
     { title: "Blindado de Transporte", tipo: "mecanizado", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
     { title: "Especialista em Contenção", tipo: "humano", raridade: "rara", custo: 3, atk: 3, def: 2, efeito: "atordoar", img: "https://files.catbox.moe/nvlqhz.png" },
-    { title: "Bombardeio Orbital", tipo: "feitico", raridade: "epica", custo: 6, atk: 0, def: 0, efeito: "dano_total", img: "https://files.catbox.moe/8pzmk6.png" },
-    { title: "Unidade K-9 Cibernética", tipo: "ciborgue", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
+    { title: "Agente da PIDE-Tec", tipo: "humano", raridade: "rara", custo: 3, atk: 2, def: 4, efeito: "nenhum", img: "https://files.catbox.moe/nifj2x.png" },
+    { title: "Guardião de Protocolo", tipo: "automato", raridade: "rara", custo: 3, atk: 3, def: 4, efeito: "anti_feitico", text: "Imune a magias.", img: "" },
+    { title: "Demolidor Série-X", tipo: "automato", raridade: "rara", custo: 4, atk: 5, def: 3, efeito: "nenhum", text: "Puro dano.", img: "demolidor_x.png" },
+
+    // === TROPAS ÉPICAS & LENDÁRIAS ===
+    { title: "Quimera Alada", tipo: "tropa", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "voar", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
+    { title: "Ceifador da Unidade", tipo: "tropa", raridade: "epica", custo: 6, atk: 6, def: 5, efeito: "roubo_vida", img: "https://i.postimg.cc/pLcvXqzj/Ceifador-da-Unidade.png" },
+    { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "https://i.postimg.cc/q7tTtyx1/Sentinela-Omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
+    { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "https://i.postimg.cc/0yXv2cDX/Projeto-Zeus-Alfa.png" },
     { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "https://files.catbox.moe/wkfzj3.png" },
     { title: "O Punho da Resistência", tipo: "mecanizado", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
     { title: "Pacificador V.9", tipo: "mecanizado", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
-    { title: "Interceptor de Zeus", tipo: "drone", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
-    { title: "Agente da PIDE-Tec", tipo: "humano", raridade: "rara", custo: 3, atk: 2, def: 4, efeito: "nenhum", img: "https://files.catbox.moe/nifj2x.png" },
-    { title: "Pulso Eletromagnético", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "atordoar", text: "Atordoa unidade inimiga.", img: "Pulso.png" },
-    { title: "Injeção de Nanobots", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "cura_2", text: "Cura 2 de uma unidade aliada.", img: "Injecao_Nanobots.png" },
-    { title: "Sobrecarga de Sistema", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "dano_2", text: "Causa 2 de dano a uma unidade.", img: "" },
-    { title: "Campo de Força Portátil", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "escudo_divino", text: "Concede Escudo Divino.", img: "campo_de_forca_portatil.png" },
-    { title: "Drone de Sucata", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "nenhum", text: "Máquina simples.", img: "Sonda_Vigilancia.png" },
-    { title: "Sonda de Vigilância", tipo: "automato", raridade: "comum", custo: 1, atk: 0, def: 3, efeito: "sentinela", text: "Ataca Furtivos.", img: "" },
-    { title: "Módulo de Escudo", tipo: "automato", raridade: "comum", custo: 2, atk: 0, def: 4, efeito: "provocar", text: "Provocar.", img: "modulo_escudo.png" },
-    { title: "Guardião de Protocolo", tipo: "automato", raridade: "rara", custo: 3, atk: 3, def: 4, efeito: "anti_feitico", text: "Imune a magias.", img: "" },
-    { title: "Demolidor Série-X", tipo: "automato", raridade: "rara", custo: 4, atk: 5, def: 3, efeito: "nenhum", text: "Puro dano.", img: "demolidor_x.png" },
-    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "Colete_kevlar.png" },
+
+    // === FEITIÇOS (MAGIAS) ===
+    { title: "Kit Médico Tático", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "cura_3", img: "https://i.postimg.cc/DyqdTNV5/Kit-Medico-Tatico.png" },
+    { title: "Protocolo: EMP", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano_2", img: "https://i.postimg.cc/fTxjNP4H/Protocolo-EMP.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
+    { title: "Pulso Eletromagnético", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "atordoar", text: "Atordoa unidade inimiga.", img: "https://i.postimg.cc/bJXbtWLd/Pulso-Eletromagnetico.png" },
+    { title: "Injeção de Nanobots", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "cura_2", text: "Cura 2 de uma unidade aliada.", img: "https://i.postimg.cc/50cvCTp2/Injecao-de-Nanobots.png" },
+    { title: "Sobrecarga de Sistema", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "dano_2", text: "Causa 2 de dano a uma unidade.", img: "https://i.postimg.cc/B6WDKkNS/Sobrecarga-de-Sistema.png" },
+    { title: "Campo de Força Portátil", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "escudo_divino", text: "Concede Escudo Divino.", img: "https://i.postimg.cc/pTN8F4kx/Campo-de-forca.png" },
+    { title: "Hack de Sobrecarga", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "dano_4", img: "https://files.catbox.moe/tl6rvy.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
+    { title: "Protocolo: Purga", tipo: "feitico", raridade: "rara", custo: 4, atk: 0, def: 0, efeito: "dano_area", img: "https://i.postimg.cc/ZKkFXSQV/Protocolo-Purga.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
+    { title: "Bombardeio Orbital", tipo: "feitico", raridade: "epica", custo: 6, atk: 0, def: 0, efeito: "dano_total", img: "https://files.catbox.moe/8pzmk6.png" },
+    
+    // 👇 AS 3 MAGIAS NOVAS DA SUA LISTA DE LINKS 👇
+    { title: "Hack de Interface", tipo: "feitico", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "atordoar", text: "Atordoa uma unidade inimiga.", img: "https://i.postimg.cc/Ss08M3V4/Hack-de-Interface.png" },
+    { title: "Reboot de Emergência", tipo: "feitico", raridade: "epica", custo: 4, atk: 0, def: 0, efeito: "cura_4", text: "Restaura 4 HP de um alvo.", img: "https://i.postimg.cc/JhHZtM31/Reboot-de-Emergencia.png" },
+    { title: "Vírus de Replicação", tipo: "feitico", raridade: "lendaria", custo: 6, atk: 0, def: 0, efeito: "dano_area", text: "Causa 3 de dano a todas as tropas inimigas.", img: "https://i.postimg.cc/zfHK38CQ/Virus-de-Replicacao.png" },
+
+    // === EQUIPAMENTOS ===
+    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "https://i.postimg.cc/Gm5vcHy5/Colete-de-klevar.png" },
     { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "rifle.png" },
     { title: "Escudo de Energia", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 3, efeito: "escudo_divino", text: "Concede +3 HP e Escudo Divino.", img: "" },
-    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "Chip_berserker.png" },
-    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "manto_camuflagem.png" }
+    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "manto_camuflagem.png" },
+    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "Chip_berserker.png" }
 ];
-
 
 let currentLevel = 0, playerCollection = [], customDeck = [], playerDeck = [];
 let graveyard = { player: [], enemy: [] };
@@ -118,7 +131,7 @@ function bootTerminal() {
     
     // Segurança para P2P Direto
     customDeck = baseDeck.slice(0, 15); 
-    selectedHeroObj = { id: "orc", imgUrl: "https://files.catbox.moe/wkfzj3.png" }; 
+    selectedHeroObj = { id: "COMANDANTE", imgUrl: "https://files.catbox.moe/wkfzj3.png" }; 
 
     initMultiplayer();
     
@@ -129,7 +142,7 @@ function bootTerminal() {
         playSound("click"); playSound("bgm"); 
         document.getElementById("fragment-count").textContent = playerFragments;
     };
-    document.querySelectorAll(".hero-choice").forEach(choice => {
+  document.querySelectorAll(".hero-choice").forEach(choice => {
         choice.onclick = () => {
             playSound("click");
             
@@ -157,33 +170,45 @@ function bootTerminal() {
             particleContainer.style.borderRadius = "inherit"; // Segue a borda da carta
             choice.appendChild(particleContainer);
 
-            for(let i = 0; i < 15; i++) {
+            // ... (dentro do clique, onde cria o particleContainer) ...
+            for (let i = 0; i < 15; i++) {
                 const p = document.createElement("div");
                 p.style.position = "absolute";
-                let size = Math.random() * 4 + 2; // Tamanho entre 2px e 6px
+
+                let size = Math.random() * 4 + 2;
                 p.style.width = size + "px";
                 p.style.height = size + "px";
-                p.style.background = "#ff0000";
-                p.style.boxShadow = "0 0 10px #ff0000, 0 0 20px #ff5555";
+
+                // Pega as cores baseadas em quem foi clicado (Vermelho, Azul ou Verde)
+                let colors = ["#ff2a2a", "#ff9900", "#ffffff"]; // Padrão
+                if (choice.classList.contains("ESTRATEGISTA")) colors = ["#00ffff", "#3399ff", "#ffffff"];
+                if (choice.classList.contains("BIOMEDICO")) colors = ["#00ff66", "#00cc66", "#ffffff"];
+
+                const color = colors[Math.floor(Math.random() * colors.length)];
+
+                p.style.background = color;
+                p.style.boxShadow = `0 0 8px ${color}, 0 0 16px ${color}`;
                 p.style.borderRadius = "50%";
-                p.style.bottom = "-10px"; // Nascem debaixo do avatar
+
+                p.style.bottom = "5%"; // Começa um pouco acima do fundo para não ser cortado
                 p.style.left = Math.random() * 100 + "%";
                 p.style.opacity = Math.random() * 0.8 + 0.2;
+
                 particleContainer.appendChild(p);
 
-                // Anima as brasas subindo infinitamente
+                // O GSAP correto: Pulsa o tamanho e sobe como energia!
                 gsap.to(p, {
-                    y: - (Math.random() * 200 + 100), // Sobem
-                    x: (Math.random() * 40 - 20),     // Balançam para os lados
-                    opacity: 0,                       // Desaparecem no topo
-                    duration: Math.random() * 2 + 1.5,
-                    repeat: -1,                       // Loop infinito!
-                    delay: Math.random() * 2,
-                    ease: "power1.out"
+                    y: -(Math.random() * 150 + 50), // Sobe voando
+                    x: (Math.random() * 30 - 15),   // Balança
+                    scale: Math.random() * 0.6 + 0.8, // Pulsa
+                    opacity: 0,                     // Desvanece no topo
+                    repeat: -1,
+                    duration: Math.random() * 1.5 + 1.5,
+                    ease: "sine.inOut"
                 });
             }
-        };
-    });
+        }; // <-- FECHA O ONCLICK
+    }); // <-- AQUI ESTÁ O VILÃO! FALTAVA FECHAR O FOREACH AQUI!
 
     document.getElementById("btn-start-battle-direct").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.add("active"); };
     document.getElementById("btn-cancel-mode").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); };
@@ -223,7 +248,7 @@ function bootTerminal() {
             document.getElementById("hero-screen").classList.add("active"); // <-- Faltava ponto e vírgula aqui
         }; // <-- Faltava fechar o onclick aqui
     }
-} // <-- Faltava fechar a bootTerminal() inteira aqui!
+} 
 
 // 4. DECK BUILDER E MERCADO NEGRO
 function initDeckBuilder() {
@@ -333,7 +358,7 @@ function openMarketModal(card, copies) {
     document.getElementById("btn-close-transaction").onclick = () => document.getElementById("transaction-modal").classList.remove("active");
 }
 
-// 5. CÉREBRO DOS STATUS DINÂMICOS
+//// 5. CÉREBRO DOS STATUS DINÂMICOS (AGORA COM VFX INTEGRADO)
 function recalculateStats(c) {
     let baseAtk = parseInt(c.dataset.baseAtk) || 0; let baseHp = parseInt(c.dataset.baseHp) || 0; let damageTaken = parseInt(c.dataset.damageTaken) || 0; 
     let eqAtk = parseInt(c.dataset.equipAtk) || 0; let eqHp = parseInt(c.dataset.equipHp) || 0;
@@ -346,12 +371,50 @@ function recalculateStats(c) {
     if(atkNode) atkNode.innerText = finalAtk > 0 ? finalAtk : 0; if(defNode) defNode.innerText = currentHp;
 
     let activeEffect = c.dataset.equipEffect || c.dataset.originalEffect; c.dataset.effect = activeEffect; 
-    c.classList.remove("taunt-card", "double-attack-card", "lifesteal-card", "shield-card", "stealth-card");
+    
+    // Limpa todas as classes visuais antes de reavaliar
+    c.classList.remove("taunt-card", "double-attack-card", "lifesteal-card", "shield-card", "stealth-card", "fury-card");
+    
     if (activeEffect === "provocar" || c.classList.contains("aura-taunt")) c.classList.add("taunt-card"); 
-    if (activeEffect === "ataque_duplo" || activeEffect === "furia") c.classList.add("double-attack-card"); 
+    if (activeEffect === "ataque_duplo") c.classList.add("double-attack-card");
     if (activeEffect === "roubo_vida") c.classList.add("lifesteal-card"); 
     if (activeEffect === "escudo_divino" && !c.dataset.shieldBroken) c.classList.add("shield-card"); 
     if (activeEffect === "furtividade") c.classList.add("stealth-card"); 
+
+    // 👇 O MOTOR DE FAÍSCAS DA FÚRIA 👇
+    if (activeEffect === "furia") {
+        c.classList.add("fury-card");
+        // Só injeta se a carta ainda não tiver as faíscas
+        if (!c.querySelector('.fury-particles-layer')) {
+            const pLayer = document.createElement("div");
+            pLayer.className = "fury-particles-layer";
+            pLayer.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; border-radius:inherit; z-index:5;";
+            c.appendChild(pLayer);
+
+            for (let i = 0; i < 8; i++) {
+                const spark = document.createElement("div");
+                let size = Math.random() * 3 + 2;
+                spark.style.cssText = `position:absolute; width:${size}px; height:${size}px; background:#ffaa00; border-radius:50%; bottom:-5px; box-shadow: 0 0 5px #ff5500;`;
+                spark.style.left = Math.random() * 100 + "%";
+                pLayer.appendChild(spark);
+
+                gsap.to(spark, {
+                    y: -(Math.random() * 120 + 40),
+                    x: (Math.random() * 30 - 15),
+                    opacity: 0,
+                    scale: Math.random() * 0.5 + 0.5,
+                    duration: Math.random() * 1 + 1,
+                    repeat: -1,
+                    ease: "power1.out",
+                    delay: Math.random() * 1
+                });
+            }
+        }
+    } else {
+        // Se a Fúria for anulada/removida, as faíscas apagam
+        const existingSparks = c.querySelector('.fury-particles-layer');
+        if (existingSparks) existingSparks.remove();
+    }
 
     if (c.dataset.type !== "feitico" && currentHp <= 0 && c.dataset.dead !== "true") {
         c.dataset.dead = "true"; processCardEffect("UltimoSuspiro", c, c.parentElement.dataset.owner);
@@ -375,27 +438,31 @@ function updateAuras() {
     });
 }
 
-// 6. CRIAÇÃO E CLIQUE DE CARTAS
 // TRADUTOR AUTOMÁTICO DE EFEITOS
 function getCardDesc(item) {
-    if (item.text) return item.text; // Se já tiver texto, usa-o
+    if (item.text) return item.text; 
     let eff = item.efeito;
     if (!eff || eff === "nenhum") return "";
     
     const dict = {
         "provocar": "🛡️ Provocar: Inimigos devem atacar esta unidade.",
-        "ataque_duplo": "⚔️ Ataque Duplo: Ataca duas vezes.",
+        "ataque_duplo": "⚔️ Ataque Duplo: Pode atacar 2 vezes por turno.",
         "roubo_vida": "❤️ Roubo de Vida: Cura o Herói ao causar dano.",
-        "escudo_divino": "🔰 Escudo Divino: Ignora o 1º dano.",
-        "escudo": "🔰 Escudo: Ignora o 1º dano.",
+        "escudo_divino": "🔰 Escudo Divino: Ignora o 1º dano recebido.",
+        "escudo": "🔰 Escudo: Ignora o 1º dano recebido.",
         "furtividade": "🥷 Furtividade: Imune a ataques diretos.",
         "voar": "🦅 Voar: Ignora unidades com Provocar terrestres.",
         "regeneracao": "🧬 Regeneração: Restaura 1 HP no fim do turno.",
         "cura_turno": "💉 Cura 1 HP do Herói no fim do turno.",
-        "reciclar": "♻️ Reciclar: Retorna carta do cemitério."
+        "reciclar": "♻️ Reciclar: Retorna carta do cemitério.",
+        "investida": "⚡ Ataque Rápido: Pode atacar no turno em que é jogada.",
+        "ataque_rapido": "⚡ Ataque Rápido: Pode atacar no turno em que é jogada.",
+        "atordoar": "🔌 Atordoar: Impede o alvo de atacar no próximo turno.",
+        "dano_area": "💥 Dano em Área: Causa 3 de dano a todas as tropas inimigas."
     };
     return dict[eff] || `Efeito: ${eff.replace(/_/g, ' ').toUpperCase()}`;
 }
+
 
 // 6. MOTOR DE CARTAS MELHORADO
 function createCard(item) { 
@@ -428,34 +495,83 @@ function createCard(item) {
     recalculateStats(c); return c; 
 }
 
+// ==========================================
+// 🎯 SISTEMA DE CLIQUES E MIRAS (BLINDADO)
+// ==========================================
+
 function handleCardClick(e) {
-    if(isSystemLocked) return; const c = e.currentTarget; const p = c.parentElement; 
+    if(isSystemLocked) return; 
+    const c = e.currentTarget; 
+    const p = c.parentElement; 
     const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.raca === "feitico";
     const isEquipSelected = selectedCardFromHand && selectedCardFromHand.dataset.raca === "equipamento";
 
-    if(p.id==="hand"){ 
+    if(p.id === "hand"){ 
         playSound("click"); 
-        if(selectedCardFromHand === c){ selectedCardFromHand = null; c.classList.remove("deployment-selected"); arrangeHand(); } 
+        if(selectedCardFromHand === c){ 
+            selectedCardFromHand = null; 
+            c.classList.remove("deployment-selected"); 
+            arrangeHand(); 
+        } 
         else { 
             if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected");
-            selectedCardFromHand = c; c.classList.add("deployment-selected"); 
-            gsap.to(c, { scale: 1.3, y: -120, rotation: 0, zIndex: 100, duration: 0.3, ease: "back.out(1.7)" }); arrangeHand(c); 
+            selectedCardFromHand = c; 
+            c.classList.add("deployment-selected"); 
+            gsap.to(c, { scale: 1.3, y: -120, rotation: 0, zIndex: 100, duration: 0.3, ease: "back.out(1.7)" }); 
+            arrangeHand(c); 
         } 
     } 
     else if (isSpellSelected) { executeSpell(selectedCardFromHand, c, p.dataset.owner); }
     else if (isEquipSelected) { executeEquip(selectedCardFromHand, c, p.dataset.owner); } 
-    else if(p.dataset.owner==="player" && currentStep==="combat" && attackToken==="player"){ 
-        if(c.dataset.hasAttacked === "true") { playSound("error"); return; }
-        if(selectedAttacker===c) { selectedAttacker=null; c.classList.remove("attacker-selected"); } 
-        else { if(selectedAttacker) selectedAttacker.classList.remove("attacker-selected"); selectedAttacker=c; c.classList.add("attacker-selected"); } 
+    
+    else if(p.dataset.owner === "player" && currentStep === "combat" && attackToken === "player"){ 
+        if(c.dataset.hasAttacked === "true" || c.classList.contains("exhausted")) { playSound("error"); return; }
+        
+        if(selectedAttacker === c) { 
+            selectedAttacker = null; 
+            c.classList.remove("attacker-selected"); 
+        } 
+        else { 
+            if(selectedAttacker) selectedAttacker.classList.remove("attacker-selected"); 
+            selectedAttacker = c; 
+            c.classList.add("attacker-selected"); 
+            playSound("click");
+        } 
     }
-    else if(p.dataset.owner==="enemy" && selectedAttacker){ 
+    else if(p.dataset.owner === "enemy" && selectedAttacker){ 
         const taunts = document.getElementById("enemy-field").querySelectorAll('.taunt-card');
-        if (taunts.length > 0 && !c.classList.contains('taunt-card')) { playSound("error"); alert("ALVO INVÁLIDO!"); return; }
-        resolveCombat(selectedAttacker, c, true); 
+        if (taunts.length > 0 && !c.classList.contains('taunt-card')) { 
+            playSound("error"); alert("ALVO INVÁLIDO! Há inimigos com Provocar na frente."); return; 
+        }
+        
+        // 👇 TRAVA DE SPAM DE CLIQUE 👇
+        let attacker = selectedAttacker;
+        selectedAttacker = null; // Tira a seleção instantaneamente
+        attacker.classList.remove("attacker-selected");
+        resolveCombat(attacker, c, true); 
     } 
 }
 
+function handleHeroClick(heroElement, owner) {
+    if (isSystemLocked) return;
+    const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.raca === "feitico";
+
+    if (isSpellSelected) {
+        executeSpell(selectedCardFromHand, heroElement, owner);
+    } 
+    else if (selectedAttacker && owner === "enemy" && attackToken === "player" && currentStep === "combat") {
+        const taunts = document.getElementById("enemy-field").querySelectorAll('.taunt-card');
+        if (taunts.length > 0) { 
+            playSound("error"); alert("ALVO INVÁLIDO! Destrua as tropas com Provocar primeiro."); return; 
+        }
+        
+        // 👇 TRAVA DE SPAM DE CLIQUE NO HERÓI 👇
+        let attacker = selectedAttacker;
+        selectedAttacker = null; // Desarma o mouse instantaneamente
+        attacker.classList.remove("attacker-selected");
+        resolveCombat(attacker, heroElement, true);
+    }
+}
 // 7. MAGIAS E EQUIPAMENTOS
 function executeEquip(equipCard, targetElement, targetOwner) {
     if (currentStep === "combat") { playSound("error"); alert("Apenas Fase de Deploy."); return; }
@@ -492,7 +608,8 @@ function executeSpell(spellCard, targetElement, targetOwner) {
         if (playerMana < cost) { playSound("error"); alert("RAM INSUFICIENTE!"); return; }
         const efeito = spellCard.dataset.effect;
         if (efeito.includes("cura") && targetOwner !== "player") { playSound("error"); alert("Apenas em aliados!"); return; }
-        if (efeito.includes("dano") && targetOwner !== "enemy") { playSound("error"); alert("Apenas em inimigos!"); return; }
+        // Se não for magia de área, bloqueia jogar no aliado
+        if (efeito.includes("dano") && !efeito.includes("area") && !efeito.includes("total") && targetOwner !== "enemy") { playSound("error"); alert("Apenas em inimigos!"); return; }
 
         playerMana -= cost; updateLifeAndMana(); 
 
@@ -508,14 +625,21 @@ function executeSpell(spellCard, targetElement, targetOwner) {
     if(spellCard.dataset.somDrop) { let d = new Audio(spellCard.dataset.somDrop); d.play().catch(()=>{}); } else { playSound("hit"); }
     const efeito = spellCard.dataset.effect;
 
-    if(efeito === "dano_total") {
-        document.getElementById(isLocalCaster ? "enemy-field" : "player-field").querySelectorAll('.card-base').forEach(inimigo => applyDamage(inimigo, 4)); if(isLocalCaster) enemyLife -= 4; else playerLife -= 4; screenShake();
+    // 👇 MECÂNICAS DE MAGIA (ÁREA E ATORDOAR) 👇
+    if(efeito === "dano_total" || efeito === "dano_area") {
+        document.getElementById(isLocalCaster ? "enemy-field" : "player-field").querySelectorAll('.card-base').forEach(inimigo => applyDamage(inimigo, 3)); 
+        if(efeito === "dano_total") { if(isLocalCaster) enemyLife -= 4; else playerLife -= 4; }
+        screenShake();
     } else if (efeito.includes("dano_")) {
         let dmg = parseInt(efeito.split("_")[1]) || 0;
         if(targetElement.id.includes("hero")) { if(targetElement.id === "enemy-hero") enemyLife -= dmg; else playerLife -= dmg; if(window.VFX) VFX.particles(targetElement, "#ff0000"); } else { applyDamage(targetElement, dmg); } screenShake();
     } else if (efeito.includes("cura_")) {
         let heal = parseInt(efeito.split("_")[1]) || 0;
         if(targetElement.id.includes("hero")) { if(targetElement.id === "player-hero") playerLife += heal; else enemyLife += heal; if(window.VFX) VFX.particles(targetElement, "#00ff00"); } else { targetElement.dataset.damageTaken = Math.max(0, (parseInt(targetElement.dataset.damageTaken) || 0) - heal); recalculateStats(targetElement); if(window.VFX) VFX.particles(targetElement, "#00ff00"); }
+    } else if (efeito === "atordoar" && !targetElement.id.includes("hero")) {
+        targetElement.classList.add("exhausted"); 
+        targetElement.dataset.hasAttacked = "true"; 
+        if(window.VFX) VFX.stun(targetElement);
     }
     
     checkGameOver(); updateLifeAndMana(); 
@@ -579,25 +703,23 @@ function handleActionBtn() {
 
 function startNewRound(fromNetwork = false) {
     if(gameIsOver) return; currentTurn++; 
-    
     attackToken = (attackToken === "player") ? "enemy" : "player"; 
     currentStep = "deploy_attacker";
     
-    document.querySelectorAll('.card-base').forEach(c => { c.dataset.hasAttacked = "false"; c.classList.remove("exhausted"); processCardEffect("FimDeTurno", c, c.parentElement.dataset.owner); });
+    document.querySelectorAll('.card-base').forEach(c => { 
+        c.dataset.hasAttacked = "false"; 
+        c.dataset.attacksMade = "0"; // 👇 Reseta o Ataque Duplo aqui 👇
+        c.classList.remove("exhausted"); 
+        processCardEffect("FimDeTurno", c, c.parentElement.dataset.owner); 
+    });
     
-    // 👇 PROGRESSÃO DE MANA CLÁSSICA (Só sobe na nossa vez de atacar) 👇
     if (attackToken === "player" || (!window.conexao)) {
-        if(maxMana < 10) maxMana++; 
-        playerMana = maxMana; 
-        drawCard(); 
+        if(maxMana < 10) maxMana++; playerMana = maxMana; drawCard(); 
     }
-    
     updateUIState();
-    
-    if(window.conexao && window.conexao.open && attackToken === "enemy" && !fromNetwork) { 
-        window.enviarPacote({ acao: "PASSAR_TURNO" }); 
-    }
+    if(window.conexao && window.conexao.open && attackToken === "enemy" && !fromNetwork) { window.enviarPacote({ acao: "PASSAR_TURNO" }); }
 }
+
 
 function updateUIState() {
     updateLifeAndMana(); clearInterval(timerInterval); 
@@ -647,30 +769,35 @@ function createSlots(f, o) {
 }
 
 function executePlayCard(slot, card) {
-    if(card.dataset.type === "feitico") return; let cst = parseInt(card.dataset.cost) || 0; let donoDoSlot = slot.dataset.owner; 
+    if(card.dataset.type === "feitico") return; 
+    if(slot.querySelector('.card-base')) { playSound("error"); alert("SISTEMA: Slot Ocupado!"); return; }
+    
+    let cst = parseInt(card.dataset.cost) || 0; let donoDoSlot = slot.dataset.owner; 
     if(playerMana >= cst) {
         playerMana -= cst; slot.appendChild(card); 
-        
         if(donoDoSlot === "player" && window.conexao && window.conexao.open) { let slotIndex = Array.from(slot.parentElement.children).indexOf(slot); window.enviarPacote({ acao: "JOGAR_CARTA", cardName: card.dataset.name, slotIndex: slotIndex }); }
 
         card.classList.remove("deployment-selected"); gsap.killTweensOf(card); gsap.set(card, { clearProps: "all" }); 
         gsap.set(card, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0 });
-        card.dataset.hasAttacked = "true"; card.classList.add("exhausted");
+        
+        // 👇 MECÂNICA: ATAQUE RÁPIDO 👇
+        let activeEffect = card.dataset.effect || card.dataset.originalEffect;
+        if (activeEffect === "investida" || activeEffect === "ataque_rapido") {
+            card.dataset.hasAttacked = "false"; // Sem 'Zzz', pronto pra bater!
+        } else {
+            card.dataset.hasAttacked = "true"; 
+            card.classList.add("exhausted"); // Entra cansada
+        }
+
         playSound("deploy"); updateLifeAndMana(); setTimeout(updateAuras, 100); draggedCard = null; selectedCardFromHand = null; arrangeHand();
     } else { playSound("error"); alert("RAM INSUFICIENTE!"); }
 }
 
-function resolveCombat(atkCard, defCard, isPlayer) {
+
+function resolveCombat(atkCard, defCard, isPlayer, onFinish) {
     const rectAtk = atkCard.getBoundingClientRect(); const rectDef = defCard.getBoundingClientRect();
     const moveX = rectDef.left - rectAtk.left; const moveY = rectDef.top - rectAtk.top;
     atkCard.style.zIndex = "100";
-
-    if (isPlayer && window.conexao && window.conexao.open) {
-        let atkSlot = Array.from(atkCard.parentElement.parentElement.children).indexOf(atkCard.parentElement);
-        let targetType = defCard.id.includes("hero") ? "hero" : "card";
-        let defSlot = targetType === "card" ? Array.from(defCard.parentElement.parentElement.children).indexOf(defCard.parentElement) : null;
-        window.enviarPacote({ acao: "ATACAR", atkSlot: atkSlot, targetType: targetType, defSlot: defSlot });
-    }
 
     gsap.to(atkCard, {
         x: moveX, y: moveY, duration: 0.28, ease: "power3.in",
@@ -692,11 +819,25 @@ function resolveCombat(atkCard, defCard, isPlayer) {
             let attackerAlive = (parseInt(atkCard.dataset.hp) || 0) > 0;
             let defenderDied = !defCard.id.includes("hero") && (parseInt(defCard.dataset.hp) || 0) <= 0;
 
-            if (attackerAlive && atkCard.dataset.effect === "furia" && defenderDied) { atkCard.dataset.hasAttacked = "false"; atkCard.classList.remove("exhausted"); if(window.VFX) VFX.fury(atkCard); } 
-            else if (attackerAlive) { atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); }
+            if (attackerAlive) {
+                let eff = atkCard.dataset.effect;
+                if (eff === "furia" && defenderDied) { 
+                    atkCard.dataset.hasAttacked = "false"; atkCard.classList.remove("exhausted"); if(window.VFX) VFX.fury(atkCard); 
+                } 
+                // 👇 MECÂNICA: ATAQUE DUPLO 👇
+                else if (eff === "ataque_duplo" && atkCard.dataset.attacksMade !== "1") {
+                    atkCard.dataset.attacksMade = "1"; // Marca que já bateu uma vez
+                    atkCard.dataset.hasAttacked = "false"; // Destranca para bater de novo!
+                    atkCard.classList.remove("exhausted");
+                } 
+                else { 
+                    atkCard.dataset.hasAttacked = "true"; atkCard.classList.add("exhausted"); 
+                }
+            }
             
-            atkCard.classList.remove("attacker-selected"); selectedAttacker = null;
-            if (attackerAlive) { gsap.to(atkCard, { x: 0, y: 0, duration: 0.45, ease: "power2.out", onComplete: () => { atkCard.style.zIndex = ""; } }); }
+            atkCard.classList.remove("attacker-selected"); 
+            if (attackerAlive) { gsap.to(atkCard, { x: 0, y: 0, duration: 0.45, ease: "power2.out", onComplete: () => { atkCard.style.zIndex = ""; if(onFinish) onFinish(); } }); }
+            else { if(onFinish) onFinish(); }
         }
     });
 }
@@ -762,9 +903,40 @@ async function aiCombatPhase() {
 
 function checkGameOver() { 
     if (playerLife > 0 && enemyLife > 0) return; 
-    gameIsOver = true; clearInterval(timerInterval); isSystemLocked = true; 
-    const playerWon = playerLife > 0; const modal = document.getElementById("game-over-modal");
-    modal.innerHTML = `<div class="modal-content final-screen"><img src="https://i.pinimg.com/originals/03/95/34/0395349bcc0db6334319650be9574588.gif" class="final-gif"><h1 class="final-title">${playerWon ? "VITÓRIA" : "DERROTA"}</h1><button class="cmd-btn" onclick="location.reload()">[ RETORNAR ]</button></div>`;
+    
+    // 👇 A TRAVA ANTI-CRASH (Impede que a função rode duas vezes) 👇
+    if (gameIsOver) return; 
+    
+    gameIsOver = true; 
+    clearInterval(timerInterval); 
+    isSystemLocked = true; 
+    
+    const playerWon = playerLife > 0; 
+    const modal = document.getElementById("game-over-modal");
+    
+    // 👇 SISTEMA DE RECOMPENSAS E PAGAMENTO 👇
+    let recompensaHTML = "";
+    if (playerWon) {
+        let ganho = Math.floor(Math.random() * 100) + 50; // Sorteia entre 50 e 150 HDs
+        playerFragments += ganho;
+        recompensaHTML = `<h2 style="color: #00ffff; margin: 15px 0; text-shadow: 0 0 10px #00ffff;">+${ganho} 💽 HDs EXTRAÍDOS</h2>`;
+        playSound("deploy"); // Toca um som de sucesso
+    } else {
+        playSound("error"); // Toca som de falha
+    }
+    
+    modal.innerHTML = `
+        <div class="modal-content final-screen" style="border-color: ${playerWon ? '#00ff00' : '#ff0000'}; background: rgba(5,5,10,0.95);">
+            <img src="https://i.pinimg.com/originals/03/95/34/0395349bcc0db6334319650be9574588.gif" class="final-gif" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; opacity: 0.8;">
+            <h1 class="final-title" style="color: ${playerWon ? '#00ff00' : '#ff0000'}; font-size: 2.5rem; margin-top: 15px;">
+                ${playerWon ? "SISTEMA HACKEADO" : "FALHA CRÍTICA"}
+            </h1>
+            ${recompensaHTML}
+            <p style="color: #888;">Transmissão encerrada.</p>
+            <button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>
+        </div>
+    `;
+    
     setTimeout(() => modal.classList.add("active"), 1000); 
 }
 
