@@ -63,9 +63,6 @@ body {
 #hero-screen { align-items: center; justify-content: center; background: transparent;}
 
 .hero-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; max-width: 1000px; width: 95%; padding-top: 60px; }
-.hero-choice { width: 220px; min-height: 280px; background: rgba(5, 5, 5, 0.8); border: 1px solid #330000; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 0 10px rgba(0,0,0,0.5); backdrop-filter: blur(3px);}
-.hero-choice img { width: 80px; height: 80px; margin-bottom: 15px; border: 1px solid #440000; object-fit: cover; background: #111; }
-.hero-choice:hover { transform: translateY(-5px); border-color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.2); }
 .hero-choice.selected { border-color: #ff0000; box-shadow: 0 0 30px rgba(255,0,0,0.4); transform: scale(1.05); }
 
 /* =========================================================
@@ -263,15 +260,178 @@ body {
 .card-base[data-effect="instavel"] { border-color: #880000 !important; filter: grayscale(0.5) contrast(1.2); animation: shakeDefect 0.5s infinite; }
 @keyframes shakeDefect { 0%, 100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(1px, -1px) rotate(0.5deg); } }
 
-/* TELA DE SELEÇÃO DE HERÓIS */
+/* TELA DE SELEÇÃO: A CARTA EM SI FICA NEUTRA */
 .hero-choice {
-    position: relative;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
+}
+.hero-choice.selected {
+    transform: scale(1.05); /* Dá um pequeno zoom na carta */
+    border-color: #444; /* A carta em si não brilha, o anel é que brilha! */
 }
 
-.hero-choice.selected {
-    border: 2px solid #ff0000 !important;
-    box-shadow: 0 0 30px rgba(255, 0, 0, 0.8), inset 0 0 15px rgba(255, 0, 0, 0.4) !important;
-    transform: scale(1.05);
-    z-index: 10;
+/* O ANEL DO AVATAR (A MÁGICA REDONDA ACONTECE AQUI) */
+.avatar-ring {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000;
 }
+
+/* A IMAGEM PERFEITAMENTE REDONDA NO CENTRO */
+.avatar-ring img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50% !important; /* Força a foto a ser redonda */
+    object-fit: cover;
+    z-index: 10;
+    border: 2px solid #222;
+    transition: 0.3s;
+}
+
+/* AS DUAS BORDAS REDONDAS GIRATÓRIAS (INVISÍVEIS POR PADRÃO) */
+.avatar-ring::before,
+.avatar-ring::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0; /* Só aparecem quando clica */
+    transition: opacity 0.3s;
+}
+
+/* Borda Externa (O Brilho) */
+.avatar-ring::before { inset: -4px; filter: blur(6px); z-index: 1; }
+/* Borda Interna (O Fio de Energia) */
+.avatar-ring::after { inset: 2px; filter: blur(1px); z-index: 2; }
+
+/* LIGA OS MOTORES QUANDO SELECIONADO! */
+.hero-choice.selected .avatar-ring::before,
+.hero-choice.selected .avatar-ring::after {
+    opacity: 1;
+}
+
+/* === COMANDANTE (VERMELHO) === */
+.hero-choice.comandante.selected .avatar-ring::before {
+    background: conic-gradient(transparent, #ff0000, transparent, #ff5555, transparent);
+    animation: spin-cw 3s linear infinite;
+}
+.hero-choice.comandante.selected .avatar-ring::after {
+    background: conic-gradient(transparent, #ffaa00, transparent);
+    animation: spin-ccw 2s linear infinite;
+}
+.hero-choice.comandante.selected .avatar-ring img { border-color: #ff0000; box-shadow: 0 0 15px #ff0000; }
+
+/* === ESTRATEGISTA (AZUL CIANO) === */
+.hero-choice.estrategista.selected .avatar-ring::before {
+    background: conic-gradient(transparent, #00ffff, transparent, #3399ff, transparent);
+    animation: spin-cw 3s linear infinite;
+}
+.hero-choice.estrategista.selected .avatar-ring::after {
+    background: conic-gradient(transparent, #66ffff, transparent);
+    animation: spin-ccw 2s linear infinite;
+}
+.hero-choice.estrategista.selected .avatar-ring img { border-color: #00ffff; box-shadow: 0 0 15px #00ffff; }
+
+/* === BIOMÉDICA (VERDE) === */
+.hero-choice.biomedico.selected .avatar-ring::before {
+    background: conic-gradient(transparent, #00ff66, transparent, #66ff99, transparent);
+    animation: spin-cw 3s linear infinite;
+}
+.hero-choice.biomedico.selected .avatar-ring::after {
+    background: conic-gradient(transparent, #00cc66, transparent);
+    animation: spin-ccw 2s linear infinite;
+}
+.hero-choice.biomedico.selected .avatar-ring img { border-color: #00ff66; box-shadow: 0 0 15px #00ff66; }
+
+@keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+/* =========================================
+   ✨ EFEITOS VISUAIS DE STATUS DAS CARTAS
+   ========================================= */
+
+/* Base para os anéis de energia não vazarem */
+.card-base.taunt-card::before, 
+.card-base.shield-card::before {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: 6px; /* Segue o formato da carta */
+    pointer-events: none;
+    filter: blur(4px);
+    z-index: -1;
+}
+
+/* 🛡️ PROVOCAR (Aura Vermelha Intensa Giratória) */
+.card-base.taunt-card::before {
+    background: conic-gradient(transparent, #ff0000, transparent, #ff3300, transparent);
+    animation: spin-cw 4s linear infinite;
+}
+.card-base.taunt-card {
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.9), inset 0 0 10px rgba(255, 0, 0, 0.5) !important;
+    border: 2px solid #ff0000 !important;
+}
+
+/* 🔰 ESCUDO DIVINO (Aura Dourada/Branca Protetora) */
+.card-base.shield-card::before {
+    background: conic-gradient(transparent, #ffd700, transparent, #ffffff, transparent);
+    animation: spin-cw 5s linear infinite;
+}
+.card-base.shield-card {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 15px rgba(255, 215, 0, 0.6) !important;
+    border: 2px solid #ffd700 !important;
+}
+
+/* 😡 FÚRIA (Pulsação Constante) */
+.card-base.fury-card {
+    animation: fury-pulse 0.8s ease-in-out infinite alternate !important;
+    border: 2px solid #ff5500 !important;
+}
+
+@keyframes fury-pulse {
+    0% { box-shadow: 0 0 10px #ff2a00, inset 0 0 5px #ff2a00; transform: scale(1) translateY(0); }
+    100% { box-shadow: 0 0 30px #ff6600, inset 0 0 20px #ff6600; transform: scale(1.02) translateY(-2px); }
+}
+/* ⚔️ ATAQUE DUPLO (Eletricidade e Sobrecarga) */
+.card-base.double-attack-card {
+    box-shadow: 0 0 15px #0088ff, inset 0 0 10px #00ffff !important;
+    border: 2px solid #00ffff !important;
+    animation: electric-pulse 1.5s infinite alternate;
+    overflow: hidden;
+}
+
+/* O feixe de raio varrendo a carta (Overlay) */
+.card-base.double-attack-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(0, 255, 255, 0.6), transparent);
+    transform: skewX(-20deg);
+    animation: lightning-sweep 2.5s infinite linear;
+    pointer-events: none; /* Para não bloquear o clique do rato/dedo */
+    z-index: 6; /* Fica por cima da arte e do texto */
+    border-radius: inherit;
+}
+
+/* Animação do pulsar da borda */
+@keyframes electric-pulse {
+    0% { box-shadow: 0 0 10px #0088ff, inset 0 0 5px #00ffff; }
+    100% { box-shadow: 0 0 25px #00ffff, inset 0 0 15px #ffffff; }
+}
+
+/* Animação do feixe passando */
+@keyframes lightning-sweep {
+    0% { left: -100%; }
+    15% { left: 200%; }
+    100% { left: 200%; } /* Fica invisível durante uns segundos antes de repetir */
+}
+
+
