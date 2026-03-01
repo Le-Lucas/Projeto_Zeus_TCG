@@ -42,11 +42,49 @@ sfx.bgm.loop = true; sfx.bgm.volume = 0.4;
 function playSound(type) { if(sfx[type]) { if(type !== 'bgm') sfx[type].currentTime = 0; sfx[type].play().catch(()=>{}); } }
 function screenShake() { const b = document.getElementById("board"); if(b) { b.animate([{ transform: "translate(8px, 8px)" }, { transform: "translate(-8px, -8px)" }, { transform: "translate(8px, -8px)" }, { transform: "translate(0, 0)" }], { duration: 400 }); } }
 
-// 2. BANCO DE DADOS
+// 2. BANCO DE DADOS (CAMPANHA & VILÕES)
+const imgDiretor = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXT1IcOkgyVdfxJRupj-0q2LwH3pIRyYWTbg&s";
+const imgOperador = "https://plus.unsplash.com/premium_photo-1682097238346-3f2a677ccfe6?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c29sZGFkb3xlbnwwfHwwfHx8MA%3D%3D";
+const imgAdao = "https://img.freepik.com/fotos-premium/retrato-de-um-homem-palido-olhando-para-a-camera-com-um-olhar-assustador-contra-um-fundo-escuro-no-estudio_236854-66039.jpg";
+
 const campaignData = [
-    { name: "SETOR 1", bossName: "UNIDADE DE CONTROLE", bossHp: 15, bossImg: "https://files.catbox.moe/05e01v.png", arena: "arena-neon" },
-    { name: "SETOR 2", bossName: "ESPÉCIME 042", bossHp: 25, bossImg: "https://files.catbox.moe/nvlqhz.png", arena: "theme-lab" },
-    { name: "SETOR 3", bossName: "GENERAL MÃO DE FERRO", bossHp: 40, bossImg: "https://files.catbox.moe/wkfzj3.png", arena: "theme-war" }
+    { 
+        name: "CENA 1: COMPLEXO MILITAR", 
+        bossName: "DEFESA DO PERÍMETRO", bossHp: 15, 
+        bossImg: "https://files.catbox.moe/ui0skk.png", // Imagem genérica de soldado
+        bgImg: "https://i.postimg.cc/ZY8N7bVC/cena1.jpg", 
+        deckTema: ["Agente Novato", "Drone de Varredura", "Segurança Aegis", "Atirador Furtivo", "Drone de Sucata"],
+        dialogo: [
+            { ator: "O DIRETOR", img: imgDiretor, texto: "Operador, detectamos uma anomalia térmica no Setor X8E. Parece uma detonação não autorizada." },
+            { ator: "O DIRETOR", img: imgDiretor, texto: "Nossa inteligência sugere que operações clandestinas do Projeto Zeus estão acontecendo lá. Infiltre-se e neutralize a ameaça." },
+            { ator: "OPERADOR", img: imgOperador, texto: "Entendido, Diretor. Iniciando varredura no perímetro externo da base." }
+        ]
+    },
+    { 
+        name: "CENA 2: CELA DAS COBAIAS", 
+        bossName: "HORDAS DA INCUBAÇÃO", bossHp: 20, 
+        bossImg: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png", 
+        bgImg: "https://i.postimg.cc/05YSWkcj/cena2.jpg", 
+        deckTema: ["Cobaia Estágio 1", "Mutante Instável", "Ciborgue Falho", "Unidade K-9 Cibernética"],
+        dialogo: [
+            { ator: "OPERADOR", img: imgOperador, texto: "Diretor, o perímetro foi limpo. Mas não houve explosão propriamente dita... os portões do Sub-1 foram arrombados de dentro para fora." },
+            { ator: "O DIRETOR", img: imgDiretor, texto: "Isso é impossível. Proceda com extrema cautela ao descer." },
+            { ator: "OPERADOR", img: imgOperador, texto: "Espera... tem algo se movendo nas sombras. Contato! Cobaias soltas e frenéticas! Cortando comunicação para engajamento!" }
+        ]
+    },
+    { 
+        name: "CENA 3: LABS ZEUS", 
+        bossName: "ADÃO: O PRIMEIRO", bossHp: 40, // Deixei 40 para ser um Boss final digno, mas pode mudar
+        bossImg: imgAdao, 
+        bgImg: "https://i.postimg.cc/ry14nVQz/cena3.jpg", 
+        deckTema: ["Projeto Zeus: Alfa", "O Punho da Resistência", "Sentinela Ômega", "Hack de Sobrecarga"],
+        dialogo: [
+            { ator: "OPERADOR", img: imgOperador, texto: "Subnível 2 alcançado. Esquadrão de segurança abatido. Cientistas também... mas estão todos vivos, apenas nocauteados." },
+            { ator: "ADÃO", img: imgAdao, texto: "Se eu sou apenas um homem... por que não me canso igual a eles?" },
+            { ator: "ADÃO", img: imgAdao, texto: "Eles dizem que sou uma arma. A arma perfeita. Então por que eu hesito em puxar o gatilho?" },
+            { ator: "ADÃO", img: imgAdao, texto: "Ah... mais soldados chegando. Isso é tão irritante. Desliguem-se." }
+        ]
+    }
 ];
 
 const baseDeck = [
@@ -110,10 +148,10 @@ const baseDeck = [
 
     // === EQUIPAMENTOS ===
     { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "https://i.postimg.cc/Gm5vcHy5/Colete-de-klevar.png" },
-    { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "rifle.png" },
-    { title: "Escudo de Energia", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 3, efeito: "escudo_divino", text: "Concede +3 HP e Escudo Divino.", img: "" },
-    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "manto_camuflagem.png" },
-    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "Chip_berserker.png" }
+    { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "https://i.postimg.cc/R0KzzDWy/rifle.png" },
+    { title: "Escudo de Energia", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 3, efeito: "escudo_divino", text: "Concede +3 HP e Escudo Divino.", img: "https://i.postimg.cc/6QnNNm7t/Gemini-Generated-Image-186xuf186xuf186x.png" },
+    { title: "Manto de Camuflagem", tipo: "equipamento", raridade: "rara", custo: 2, atk: 0, def: 0, efeito: "furtividade", text: "Concede Furtividade.", img: "https://i.postimg.cc/d0rKKx7v/manto.png" },
+    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "https://i.postimg.cc/bvkjjBGh/chip.png" }
 ];
 
 let currentLevel = 0, playerCollection = [], customDeck = [], playerDeck = [];
@@ -130,7 +168,22 @@ function bootTerminal() {
     baseDeck.forEach(c => { playerCollection.push({...c}); playerCollection.push({...c}); playerCollection.push({...c}); });
     
     // Segurança para P2P Direto
-    customDeck = baseDeck.slice(0, 15); 
+     // 👇 DECK INICIAL BALANCEADO DO OPERADOR 👇
+            const nomesDeckInicial = [
+                "Agente Novato", "Atirador Furtivo", "Sucateiro da Zona Sul", // Tropa Leve
+                "Segurança Aegis", "Unidade K-9 Cibernética",                 // Defesa e Ataque
+                "Mercenário", "Médico de Combate",                            // Suporte
+                "Sobrevivente Rebelde", "Quimera Alada",                      // Força Média
+                "Exoesqueleto Mk.II", "Ceifador da Unidade",                  // PESOS PESADOS
+                "Sobrecarga de Sistema", "Kit Médico Tático",                 // Magias
+                "Rifle de Plasma", "Colete de Kevlar"                         // Equipamentos
+            ];
+            customDeck = [];
+            nomesDeckInicial.forEach(nome => {
+                let carta = baseDeck.find(c => c.title === nome);
+                if(carta) customDeck.push({...carta});
+            });
+            // 👆 FIM DO DECK INICIAL 👆
     selectedHeroObj = { id: "COMANDANTE", imgUrl: "https://files.catbox.moe/wkfzj3.png" }; 
 
     initMultiplayer();
@@ -156,7 +209,22 @@ function bootTerminal() {
             // 2. Adiciona o brilho vermelho ao selecionado
             choice.classList.add("selected");
             selectedHeroObj = { id: choice.dataset.hero, imgUrl: choice.dataset.img };
-            customDeck = baseDeck.slice(0, 15);
+         // 👇 DECK INICIAL BALANCEADO DO OPERADOR 👇
+            const nomesDeckInicial = [
+                "Agente Novato", "Atirador Furtivo", "Sucateiro da Zona Sul", // Tropa Leve
+                "Segurança Aegis", "Unidade K-9 Cibernética",                 // Defesa e Ataque
+                "Mercenário", "Médico de Combate",                            // Suporte
+                "Sobrevivente Rebelde", "Quimera Alada",                      // Força Média
+                "Exoesqueleto Mk.II", "Ceifador da Unidade",                  // PESOS PESADOS
+                "Sobrecarga de Sistema", "Kit Médico Tático",                 // Magias
+                "Rifle de Plasma", "Colete de Kevlar"                         // Equipamentos
+            ];
+            customDeck = [];
+            nomesDeckInicial.forEach(nome => {
+                let carta = baseDeck.find(c => c.title === nome);
+                if(carta) customDeck.push({...carta});
+            });
+            // 👆 FIM DO DECK INICIAL 👆
             document.getElementById("hero-actions").style.display = "flex";
 
             // 3. INJETA AS PARTÍCULAS VERMELHAS SUTIS (GSAP)
@@ -212,6 +280,16 @@ function bootTerminal() {
 
     document.getElementById("btn-start-battle-direct").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.add("active"); };
     document.getElementById("btn-cancel-mode").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); };
+    // 👇 ADICIONE A IGNIÇÃO DA CAMPANHA AQUI 👇
+    const btnModeStory = document.getElementById("btn-mode-story");
+    if(btnModeStory) {
+        btnModeStory.onclick = () => { 
+            playSound("click"); 
+            document.getElementById("mode-selection-modal").classList.remove("active"); 
+            currentLevel = 0; 
+            startCampaignScene(); 
+        };
+    }
     document.getElementById("btn-cancel-arena").onclick = () => { playSound("click"); document.getElementById("arena-selection-modal").classList.remove("active"); };
     document.getElementById("btn-mode-casual").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); document.getElementById("arena-selection-modal").classList.add("active"); };
     document.querySelectorAll(".btn-arena").forEach(btn => {
@@ -221,6 +299,8 @@ function bootTerminal() {
     
     const actionBtn = document.getElementById("actionBtn");
     if(actionBtn) { actionBtn.onclick = handleActionBtn; }
+    const btnHome = document.getElementById("btn-home");
+    if(btnHome) btnHome.onclick = () => { playSound("click"); location.reload(); };
 
     document.getElementById("board").onclick = (e) => {
         if (!e.target.closest('.slot') && !e.target.closest('.card-base') && !e.target.closest('.hero-panel') && !e.target.closest('.hero-panel-game')) {
@@ -247,6 +327,27 @@ function bootTerminal() {
             document.getElementById("market-screen").classList.remove("active");
             document.getElementById("hero-screen").classList.add("active"); // <-- Faltava ponto e vírgula aqui
         }; // <-- Faltava fechar o onclick aqui
+    }
+
+    // 👇 ABRIR O CEMITÉRIO 👇
+    const btnGrave = document.getElementById("btn-graveyard");
+    if(btnGrave) {
+        btnGrave.onclick = () => {
+            playSound("click");
+            const grid = document.getElementById("graveyard-grid");
+            if(grid) {
+                grid.innerHTML = "";
+                // Clona as cartas mortas para o visualizador
+                graveyard.player.forEach(cData => {
+                    const el = createCard(cData);
+                    el.style.position = "relative";
+                    el.style.transform = "scale(0.85)";
+                    el.onclick = null; el.ondragstart = null; // Tira os cliques e drag
+                    grid.appendChild(el);
+                });
+                document.getElementById("graveyard-modal").classList.add("active");
+            }
+        };
     }
 } 
 
@@ -745,15 +846,117 @@ function updateUIState() {
         if (attackToken === "player") { phaseDisp.innerText = "FASE DE COMBATE"; btn.innerText = "PASSAR TURNO"; isSystemLocked = false; startTimer(60); } 
         else { phaseDisp.innerText = isP2P ? "ATAQUE INIMIGO" : "ATAQUE DA IA"; btn.innerText = "AGUARDE"; isSystemLocked = true; if(!isP2P) aiCombatPhase(); }
     }
+}function updateUIState() {
+    updateLifeAndMana(); clearInterval(timerInterval); 
+    // Contador clássico
+    document.getElementById("turn-display").innerText = `TURNO ${currentTurn}`;
+    
+    // ===================================================
+    // 👇 NOVA ANIMAÇÃO DE ENGRENAGENS (ESTILO LoR) 👇
+    // ===================================================
+    // 1. Verifica se o turno virou agora
+    if (window.lastAttackToken !== attackToken) {
+        // GSAP: Efeito Dramático de Aceleração/Arranque
+        gsap.to(".cyber-gear", { rotation: "+=360", duration: 0.6, ease: "power2.inOut" });
+        window.lastAttackToken = attackToken;
+    }
+
+    // 2. Atualiza as cores e o sentido de rotação
+    const pGear = document.getElementById("gear-player");
+    const eGear = document.getElementById("gear-enemy");
+    if (pGear && eGear) {
+        if (attackToken === "player") {
+            pGear.classList.add("active"); eGear.classList.remove("active");
+            pGear.style.animationDirection = "normal"; eGear.style.animationDirection = "reverse";
+        } else {
+            pGear.classList.remove("active"); eGear.classList.add("active");
+            pGear.style.animationDirection = "reverse"; eGear.style.animationDirection = "normal";
+        }
+    }
+    // ===================================================
+    
+    const btn = document.getElementById("actionBtn"); const phaseDisp = document.getElementById("phase-display");
+    const pFrame = document.querySelector("#player-hero .hero-avatar-frame"); const eFrame = document.querySelector("#enemy-hero .hero-avatar-frame");
+    if(pFrame && eFrame) {
+        pFrame.style.boxShadow = "0 0 10px var(--theme-glow)"; eFrame.style.boxShadow = "0 0 10px rgba(255,0,0,0.3)";
+        if(attackToken === "player") pFrame.style.boxShadow = "0 0 35px #00ffff"; else eFrame.style.boxShadow = "0 0 35px #ff0000"; 
+    }
+    
+    let isP2P = (window.conexao && window.conexao.open); 
+
+    if (currentStep === "deploy_attacker") {
+        if (attackToken === "player") { phaseDisp.innerText = "FASE DE CARTAS"; btn.innerText = "DEFESA INIMIGA"; isSystemLocked = false; startTimer(80); } 
+        else { phaseDisp.innerText = isP2P ? "TURNO INIMIGO" : "TURNO DA IA"; btn.innerText = "AGUARDE"; isSystemLocked = true; if(!isP2P) aiDeployPhase(); }
+    } else if (currentStep === "deploy_defender") {
+        if (attackToken === "enemy") { phaseDisp.innerText = "DEFENDA-SE!"; btn.innerText = "COMBATE INIMIGO"; isSystemLocked = false; startTimer(80); } 
+        else { phaseDisp.innerText = isP2P ? "DEFESA INIMIGA" : "DEFESA DA IA"; btn.innerText = "AGUARDE"; isSystemLocked = true; if(!isP2P) aiDeployPhase(); }
+    } else if (currentStep === "combat") {
+        if (attackToken === "player") { phaseDisp.innerText = "FASE DE COMBATE"; btn.innerText = "PASSAR TURNO"; isSystemLocked = false; startTimer(60); } 
+        else { phaseDisp.innerText = isP2P ? "ATAQUE INIMIGO" : "ATAQUE DA IA"; btn.innerText = "AGUARDE"; isSystemLocked = true; if(!isP2P) aiCombatPhase(); }
+    }
 }
 
-function startTimer(s){ turnTime=s; document.getElementById("timer").innerText=turnTime; clearInterval(timerInterval); timerInterval=setInterval(()=>{ if(!isSystemLocked && !gameIsOver){ turnTime--; document.getElementById("timer").innerText=turnTime; if(turnTime<=0) handleActionBtn(); } },1000); }
+let maxTurnTime = 80;
 
+function startTimer(s) { 
+    turnTime = s; 
+    maxTurnTime = s;
+    
+    // 1. Constrói o Painel do Elevador (cria os números)
+    const container = document.getElementById("elevator-timer");
+    if (container) {
+        // Só reconstrói se a quantidade de números for diferente
+        if (container.children.length !== s) {
+            container.innerHTML = "";
+            for(let i = 1; i <= s; i++) {
+                let node = document.createElement("div");
+                node.className = "timer-node pending";
+                node.id = "timer-node-" + i;
+                node.innerText = i;
+                container.appendChild(node);
+            }
+        }
+    }
+
+    updateElevatorTimer(); // Atualiza a luz no segundo 1
+
+    clearInterval(timerInterval); 
+    timerInterval = setInterval(() => { 
+        if(!isSystemLocked && !gameIsOver) { 
+            turnTime--; 
+            updateElevatorTimer(); // Move a luz para o próximo número
+            if(turnTime <= 0) handleActionBtn(); 
+        } 
+    }, 1000); 
+}
+
+// 👇 NOVA FUNÇÃO QUE CONTROLA AS LUZES DO ELEVADOR 👇
+function updateElevatorTimer() {
+    const container = document.getElementById("elevator-timer");
+    if(!container) return;
+    
+    // Calcula quantos segundos já se passaram (Ex: 80 - 79 = 1)
+    let elapsed = maxTurnTime - turnTime + 1; 
+    
+    for(let i = 1; i <= maxTurnTime; i++) {
+        let node = document.getElementById("timer-node-" + i);
+        if (node) {
+            if (i === elapsed) {
+                node.className = "timer-node active"; // Acende o andar atual!
+            } else if (i < elapsed) {
+                node.className = "timer-node passed"; // Apaga os andares que já passaram
+            } else {
+                node.className = "timer-node pending"; // Deixa escuro os andares futuros
+            }
+        }
+    }
+}
 function updateLifeAndMana() {
     if(document.getElementById("mana")) document.getElementById("mana").innerText = `${playerMana}/${maxMana}`; 
     if(document.getElementById("player-life")) document.getElementById("player-life").innerText = playerLife; 
     if(document.getElementById("enemy-life")) document.getElementById("enemy-life").innerText = enemyLife;
     if(document.getElementById("cards-in-deck")) document.getElementById("cards-in-deck").innerText = playerDeck.length;
+    if(document.getElementById("cards-in-grave")) document.getElementById("cards-in-grave").innerText = graveyard.player.length;
 }
 
 function createSlots(f, o) { 
@@ -778,7 +981,8 @@ function executePlayCard(slot, card) {
         if(donoDoSlot === "player" && window.conexao && window.conexao.open) { let slotIndex = Array.from(slot.parentElement.children).indexOf(slot); window.enviarPacote({ acao: "JOGAR_CARTA", cardName: card.dataset.name, slotIndex: slotIndex }); }
 
         card.classList.remove("deployment-selected"); gsap.killTweensOf(card); gsap.set(card, { clearProps: "all" }); 
-        gsap.set(card, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0 });
+        // Mantivemos a correção da opacidade e do z-index para não ficar fantasma!
+        gsap.set(card, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0, opacity: 1, zIndex: 10 });
         
         // 👇 MECÂNICA: ATAQUE RÁPIDO 👇
         let activeEffect = card.dataset.effect || card.dataset.originalEffect;
@@ -788,6 +992,9 @@ function executePlayCard(slot, card) {
             card.dataset.hasAttacked = "true"; 
             card.classList.add("exhausted"); // Entra cansada
         }
+
+        // 🚨 O FIO QUE FALTAVA LIGAR: Ativa os efeitos de "Ao Jogar" 🚨
+        processCardEffect("AoJogar", card, donoDoSlot);
 
         playSound("deploy"); updateLifeAndMana(); setTimeout(updateAuras, 100); draggedCard = null; selectedCardFromHand = null; arrangeHand();
     } else { playSound("error"); alert("RAM INSUFICIENTE!"); }
@@ -855,12 +1062,26 @@ function applyDamage(target, dmg) {
 function processCardEffect(gatilho, cartaObj, owner) {
     const efeito = cartaObj.dataset.effect; const isPlayer = owner === "player";
     if (gatilho === "AoJogar") {
-        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { playerDeck.push(graveyard.player.pop()); updateLifeAndMana(); }
+        // 👇 NOVA MECÂNICA DE RECICLAR 👇
+        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
+            let revivida = graveyard.player.pop(); // Tira a última do cemitério
+            updateLifeAndMana(); 
+            
+            // Cria a carta e atira-a para a mão!
+            let novaCarta = createCard(revivida); 
+            document.getElementById("hand").appendChild(novaCarta); 
+            gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
+            arrangeHand(); 
+            
+            playSound("deploy");
+            if(window.alert) alert(`SISTEMA: [ ${revivida.title} ] recuperado do lixo!`);
+        }
+        
         if (efeito === "atordoar") { const targets = document.getElementById(isPlayer ? "enemy-field" : "player-field").querySelectorAll('.card-base'); if(targets.length > 0) { const t = targets[Math.floor(Math.random() * targets.length)]; t.classList.add("exhausted"); t.dataset.hasAttacked = "true"; if(window.VFX) VFX.stun(t); } }
         if (efeito === "roubo_energia" && isPlayer) { enemyLife -= 1; updateLifeAndMana(); if(window.VFX) VFX.particles(document.getElementById("enemy-hero"), "#ff00ff"); }
     }
     if (gatilho === "UltimoSuspiro") {
-        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); 
+        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); updateLifeAndMana(); // Atualiza contador na hora
         if (efeito === "evocar_recruta") { const slot = cartaObj.parentElement; setTimeout(() => { if(slot && !slot.querySelector('.card-base')) { const recruit = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha")); recruit.dataset.owner = owner; gsap.set(recruit, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); slot.appendChild(recruit); if(window.VFX) VFX.onSummon(recruit, "provocar"); } }, 500); }
     }
     if (gatilho === "FimDeTurno") {
@@ -872,14 +1093,35 @@ function processCardEffect(gatilho, cartaObj, owner) {
 async function aiDeployPhase() {
     await sleep(1500); if(gameIsOver) return;
     const slots = Array.from(document.getElementById("enemy-field").children).filter(s=>!s.hasChildNodes()); 
+    
     if(slots.length > 0 && Math.random() > 0.1) { 
-        const pool = baseDeck.filter(x => x.tipo !== "feitico" && x.tipo !== "equipamento"); 
-        const c = pool[Math.floor(Math.random() * pool.length)]; 
-        const el = createCard(c); el.dataset.owner="enemy"; slots[0].appendChild(el); playSound("deploy");
-        gsap.set(el, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0 });
-        if (el.dataset.effect === "investida") el.dataset.hasAttacked = "false"; else { el.dataset.hasAttacked = "true"; el.classList.add("exhausted"); }
-        if(window.VFX) VFX.onSummon(el, el.dataset.effect); processCardEffect("AoJogar", el, "enemy"); updateAuras();
-    } 
+        // 👇 FILTRO BLINDADO DA IA 👇
+        let pool = [];
+        // SE FOR CAMPANHA: Usa ESTRITAMENTE o deck do vilão atual!
+        if (currentLevel !== "casual" && campaignData[currentLevel] && campaignData[currentLevel].deckTema) {
+            pool = baseDeck.filter(x => campaignData[currentLevel].deckTema.includes(x.title) && x.custo <= maxMana);
+        } 
+        // SE FOR SIMULAÇÃO CASUAL: IA joga de tudo, mas respeita a mana!
+        else {
+            pool = baseDeck.filter(x => x.tipo !== "feitico" && x.tipo !== "equipamento" && x.custo <= maxMana); 
+        }
+        // 👆 FIM DO FILTRO 👆
+        
+        if (pool.length > 0) { // Só joga se tiver dinheiro (RAM) para pagar
+            const c = pool[Math.floor(Math.random() * pool.length)]; 
+            const el = createCard(c); el.dataset.owner="enemy"; slots[0].appendChild(el); playSound("deploy");
+            gsap.set(el, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0 });
+            
+            // IA respeitando a regra de Ataque Rápido
+            if (el.dataset.effect === "investida" || el.dataset.effect === "ataque_rapido") {
+                el.dataset.hasAttacked = "false"; 
+            } else { 
+                el.dataset.hasAttacked = "true"; el.classList.add("exhausted"); 
+            }
+            
+            if(window.VFX) VFX.onSummon(el, el.dataset.effect); processCardEffect("AoJogar", el, "enemy"); updateAuras();
+        }
+    }
     await sleep(1000); if (!gameIsOver) advancePhase();
 }
 
@@ -903,8 +1145,6 @@ async function aiCombatPhase() {
 
 function checkGameOver() { 
     if (playerLife > 0 && enemyLife > 0) return; 
-    
-    // 👇 A TRAVA ANTI-CRASH (Impede que a função rode duas vezes) 👇
     if (gameIsOver) return; 
     
     gameIsOver = true; 
@@ -914,17 +1154,33 @@ function checkGameOver() {
     const playerWon = playerLife > 0; 
     const modal = document.getElementById("game-over-modal");
     
-    // 👇 SISTEMA DE RECOMPENSAS E PAGAMENTO 👇
     let recompensaHTML = "";
     if (playerWon) {
-        let ganho = Math.floor(Math.random() * 100) + 50; // Sorteia entre 50 e 150 HDs
+        let ganho = Math.floor(Math.random() * 100) + 50; 
         playerFragments += ganho;
         recompensaHTML = `<h2 style="color: #00ffff; margin: 15px 0; text-shadow: 0 0 10px #00ffff;">+${ganho} 💽 HDs EXTRAÍDOS</h2>`;
-        playSound("deploy"); // Toca um som de sucesso
+        playSound("deploy"); 
     } else {
-        playSound("error"); // Toca som de falha
+        playSound("error"); 
     }
     
+    // 👇 LÓGICA DE PROGRESSÃO DA CAMPANHA 👇
+    let botoesAcao = `<button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>`;
+    
+    if (playerWon && currentLevel !== "casual") {
+        if (currentLevel < campaignData.length - 1) {
+            // Se ainda houverem boss/fases pela frente
+            botoesAcao = `
+                <button class="open-btn" onclick="nextCampaignLevel()" style="margin-top: 20px; color: #00ff00; border-color: #00ff00;">[ AVANÇAR PARA SETOR ${currentLevel + 2} ]</button>
+                <button class="cmd-btn" onclick="location.reload()" style="margin-top: 10px; border-color: #444; color: #777;">[ EXTRAIR E SAIR ]</button>
+            `;
+        } else {
+            // Se derrotou o Adão (Última Fase)
+            recompensaHTML += `<h3 style="color: gold; text-shadow: 0 0 15px gold; margin-top: 10px;">👑 PROJETO ZEUS ENCERRADO 👑</h3><p style="color: #fff;">A Matriz está limpa, Operador.</p>`;
+        }
+    }
+    // 👆 FIM DA LÓGICA 👆
+
     modal.innerHTML = `
         <div class="modal-content final-screen" style="border-color: ${playerWon ? '#00ff00' : '#ff0000'}; background: rgba(5,5,10,0.95);">
             <img src="https://i.pinimg.com/originals/03/95/34/0395349bcc0db6334319650be9574588.gif" class="final-gif" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; opacity: 0.8;">
@@ -933,12 +1189,22 @@ function checkGameOver() {
             </h1>
             ${recompensaHTML}
             <p style="color: #888;">Transmissão encerrada.</p>
-            <button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                ${botoesAcao}
+            </div>
         </div>
     `;
     
     setTimeout(() => modal.classList.add("active"), 1000); 
 }
+
+// 👇 NOVA FUNÇÃO PARA AVANÇAR DE FASE 👇
+window.nextCampaignLevel = function() {
+    playSound("click");
+    document.getElementById("game-over-modal").classList.remove("active");
+    currentLevel++; // Aumenta o nível de 0 para 1, de 1 para 2...
+    startCampaignScene(); // Chama o diálogo do próximo Boss!
+};
 
 function drawCard() { 
     if(playerDeck.length > 0) { 
@@ -1058,3 +1324,83 @@ function prepararBatalha() {
 
 window.enviarPacote = function(dados) { if(window.conexao && window.conexao.open) window.conexao.send(dados); }
 window.addEventListener('DOMContentLoaded', bootTerminal);
+// ==========================================
+// 📖 MOTOR DE VISUAL NOVEL (CAMPANHA) 📖
+// ==========================================
+let dialogueIndex = 0;
+
+function startCampaignScene() {
+    // 1. Esconde todas as telas (incluindo a de Avatar)
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    
+    // 2. Prepara a tela de diálogo
+    const diagScreen = document.getElementById("dialogue-screen");
+    if(!diagScreen) { alert("ERRO: Tela de diálogo não encontrada no HTML!"); return; }
+    
+    diagScreen.classList.add("active");
+    diagScreen.style.display = "flex";
+    dialogueIndex = 0;
+    
+    // 3. Chama a primeira linha de texto
+    showNextDialogue();
+    
+    // 4. Configura o clique para avançar a história
+    diagScreen.onclick = (e) => {
+        // Ignora se o clique for no botão de Pular
+        if(e.target.id === "btn-skip-dialogue") return; 
+        
+        playSound("click");
+        dialogueIndex++;
+        showNextDialogue();
+    };
+
+    // 5. Configura o botão de PULAR DIRETO PRO COMBATE
+    const btnSkip = document.getElementById("btn-skip-dialogue");
+    if(btnSkip) {
+        btnSkip.onclick = () => {
+            playSound("deploy");
+            iniciarCombateDaCampanha();
+        };
+    }
+}
+
+function showNextDialogue() {
+    const data = campaignData[currentLevel];
+    if (dialogueIndex < data.dialogo.length) {
+        const line = data.dialogo[dialogueIndex];
+        const nameEl = document.getElementById("dialogue-name");
+        
+        // Cores Dinâmicas dos Personagens
+        if(line.ator === "O DIRETOR") { nameEl.style.color = "#ffaa00"; nameEl.style.textShadow = "0 0 10px #ffaa00"; document.getElementById("dialogue-avatar").style.borderColor = "#ffaa00"; }
+        else if(line.ator === "ADÃO") { nameEl.style.color = "#ff0055"; nameEl.style.textShadow = "0 0 10px #ff0055"; document.getElementById("dialogue-avatar").style.borderColor = "#ff0055"; }
+        else { nameEl.style.color = "#00ffff"; nameEl.style.textShadow = "0 0 10px #00ffff"; document.getElementById("dialogue-avatar").style.borderColor = "#00ffff"; }
+        
+        nameEl.innerText = line.ator;
+        document.getElementById("dialogue-avatar").src = line.img;
+        document.getElementById("dialogue-text").innerText = line.texto;
+    } else {
+        // Se o diálogo acabou, vai para a luta!
+        iniciarCombateDaCampanha();
+    }
+}
+
+function iniciarCombateDaCampanha() {
+    const data = campaignData[currentLevel];
+    
+    // Esconde a tela de diálogo
+    const diagScreen = document.getElementById("dialogue-screen");
+    diagScreen.classList.remove("active");
+    diagScreen.style.display = "none";
+    
+    // Mostra o Tabuleiro
+    document.getElementById("game-screen").classList.add("active");
+    
+    // Injeta a Arte do Cenário (Base Militar, Prisão ou Labs)
+    const board = document.getElementById("board");
+    board.style.backgroundImage = `url('${data.bgImg}')`;
+    board.style.backgroundSize = "cover";
+    board.style.backgroundPosition = "center";
+    
+    // Inicia o motor de combate
+    initGame(currentLevel);
+}
