@@ -85,6 +85,7 @@
                         <button id="btn-back-from-deck" class="cmd-btn" style="border-color: #444; color: #777;">VOLTAR</button>
                     </div>
                 </div>
+
              </div>
         </div>
 
@@ -98,18 +99,33 @@
 
         <div id="game-screen" class="screen layout-battle">
             <div class="sidebar">
-                <div id="turn-display" style="font-weight: bold; font-size: 1.2rem; color: white;">TURNO 1</div>
-                <div id="phase-display" class="neon-label">AGUARDANDO</div>
-                <div style="color:cyan; margin-top: 10px;">RAM: <span id="mana" style="font-weight:bold; font-size:1.2rem;">0/0</span></div>
-                <div style="color:#ff3333; margin-top: 5px;">TIMER: <span id="timer">80</span>s</div>
+                <div id="turn-display" style="font-weight: bold; font-size: 1.2rem; color: white; text-align: center;">TURNO 1</div>
+                <div id="phase-display" class="neon-label" style="text-align: center;">AGUARDANDO</div>
+                <div style="color:cyan; margin-top: 15px; text-align: center;">RAM: <span id="mana" style="font-weight:bold; font-size:1.2rem;">0/0</span></div>
+              
                 
-                <button id="actionBtn" class="cmd-btn" style="margin: 15px 0;">[ INICIAR ]</button>
-                <div class="card-back" style="margin-top: 10px;">DECK<br><span id="cards-in-deck" style="color:#fff; font-size: 1.2rem;">15</span></div>
+                <div id="action-container" style="display: flex; flex-direction: column; align-items: center; margin: 25px 0; cursor: pointer;" onclick="handleActionBtn()">
+                    <div id="turn-indicator" style="display: flex; gap: 15px; justify-content: center; margin-bottom: 5px;">
+                        <div id="gear-player" class="cyber-gear active" title="Sua Vez">⚙️</div>
+                        <div id="gear-enemy" class="cyber-gear" title="Vez do Inimigo">⚙️</div>
+                    </div>
+                    <button id="actionBtn" class="cmd-btn" style="pointer-events: none; width: 100%;">[ INICIAR ]</button>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px;">
+                    <div class="card-back" title="Seu Deck">
+                        <span id="cards-in-deck">15</span>
+                    </div>
+                    <div id="btn-graveyard" class="card-back graveyard-style" title="Arquivos Corrompidos (Cemitério)" style="cursor: pointer;">
+                        <span id="cards-in-grave">0</span>
+                    </div>
+                </div>
                 
                 <div id="player-hero" class="hero-panel-sidebar" style="margin-top: auto;">
                     <div class="hero-avatar-frame"><img id="player-avatar-img" src="" class="hero-avatar"></div>
                     <div class="hero-stats"><span style="color:#00ff00;">OPERADOR</span><span style="color:#fff; font-size:1.2rem;">VIDA: <span id="player-life">20</span></span></div>
                 </div>
+                
                 <button id="btn-home" class="cmd-btn" style="margin-top:10px; border-color: #444; color: #777;">ABORTAR</button>
             </div>
             <div id="board">
@@ -119,7 +135,9 @@
                 </div>
                 
                 <div id="enemy-field" class="field"></div>
-                <div class="field-divider"><div id="timeline-bar"></div></div>
+                <div class="field-divider" style="position: relative;">
+                    <div id="elevator-timer"></div>
+                </div>
                 <div id="player-field" class="field"></div>
             </div>
             <div id="hand"></div>
@@ -161,7 +179,7 @@
                 <h2 class="neon-label" style="font-size: 1.5rem; margin-bottom: 20px;">SELECIONE O PROTOCOLO</h2>
                 <button id="btn-mode-story" class="cmd-btn" style="margin-bottom: 15px; border-color: gold; color: gold; height: 60px;">
                     <div style="font-size: 1.1rem; font-weight: bold;">[ CAMPANHA ]</div>
-                    <div style="font-size: 0.6rem; color: #fff;">OPERAÇÃO: ALÉM DAS MÁQUINAS</div>
+                    <div style="font-size: 0.6rem; color: #fff;">OPERAÇÃO ADÃO</div>
                 </button>
                 <button id="btn-mode-casual" class="cmd-btn" style="margin-bottom: 15px; border-color: #00ffff; color: #00ffff; height: 60px;">
                     <div style="font-size: 1.1rem; font-weight: bold;">[ SIMULAÇÃO ]</div>
@@ -190,6 +208,28 @@
             </div>
         </div>
 
+        <div id="graveyard-modal" class="modal" style="z-index: 8500;">
+            <div class="modal-content" style="border-color: #ff0055; max-width: 800px; background: rgba(10,5,5,0.95);">
+                <h2 class="neon-label" style="color: #ff0055; font-size: 1.5rem; margin-bottom: 20px;">ARQUIVOS CORROMPIDOS</h2>
+                <div id="graveyard-grid" class="pool-grid" style="max-height: 50vh; overflow-y: auto;"></div>
+                <button class="cmd-btn" onclick="document.getElementById('graveyard-modal').classList.remove('active')" style="margin-top: 20px; border-color: #ff0055; color: #ff0055;">FECHAR ARQUIVOS</button>
+            </div>
+        </div>
+        <div id="dialogue-screen" class="screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9500; display: none; flex-direction: column; justify-content: flex-end; padding-bottom: 50px;">
+            
+            <button id="btn-skip-dialogue" class="cmd-btn" style="position: absolute; top: 30px; right: 30px; border-color: #ff3333; color: #ff3333; z-index: 9600;">[ PULAR HISTÓRIA ⏭️ ]</button>
+            
+            <div style="width: 100%; max-width: 900px; margin: 0 auto; display: flex; align-items: flex-end; gap: 20px;">
+                <img id="dialogue-avatar" src="" style="width: 250px; height: 350px; object-fit: cover; border: 2px solid cyan; border-radius: 8px; box-shadow: 0 0 20px cyan;">
+                <div style="flex-grow: 1; background: rgba(5,5,10,0.95); border: 2px solid cyan; border-radius: 8px; padding: 25px; min-height: 180px; position: relative;">
+                    <h3 id="dialogue-name" style="color: cyan; margin-top: 0; font-size: 1.5rem; text-shadow: 0 0 10px cyan; margin-bottom: 10px;">NOME</h3>
+                    <p id="dialogue-text" style="color: white; font-size: 1.2rem; line-height: 1.5; font-family: 'Courier New', monospace;"></p>
+                    <div style="position: absolute; bottom: 15px; right: 20px; color: #888; font-size: 0.9rem; animation: electric-pulse 1s infinite alternate; pointer-events: none;">[ CLIQUE PARA CONTINUAR ]</div>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
     </div> <svg id="targeting-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9000;">
         <line id="targeting-line" x1="0" y1="0" x2="0" y2="0" stroke="#ff0000" stroke-width="3" stroke-dasharray="5,5" />
         <circle id="targeting-dot" cx="0" cy="0" r="5" fill="#ff0000" />
