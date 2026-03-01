@@ -434,4 +434,137 @@ body {
     100% { left: 200%; } /* Fica invisível durante uns segundos antes de repetir */
 }
 
+/* =========================================
+   ⚙️ INDICADOR DE TURNO (LO-R STYLE) ⚙️
+   ========================================= */
+.cyber-gear {
+    font-size: 2.5rem;
+    color: #444; /* Cor Desligada (Cinza Escuro) */
+    animation: spin-gear 6s linear infinite;
+    transition: all 0.4s ease;
+    user-select: none;
+    line-height: 1;
+}
 
+.cyber-gear.active {
+    animation-duration: 2s; /* Acelera e gira rápido quando é a vez */
+}
+
+/* Engrenagem do Operador (Nós) */
+#gear-player.active {
+    color: #00ffff; 
+    text-shadow: 0 0 15px #00ffff, 0 0 30px #0088ff;
+}
+
+/* Engrenagem da Ameaça (Inimigo) */
+#gear-enemy.active {
+    color: #ff0000; 
+    text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+}
+
+@keyframes spin-gear {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* 🎴 ESTILO DA IMAGEM DO DECK */
+.card-back {
+    width: 75px;
+    height: 105px;
+    background-image: url('https://i.pinimg.com/736x/8e/4a/1b/8e4a1b0b555030f2824e0b5f88fc8362.jpg'); /* Arte Cyberpunk de Verso de Carta */
+    background-size: cover;
+    background-position: center;
+    border: 2px solid #00ffff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px #00ffff, inset 0 0 15px rgba(0,0,0,0.8);
+    margin: 0 auto;
+    position: relative;
+}
+
+#cards-in-deck {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ffff, 0 0 20px #000;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+/* =========================================
+   ⏱️ TIMER ELEVADOR (CENTRO DA MESA)
+   ========================================= */
+#elevator-timer {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.timer-node {
+    font-size: 0.65rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.15); /* Números que ainda vão chegar (escuros) */
+    transition: all 0.2s ease;
+    text-shadow: none;
+}
+
+.timer-node.passed {
+    color: rgba(0, 0, 0, 0.3); /* Números que já passaram ficam quase invisíveis */
+}
+
+/* O NÚMERO ATUAL (ACESO) */
+.timer-node.active {
+    font-size: 1rem;
+    transform: scale(1.5) translateY(-2px);
+    z-index: 10;
+}
+
+/* CORES DINÂMICAS POR TEMA DA ARENA */
+body.theme-lab .timer-node.active { color: #00ffc8; text-shadow: 0 0 12px #00ffc8, 0 0 20px #00ffc8; }
+body.theme-war .timer-node.active { color: #ff3c3c; text-shadow: 0 0 12px #ff3c3c, 0 0 20px #ff3c3c; }
+body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700ff, 0 0 20px #b700ff; }
+/* Fallback caso não tenha tema */
+.timer-node.active { color: #00ffff; text-shadow: 0 0 12px #00ffff; }
+
+/* 💀 ESTILO DO CEMITÉRIO */
+.graveyard-style {
+    background: linear-gradient(135deg, #220000, #000000);
+    border-color: #ff0055;
+    box-shadow: 0 0 10px #ff0055, inset 0 0 15px rgba(0,0,0,0.8);
+}
+.graveyard-style::before {
+    content: "💀";
+    position: absolute;
+    font-size: 2.5rem;
+    opacity: 0.2;
+    z-index: 0;
+}
+#cards-in-grave {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff0055, 0 0 20px #000;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 2px 8px;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+/* 🛑 TRAVA DE ZOOM NO TABULEIRO 🛑 */
+/* Impede que a carta cresça descontroladamente quando já está no campo de batalha, facilitando equipar magias */
+.field .card-base:hover {
+    transform: translate(-50%, -50%) scale(0.62) !important; /* Aumenta só 2% em vez de ficar gigante */
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important; /* Dá um brilho ciano de mira */
+    z-index: 15 !important;
+}
