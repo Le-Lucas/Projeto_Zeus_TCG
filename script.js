@@ -100,8 +100,8 @@ const baseDeck = [
     { title: "Cadete de Patrulha", tipo: "soldado", raridade: "comum", custo: 1, atk: 1, def: 3, efeito: "provocar", img: "https://files.catbox.moe/ui0skk.png" },
     { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "https://files.catbox.moe/ebt0u6.png" },
     { title: "Barreira Eletrônica", tipo: "estrutura", raridade: "comum", custo: 2, atk: 0, def: 7, efeito: "provocar", img: "https://files.catbox.moe/b097ur.png" },
-    { title: "Unidade K-9 Cibernética", tipo: "ciborgue", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
-    { title: "Interceptor de Zeus", tipo: "drone", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
+    { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
+    { title: "Interceptor de Zeus", tipo: "automato", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
     { title: "Drone de Sucata", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "nenhum", text: "Máquina simples.", img: "https://i.postimg.cc/tgnW7p32/Drone-de-Varredura.png" },
     { title: "Sonda de Vigilância", tipo: "automato", raridade: "comum", custo: 1, atk: 0, def: 3, efeito: "sentinela", text: "Ataca Furtivos.", img: "https://i.postimg.cc/MGfVXq0T/Varredura-de-Satelite.png" },
     { title: "Módulo de Escudo", tipo: "automato", raridade: "comum", custo: 2, atk: 0, def: 4, efeito: "provocar", text: "Provocar.", img: "modulo_escudo.png" },
@@ -129,7 +129,9 @@ const baseDeck = [
     { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "https://files.catbox.moe/wkfzj3.png" },
     { title: "O Punho da Resistência", tipo: "mecanizado", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
     { title: "Pacificador V.9", tipo: "mecanizado", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
-
+    // Adicione no seu baseDeck:
+    { title: "Enxame de Nanobots", tipo: "automato", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "sinergia_automato", text: "Sinergia: Ganha +1/+1 quando outro Autômato aliado entra em campo.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKmEat6w4aafi5kCkFL9_gVZvCcdfsufUR6A&s" }, // Pode trocar a imagem depois
+    { title: "Esquadrão Tático", tipo: "humano", raridade: "comum", custo: 4, atk: 3, def: 2, efeito: "tropa_coordenada", text: "Invoca um Cadete de Patrulha. Se não houver espaço, ganha +1/+1.", img: "data:image/jpeg;base64,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" }, // Imagem placeholder
     // === FEITIÇOS (MAGIAS) ===
     { title: "Kit Médico Tático", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "cura_3", img: "https://i.postimg.cc/DyqdTNV5/Kit-Medico-Tatico.png" },
     { title: "Protocolo: EMP", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano_2", img: "https://i.postimg.cc/fTxjNP4H/Protocolo-EMP.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
@@ -215,7 +217,7 @@ function bootTerminal() {
                 "Segurança Aegis", "Unidade K-9 Cibernética",                 // Defesa e Ataque
                 "Mercenário", "Médico de Combate",                            // Suporte
                 "Sobrevivente Rebelde", "Quimera Alada",                      // Força Média
-                "Exoesqueleto Mk.II", "Ceifador da Unidade",                  // PESOS PESADOS
+                "Exoesqueleto Mk.II", "blindado de transporte",                  // PESOS PESADOS
                 "Sobrecarga de Sistema", "Kit Médico Tático",                 // Magias
                 "Rifle de Plasma", "Colete de Kevlar"                         // Equipamentos
             ];
@@ -1060,69 +1062,69 @@ function applyDamage(target, dmg) {
 
 // RESTAURAÇÃO DA IA E EFEITOS
 function processCardEffect(gatilho, cartaObj, owner) {
-    const efeito = cartaObj.dataset.effect; const isPlayer = owner === "player";
+    const efeito = cartaObj.dataset.effect; 
+    const isPlayer = owner === "player";
+
+    // 👇 BLOCO ÚNICO DE ENTRADA EM CAMPO 👇
     if (gatilho === "AoJogar") {
-        // 👇 NOVA MECÂNICA DE RECICLAR 👇
-        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
-            let revivida = graveyard.player.pop(); // Tira a última do cemitério
-            updateLifeAndMana(); 
-            
-            // Cria a carta e atira-a para a mão!
-            let novaCarta = createCard(revivida); 
-            document.getElementById("hand").appendChild(novaCarta); 
-            gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
-            arrangeHand(); 
-            
-            playSound("deploy");
-            if(window.alert) alert(`SISTEMA: [ ${revivida.title} ] recuperado do lixo!`);
-        }
         
+        // 1. Efeitos Básicos
+        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
+            let revivida = graveyard.player.pop(); updateLifeAndMana(); 
+            let novaCarta = createCard(revivida); document.getElementById("hand").appendChild(novaCarta); 
+            gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
+            if(typeof arrangeHand === "function") arrangeHand(); playSound("deploy");
+        }
         if (efeito === "atordoar") { const targets = document.getElementById(isPlayer ? "enemy-field" : "player-field").querySelectorAll('.card-base'); if(targets.length > 0) { const t = targets[Math.floor(Math.random() * targets.length)]; t.classList.add("exhausted"); t.dataset.hasAttacked = "true"; if(window.VFX) VFX.stun(t); } }
         if (efeito === "roubo_energia" && isPlayer) { enemyLife -= 1; updateLifeAndMana(); if(window.VFX) VFX.particles(document.getElementById("enemy-hero"), "#ff00ff"); }
-    }
+
+        // 2. Variáveis de Campo para Sinergias
+        const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+
+        // 3. EFEITO DO ESQUADRÃO (INVOCAÇÃO OU BUFF)
+        if (efeito === "tropa_coordenada") {
+            const emptySlots = Array.from(field.children).filter(s => !s.hasChildNodes());
+            if (emptySlots.length > 0) {
+                const recruta = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha"));
+                recruta.dataset.owner = owner;
+                emptySlots[0].appendChild(recruta);
+                gsap.set(recruta, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 });
+                recruta.dataset.hasAttacked = "true"; recruta.classList.add("exhausted");
+                if(window.VFX) VFX.onSummon(recruta, "provocar");
+                playSound("deploy");
+            } else {
+                cartaObj.dataset.baseAtk = (parseInt(cartaObj.dataset.baseAtk) || 0) + 1;
+                cartaObj.dataset.baseHp = (parseInt(cartaObj.dataset.baseHp) || 0) + 1;
+                recalculateStats(cartaObj);
+                if(window.VFX) VFX.pulse(cartaObj, "#00ff00");
+                playSound("hit"); 
+            }
+        }
+
+        // 4. SINERGIA GLOBAL DOS NANOBOTS
+        if (cartaObj.dataset.type === "automato" || cartaObj.dataset.raca === "automato") {
+            const aliados = field.querySelectorAll('.card-base');
+            aliados.forEach(aliado => {
+                if (aliado.dataset.name === "Enxame de Nanobots" && aliado !== cartaObj) {
+                    aliado.dataset.baseAtk = (parseInt(aliado.dataset.baseAtk) || 0) + 1;
+                    aliado.dataset.baseHp = (parseInt(aliado.dataset.baseHp) || 0) + 1;
+                    recalculateStats(aliado);
+                    if(window.VFX) VFX.pulse(aliado, "#00ffff"); 
+                }
+            });
+        }
+    } 
+    // 👆 FIM DO BLOCO ÚNICO "AoJogar" 👆
+
     if (gatilho === "UltimoSuspiro") {
-        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); updateLifeAndMana(); // Atualiza contador na hora
+        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); 
         if (efeito === "evocar_recruta") { const slot = cartaObj.parentElement; setTimeout(() => { if(slot && !slot.querySelector('.card-base')) { const recruit = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha")); recruit.dataset.owner = owner; gsap.set(recruit, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); slot.appendChild(recruit); if(window.VFX) VFX.onSummon(recruit, "provocar"); } }, 500); }
     }
+    
     if (gatilho === "FimDeTurno") {
         if (efeito === "cura_turno" && isPlayer) { playerLife = Math.min(playerLife+1, maxLife); if(window.VFX) VFX.particles(document.getElementById("player-hero"), "#00ff00"); }
         if (efeito === "regeneracao") { cartaObj.dataset.damageTaken = Math.max(0, (parseInt(cartaObj.dataset.damageTaken) || 0) - 1); recalculateStats(cartaObj); if(window.VFX) VFX.particles(cartaObj, "#00ff00"); }
     }
-}
-
-async function aiDeployPhase() {
-    await sleep(1500); if(gameIsOver) return;
-    const slots = Array.from(document.getElementById("enemy-field").children).filter(s=>!s.hasChildNodes()); 
-    
-    if(slots.length > 0 && Math.random() > 0.1) { 
-        // 👇 FILTRO BLINDADO DA IA 👇
-        let pool = [];
-        // SE FOR CAMPANHA: Usa ESTRITAMENTE o deck do vilão atual!
-        if (currentLevel !== "casual" && campaignData[currentLevel] && campaignData[currentLevel].deckTema) {
-            pool = baseDeck.filter(x => campaignData[currentLevel].deckTema.includes(x.title) && x.custo <= maxMana);
-        } 
-        // SE FOR SIMULAÇÃO CASUAL: IA joga de tudo, mas respeita a mana!
-        else {
-            pool = baseDeck.filter(x => x.tipo !== "feitico" && x.tipo !== "equipamento" && x.custo <= maxMana); 
-        }
-        // 👆 FIM DO FILTRO 👆
-        
-        if (pool.length > 0) { // Só joga se tiver dinheiro (RAM) para pagar
-            const c = pool[Math.floor(Math.random() * pool.length)]; 
-            const el = createCard(c); el.dataset.owner="enemy"; slots[0].appendChild(el); playSound("deploy");
-            gsap.set(el, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0, x: 0, y: 0, rotation: 0 });
-            
-            // IA respeitando a regra de Ataque Rápido
-            if (el.dataset.effect === "investida" || el.dataset.effect === "ataque_rapido") {
-                el.dataset.hasAttacked = "false"; 
-            } else { 
-                el.dataset.hasAttacked = "true"; el.classList.add("exhausted"); 
-            }
-            
-            if(window.VFX) VFX.onSummon(el, el.dataset.effect); processCardEffect("AoJogar", el, "enemy"); updateAuras();
-        }
-    }
-    await sleep(1000); if (!gameIsOver) advancePhase();
 }
 
 async function aiCombatPhase() {
