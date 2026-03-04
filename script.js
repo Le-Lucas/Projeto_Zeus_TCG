@@ -522,6 +522,7 @@ function startGameDirect(mode, arenaClass) {
 }
 
 function initGame(levelIndex, arenaClass) {
+    currentLevel = levelIndex;
     let levelData = levelIndex === "casual" ? { bossName: "SIMULACRO", bossHp: 20, bossImg: "https://files.catbox.moe/05e01v.png" } : campaignData[levelIndex];
     const enHero = document.getElementById("enemy-hero"); 
     if(enHero) { enHero.querySelector(".hero-avatar").src = levelData.bossImg; enHero.querySelector(".hero-stats span:last-child").innerHTML = `VIDA: <span id="enemy-life">${levelData.bossHp}</span>`; enHero.onclick = () => handleHeroClick(enHero, "enemy"); }
