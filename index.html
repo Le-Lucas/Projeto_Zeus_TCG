@@ -230,11 +230,114 @@
         </div>
             </div>
         </div>
+        
+        
     </div> <svg id="targeting-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; pointer-events:none; z-index:9000;">
         <line id="targeting-line" x1="0" y1="0" x2="0" y2="0" stroke="#ff0000" stroke-width="3" stroke-dasharray="5,5" />
         <circle id="targeting-dot" cx="0" cy="0" r="5" fill="#ff0000" />
     </svg>
+    
+   <div id="loader-container">
+        <canvas id="matrix-canvas"></canvas>
+        <div id="logo-overlay">
+            <h1 class="shimmer-text glitch-effect" data-text="PROJETO ZEUS" style="font-size: 4rem; color: white; text-shadow: 0 0 20px #ff0000;">PROJETO ZEUS</h1>
+        </div>
+        <div id="tv-off-effect"></div>
+    </div>
 
+    <style>
+    /* CSS Isolado para não quebrar o jogo principal */
+    #loader-container {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
+        z-index: 99999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: black;
+        pointer-events: all; /* Bloqueia cliques enquanto carrega */
+    }
+
+    #matrix-canvas { position: absolute; top: 0; left: 0; }
+
+    #logo-overlay {
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        transform: scale(0.5);
+    }
+
+    /* Efeito de desligar TV antiga */
+    .tv-shutdown {
+        animation: tv-off 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+    }
+
+    @keyframes tv-off {
+        0% { transform: scaleY(1) scaleX(1); filter: brightness(1); }
+        50% { transform: scaleY(0.01) scaleX(1.1); filter: brightness(3); }
+        100% { transform: scaleY(0) scaleX(0); filter: brightness(10); opacity: 0; }
+    }
+    </style>
+
+    <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ23456789ZXYWVUT";
+    const fontSize = 18;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(0).map(() => ({
+        y: Math.random() * canvas.height,
+        speed: (Math.random() * 2 + 1) * (Math.random() > 0.5 ? 1 : -1) // Sobe e desce
+    }));
+
+    function drawMatrix() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.15)"; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.font = fontSize + "px 'Courier New', monospace";
+
+        drops.forEach((drop, i) => {
+            const text = chars.charAt(Math.floor(Math.random() * chars.length));
+            // Glitch vermelho ou branco
+            if(Math.random() > 0.95) ctx.fillStyle = "#ffffff"; 
+            else ctx.fillStyle = "#ff003c";
+
+            ctx.fillText(text, i * fontSize, drop.y);
+            drop.y += drop.speed * fontSize;
+
+            if (drop.y > canvas.height && drop.speed > 0) drop.y = 0;
+            if (drop.y < 0 && drop.speed < 0) drop.y = canvas.height;
+        });
+    }
+
+    let matrixInterval = setInterval(drawMatrix, 40);
+
+    // =====================================
+    // TIMERS ACELERADOS (Apenas ~1.8s total)
+    // =====================================
+    setTimeout(() => {
+        // 1. Aparece o Logo num flash
+        document.getElementById('logo-overlay').style.opacity = "1";
+        document.getElementById('logo-overlay').style.transform = "scale(1)";
+        
+        setTimeout(() => {
+            // 2. Para o Matrix e inicia efeito TV OFF agressivo
+            clearInterval(matrixInterval);
+            document.getElementById('loader-container').classList.add('tv-shutdown');
+            
+            // 3. Destrói o loader para não pesar na memória da Matriz
+            setTimeout(() => {
+                document.getElementById('loader-container').remove();
+            }, 500); 
+        }, 2800); // O logo fica só 0.8s na tela
+    }, 1500); // Apenas 0.5s de chuva antes do logo aparecer
+    </script>
+    ```
     <script src="vfx.js"></script>
     <script src="script.js"></script>
 </body>
