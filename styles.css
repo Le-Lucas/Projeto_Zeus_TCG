@@ -568,3 +568,62 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important; /* Dá um brilho ciano de mira */
     z-index: 15 !important;
 }
+/* =========================================
+   ⚔️ UPGRADE VISUAL: STATUS DAS CARTAS (ATK / DEF) 🛡️
+   ========================================= */
+
+.card-stats {
+    position: absolute;
+    bottom: -10px; /* Faz os escudos "saltarem" um pouco para fora da carta */
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.stat-badge {
+    width: 40px; /* Tamanho maior (era provavelmnete 25 ou 30px) */
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.4rem; /* Fonte bem maior e visível */
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 900; /* Super negrito */
+    color: #ffffff;
+}
+
+/* ⚔️ ATAQUE: Fogo e Neon Vermelho/Laranja */
+.stat-atk {
+    background: radial-gradient(circle, #ff3300 0%, #880000 100%);
+    border: 3px solid #ffcc00;
+    text-shadow: 2px 2px 0px #000000, 0 0 10px #ffff00;
+    box-shadow: 0 5px 15px rgba(255, 50, 0, 0.8), inset 0 0 8px rgba(0,0,0,0.5);
+    transform: translateX(-5px); /* Puxa um pouco para a esquerda */
+}
+
+/* 🛡️ DEFESA: Escudo Ciano/Azul Profundo */
+.stat-def {
+    background: radial-gradient(circle, #00bbff 0%, #002288 100%);
+    border: 3px solid #00ffff;
+    text-shadow: 2px 2px 0px #000000, 0 0 10px #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 150, 255, 0.8), inset 0 0 8px rgba(0,0,0,0.5);
+    transform: translateX(5px); /* Puxa um pouco para a direita */
+}
+
+/* Quando o equipamento ou magia for jogado (badge roxo central) */
+.card-stats .stat-badge[style*="background:#b0279b"] {
+    background: radial-gradient(circle, #ff00ff 0%, #440044 100%) !important;
+    border: 3px solid #ff88ff;
+    width: auto;
+    padding: 0 15px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(255, 0, 255, 0.8);
+    margin: 0 auto;
+    transform: translateY(-5px);
+}
+
