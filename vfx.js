@@ -1,144 +1,212 @@
-console.log("MÓDULO VFX INICIADO: MOTOR 3D & EFEITOS DE CARTAS (V8.5 - OTIMIZADO PARA ESCALA).");
+console.log("MÓDULO VFX INICIADO: MOTOR 3D & EFEITOS DE CARTAS (V9.0 - UNIFICADO).");
 
 /* =========================================================
-   1. SISTEMA DE EFEITOS DE CARTAS (DOM ANIMATIONS)
+   1. SISTEMA DE EFEITOS DE CARTAS (DOM ANIMATIONS & HUD)
    ========================================================= */
 const VFX = {
-  /* --- UTILIDADES --- */
+  /* --- EFEITO DE BUFF HOLO (NOVO) --- */
+  showBuff(cardEl, textStr, color = "#00f3ff") {
+      if (!cardEl) return;
+
+      const hud = document.createElement("div");
+      hud.className = "card-hud-overlay";
+      
+      const frame = document.createElement("div");
+      frame.className = "tech-frame ui-active";
+      if(color !== "#00f3ff") {
+          frame.style.borderColor = color;
+          frame.style.boxShadow = `inset 0 0 20px ${color}`;
+      }
+      
+      const text = document.createElement("div");
+      text.className = "buff-float-text";
+      text.style.color = color;
+      text.style.textShadow = `0 0 10px ${color}, 0 0 20px #000`;
+      text.innerText = textStr;
+
+      hud.appendChild(frame);
+      hud.appendChild(text);
+      cardEl.appendChild(hud);
+
+      gsap.to(text, {
+          opacity: 1, y: -60, scale: 1.2, duration: 0.6, ease: "back.out(2)",
+          onStart: () => { this.triggerTechBits(cardEl, color); },
+          onComplete: () => {
+              gsap.to(text, { opacity: 0, y: -100, duration: 0.4, delay: 0.3 });
+              frame.classList.remove('ui-active');
+              setTimeout(() => hud.remove(), 800);
+          }
+      });
+  },
+
+  /* --- EXPLOSÃO DE BITS (NOVO) --- */
+  triggerTechBits(cardEl, color = "#00f3ff", count = 15) {
+      if (!cardEl) return;
+      const rect = cardEl.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      for (let i = 0; i < count; i++) {
+          const p = document.createElement("div");
+          p.className = "tech-bit-particle";
+          p.style.backgroundColor = color;
+          p.style.boxShadow = `0 0 10px ${color}, 0 0 5px white`;
+          p.style.left = centerX + "px";
+          p.style.top = centerY + "px";
+          if(Math.random() > 0.5) p.style.borderRadius = "50%";
+          document.body.appendChild(p);
+
+          const angle = (i / count) * Math.PI * 2;
+          const distance = Math.random() * 100 + 50;
+
+          gsap.to(p, {
+              x: Math.cos(angle) * distance, y: Math.sin(angle) * distance,
+              rotation: Math.random() * 360, opacity: 0,
+              duration: Math.random() * 0.6 + 0.4, ease: "expo.out",
+              onComplete: () => p.remove()
+          });
+      }
+  },
+
+ /* --- UTILIDADES CLÁSSICAS --- */
   pulse(el, color, scale = 1.3, time = 600) { 
     if (!el) return;
-    el.animate([
-      { transform: "scale(1)", boxShadow: "none", zIndex: 1000 },
-      { transform: `scale(${scale})`, boxShadow: `0 0 50px ${color}, 0 0 20px #fff`, zIndex: 1000 },
-      { transform: "scale(1)", boxShadow: "none", zIndex: 100 }
-    ], { duration: time });
+    // Removido o transform para não quebrar a âncora do slot! Usamos apenas o GSAP para o brilho.
+    gsap.fromTo(el, 
+        { boxShadow: "none" }, 
+        { boxShadow: `0 0 50px ${color}, 0 0 20px #fff`, duration: time / 2000, yoyo: true, repeat: 1 }
+    );
   },
 
   particles(el, color) {
     if (!el) return;
-    
-    for (let i = 0; i < 20; i++) { 
-      const p = document.createElement("div");
-      p.style.position = "absolute";
-      p.style.width = "12px"; 
-      p.style.height = "12px";
-      p.style.borderRadius = "50%";
-      p.style.pointerEvents = "none";
-      p.style.zIndex = "9999";
-      p.style.background = color;
-      p.style.boxShadow = `0 0 15px ${color}, 0 0 5px white`; 
-
-      // MÁGICA: Injeta DENTRO do elemento para respeitar a Escala (Scale) do Mobile
-      p.style.left = "50%";
-      p.style.top = "50%";
-      el.appendChild(p);
-
-      p.animate([
-        { transform: "translate(-50%, -50%) scale(1.5)", opacity: 1 },
-        {
-          transform: `translate(calc(-50% + ${Math.random()*250-125}px), calc(-50% + ${Math.random()*250-125}px)) scale(0)`, 
-          opacity: 0
-        }
-      ], { duration: 1000 }); 
-
-      setTimeout(() => p.remove(), 1000);
-    }
-  },
-
-  // 🔥 EXPLOSÃO DE TELA INTEIRA 🔥
-  bigExplosion(color) {
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-
-      for (let i = 0; i < 80; i++) { 
-          const p = document.createElement("div");
-          p.style.position = "fixed"; 
-          p.style.width = (Math.random() * 20 + 10) + "px"; 
-          p.style.height = p.style.width;
-          p.style.borderRadius = "50%";
-          p.style.pointerEvents = "none";
-          p.style.zIndex = "99999";
-          p.style.background = color;
-          p.style.boxShadow = `0 0 30px ${color}, 0 0 10px white`;
-          p.style.left = centerX + "px";
-          p.style.top = centerY + "px";
-          document.body.appendChild(p);
-
-          const destX = (Math.random() - 0.5) * window.innerWidth * 1.5;
-          const destY = (Math.random() - 0.5) * window.innerHeight * 1.5;
-
-          p.animate([
-              { transform: "translate(-50%, -50%) scale(1)", opacity: 1 },
-              { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
-          ], { duration: 1500 + Math.random() * 1000, easing: "cubic-bezier(0.25, 1, 0.5, 1)" });
-
-          setTimeout(() => p.remove(), 2500);
-      }
-      this.screenFlash(color);
-  },
-
-  screenFlash(color) {
-      const flash = document.createElement("div");
-      flash.style.position = "fixed"; flash.style.top=0; flash.style.left=0; flash.style.width="100vw"; flash.style.height="100vh";
-      flash.style.background = color; flash.style.zIndex = "99990"; flash.style.pointerEvents = "none"; flash.style.mixBlendMode = "screen";
-      document.body.appendChild(flash);
-      flash.animate([{ opacity: 0.8 }, { opacity: 0 }], { duration: 800 });
-      setTimeout(() => flash.remove(), 800);
+    this.triggerTechBits(el, color, 12); 
   },
 
   /* --- EVENTOS DE JOGO --- */
   onSummon(card, efeito) {
     this.pulse(card, "#00ffff", 1.4, 600);
-    if (efeito === "provocar") this.taunt(card);
-    if (efeito === "investida") this.charge(card);
+    this.showBuff(card, "DEPLOY", "#00ff00");
+    if (efeito === "provocar") { card.style.outline = "3px solid red"; }
   },
 
-  onAttack(attacker, defender, efeito) {
-    attacker.animate([
-      { transform: "translateY(0) scale(1)", zIndex: 999 },
-      { transform: "translateY(-60px) scale(1.2)", zIndex: 999 }, 
-      { transform: "translateY(0) scale(1)", zIndex: 999 }
-    ], { duration: 400 });
+ onAttack(attacker, defender, efeito) {
+    // 👇 PROTEÇÃO BLINDADA: Se não tiver efeito, assume que é vazio ("") e não crasha!
+    let ef = efeito || ""; 
 
-    setTimeout(() => this.particles(defender, "#ff0000"), 200);
+    gsap.fromTo(defender, 
+      { x: -8, rotation: -2 }, 
+      { x: 8, rotation: 2, duration: 0.05, repeat: 5, yoyo: true, onComplete: () => { gsap.to(defender, {x: 0, rotation: 0, duration: 0.1}); } }
+    );
+    this.triggerTechBits(defender, "#ff0000", 20);
 
-    if (efeito === "atordoar") this.stun(defender);
-    if (efeito === "roubo_vida") this.lifeSteal(attacker);
+    if (ef.includes("atordoar")) this.showBuff(defender, "CORROMPIDO", "#ffff00");
+    if (ef.includes("roubo_vida")) this.showBuff(attacker, "HP ABSORVIDO", "#00ff66");
   },
 
   onDamage(target, efeito) {
-    target.animate([
-      { filter: "brightness(1) sepia(0)", transform: "translateX(0)" },
-      { filter: "brightness(3) sepia(1) hue-rotate(-50deg) saturate(10)", transform: "translateX(-10px)" }, 
-      { filter: "brightness(3) sepia(1) hue-rotate(-50deg) saturate(10)", transform: "translateX(10px)" }, 
-      { filter: "brightness(1) sepia(0)", transform: "translateX(0)" }
-    ], { duration: 500 });
+    let ef = efeito || ""; // Proteção também no dano
 
-    if (efeito === "escudo" || efeito === "escudo_divino") this.shield(target);
+    gsap.fromTo(target, 
+      { filter: "brightness(3) sepia(1) hue-rotate(-50deg) saturate(10)", x: -10 }, 
+      { filter: "brightness(1) sepia(0)", x: 0, duration: 0.3, onComplete: () => { gsap.to(target, {x: 0, duration: 0.1, clearProps: "filter"}); } }
+    );
+    this.triggerTechBits(target, "#ff3333", 10);
+  },
+    );
+    this.triggerTechBits(target, "#ff3333", 10);
   },
 
-  onKill(attacker, efeito) {
-    if (efeito === "furia") this.fury(attacker);
+  shield(card) { 
+      this.showBuff(card, "ESCUDO DESTRUÍDO", "#ffffff"); 
+  },
+  
+  fury(card) { 
+      this.showBuff(card, "FÚRIA ATIVADA!", "#ff3300"); 
   },
 
+  stun(card) {
+      this.showBuff(card, "SISTEMA CORROMPIDO", "#ff00ff");
+  },
+
+  // NOVA MORTE EM GLITCH
   death(card) {
-    card.animate([
-      { transform: "scale(1) rotate(0deg)", opacity: 1, filter: "grayscale(0)" },
-      { transform: "scale(0) rotate(45deg)", opacity: 0, filter: "grayscale(1) brightness(5) blur(10px)" }
-    ], { duration: 700 });
-    setTimeout(() => { if(card.parentElement) card.remove(); }, 700);
+    card.style.zIndex = "9000";
+    const tl = gsap.timeline();
+    tl.to(card, { opacity: 0.5, x: "+=5", duration: 0.05, repeat: 5, yoyo: true })
+      .to(card, {
+          scaleX: 0.1, scaleY: 1.5, opacity: 1, duration: 0.2, ease: "power2.in",
+          onStart: () => { this.triggerTechBits(card, "#ff0000", 25); }
+      })
+      .to(card, { scaleX: 0, scaleY: 0, opacity: 0, duration: 0.1, onComplete: () => { if(card.parentElement) card.remove(); } });
+  },
+  /* --- DICIONÁRIO DE CORES DO DIRETOR --- */
+  TRAIL_COLORS: {
+      "automato": "#00f3ff",   // Ciano Neon
+      "mecanizado": "#00f3ff", 
+      "ciborgue": "#00f3ff",
+      "drone": "#00f3ff",
+      "humano": "#ffcc00",     // Amarelo Gold
+      "soldado": "#ffcc00",
+      "tropa": "#880000",      // Vermelho Sangue (Mutantes/Feras)
+      "mutacao": "#880000",
+      "default": "#ffffff"     // Branco padrão
   },
 
-  /* --- EFEITOS ESPECÍFICOS --- */
-  taunt(card) { card.style.outline = "3px solid red"; this.pulse(card, "red"); },
-  charge(card) { this.pulse(card, "orange", 1.4); },
-  stun(card) { card.style.filter = "grayscale(1) brightness(0.5)"; this.pulse(card, "#ffff00"); },
-  shield(card) { this.particles(card, "#00aaff"); this.pulse(card, "#00aaff"); },
-  lifeSteal(card) { this.particles(card, "#00ff66"); this.pulse(card, "#00ff66"); },
-  fury(card) { this.pulse(card, "#ff0000", 1.5, 600); }
-};
+ /* --- DICIONÁRIO DE CORES DO DIRETOR --- */
+  TRAIL_COLORS: {
+      "automato": "#00f3ff",   // Ciano Neon
+      "mecanizado": "#00f3ff", 
+      "ciborgue": "#00f3ff",
+      "drone": "#00f3ff",
+      "humano": "#ffcc00",     // Amarelo Gold
+      "soldado": "#ffcc00",
+      "tropa": "#880000",      // Vermelho Sangue (Mutantes/Feras)
+      "mutacao": "#880000",
+      "default": "#ffffff"     // Branco padrão
+  },
 
-window.VFX = VFX; // Garante que o script principal enxergue o VFX
+  /* --- RASTRO DE VELOCIDADE (FANTASMA HOLO BASEADO EM CLASSE) --- */
+  createTrail(cardEl) {
+      if (!cardEl) return;
+      const rect = cardEl.getBoundingClientRect();
+      const ghost = document.createElement("div");
+      
+      // Pega a raça da carta (O tipo está salvo no dataset.raca)
+      const tipo = cardEl.dataset.raca || "default";
+      const color = this.TRAIL_COLORS[tipo] || this.TRAIL_COLORS["default"];
+      
+      ghost.style.position = "fixed";
+      ghost.style.left = rect.left + "px";
+      ghost.style.top = rect.top + "px";
+      ghost.style.width = rect.width + "px";
+      ghost.style.height = rect.height + "px";
+      ghost.style.borderRadius = "8px";
+      ghost.style.pointerEvents = "none";
+      ghost.style.zIndex = "90";
+      
+      // O seu AdditiveBlending traduzido para CSS (mixBlendMode: screen)
+      ghost.style.boxShadow = `0 0 20px ${color}, inset 0 0 20px ${color}`;
+      ghost.style.border = `2px solid ${color}`;
+      ghost.style.background = "rgba(0, 0, 0, 0.5)";
+      ghost.style.mixBlendMode = "screen"; 
+      
+      document.body.appendChild(ghost);
+
+      // A sua animação exata do GSAP (0.4s e Scale 0.8)
+      gsap.to(ghost, {
+          opacity: 0,
+          scale: 0.8, 
+          duration: 0.4,
+          ease: "power1.out",
+          onComplete: () => ghost.remove()
+      });
+  }
+}; // <-- FIM DO OBJETO VFX (Mantenha o resto do arquivo intocado abaixo disto)
+ 
+
+
+window.VFX = VFX; 
 
 /* =========================================================
    2. VISUAL FX ENGINE (THREE.JS - CHUVA DE DADOS CYBERPUNK)
@@ -188,12 +256,11 @@ if (canvas && typeof THREE !== 'undefined') {
 }
 
 /* =========================================================
-   ✨ VFX ENGINE: PARTÍCULAS DINÂMICAS (AVATARES CORRIGIDO)
+   3. VFX ENGINE: PARTÍCULAS DINÂMICAS (AVATARES)
    ========================================================= */
-let avatarAnimationFrame = null; // Agora a animação pode ser controlada e parada
+let avatarAnimationFrame = null; 
 
 function initAvatarParticles() {
-    // 1. Limpa qualquer animação antiga (Evita o Bug do Reset)
     if (avatarAnimationFrame) {
         cancelAnimationFrame(avatarAnimationFrame);
         avatarAnimationFrame = null;
@@ -202,7 +269,6 @@ function initAvatarParticles() {
     const frames = document.querySelectorAll(".hero-avatar-frame");
     if (frames.length === 0) return;
 
-    // Guarda os dados de cada avatar num Array
     const particleSystems = [];
 
     frames.forEach(frame => {
@@ -227,10 +293,8 @@ function initAvatarParticles() {
         particleSystems.push({ ctx, canvas, particles });
     });
 
-    // 2. Loop único para todos os avatares na tela
     function animate() {
         avatarAnimationFrame = requestAnimationFrame(animate);
-
         const themeRgb = getComputedStyle(document.body).getPropertyValue('--theme-rgb').trim() || "0, 255, 255";
 
         particleSystems.forEach(sys => {
@@ -247,7 +311,7 @@ function initAvatarParticles() {
         });
     }
     
-    animate(); // Dispara o motor
+    animate(); 
 }
 
-window.initAvatarParticles = initAvatarParticles; // Garante que o script principal consiga chamá-la
+window.initAvatarParticles = initAvatarParticles;
