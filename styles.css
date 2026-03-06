@@ -183,9 +183,13 @@ body {
 .card-base.epica { border-color: #9c27b0; box-shadow: 0 0 10px rgba(156,39,176,0.3); }
 .card-base.lendaria { border-color: #ffca28; box-shadow: 0 0 15px rgba(255,202,40,0.4); }
 
-.card-base:hover { transform: translateY(-20px) scale(1.1) !important; z-index: 500 !important; }
-.card-base.attacker-selected { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; transform: translateY(-10px); }
-.card-base.deployment-selected { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; transform: translateY(-10px); }
+
+/* O hover com CSS só deve funcionar nas cartas que estão NA MÃO (#hand) */
+#hand .card-base:hover { transform: translateY(-20px) scale(1.1) !important; z-index: 500 !important; }
+/* Removemos os 'transforms' destas classes para o GSAP dominar a mesa em paz */
+.card-base.attacker-selected { border-color: #ff0000; box-shadow: 0 0 20px #ff0000; }
+.card-base.deployment-selected { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; }
+
 .card-base.exhausted { filter: brightness(1.2) contrast(1.2) saturate(1.2) !important; pointer-events: auto !important; }
 .card-base.exhausted::after { content: "ZzZ..."; position: absolute; top: -30px; right: -10px; color: #00ffcc; font-size: 4.2rem; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-shadow: 0 0 15px #00ffcc, 0 0 30px #000, 0 0 5px #fff; z-index: 20; animation: flutuarZTurbinado 2.5s infinite ease-in-out; }
 @keyframes flutuarZTurbinado { 0% { transform: translateY(0) scale(0.8) rotate(5deg); opacity: 0.8; } 50% { transform: translateY(-25px) scale(1.3) rotate(-5deg); opacity: 1; } 100% { transform: translateY(-50px) scale(0.8) rotate(10deg); opacity: 0; } }
@@ -239,7 +243,12 @@ body {
 .card-base[data-effect="provocar"], .card-base[data-effect="disciplinado"] { box-shadow: 0 0 15px rgba(255, 150, 0, 0.8), inset 0 0 20px rgba(255, 100, 0, 0.5) !important; border-color: #ff9900 !important; animation: pulseTaunt 2s infinite alternate; }
 @keyframes pulseTaunt { 100% { box-shadow: 0 0 25px rgba(255, 150, 0, 1), inset 0 0 30px rgba(255, 100, 0, 0.8); border-color: #ffaa00 !important; } }
 
-.card-base[data-effect="furtividade"], .card-base[data-effect="espionagem"] { opacity: 0.75; border-color: #7800ff !important; box-shadow: 0 0 15px rgba(120, 0, 255, 0.5) !important; animation: glitchStealth 4s infinite linear; }
+.card-base[data-effect="furtividade"], .card-base.stealth-card { 
+    opacity: 0.65 !important; 
+    border-color: #7800ff !important; 
+    box-shadow: 0 0 10px rgba(120, 0, 255, 0.5) !important; 
+    animation: none !important; /* Remove o glitch que atrapalhava o clique */
+}
 @keyframes glitchStealth { 0%, 96%, 100% { transform: skewX(0deg); filter: hue-rotate(0deg); } 97% { transform: skewX(5deg) translateX(2px); filter: hue-rotate(90deg); opacity: 0.4; } 98% { transform: skewX(-5deg) translateX(-2px); opacity: 0.9; } 99% { transform: skewX(0deg); opacity: 0.5; } }
 
 .card-base[data-effect="escudo"], .card-base[data-effect="escudo_divino"] { border-color: #00ffff !important; box-shadow: 0 0 0 3px rgba(0, 255, 255, 0.4), 0 0 20px rgba(0, 255, 255, 0.6) !important; }
@@ -389,13 +398,12 @@ body {
 
 /* 😡 FÚRIA (Pulsação Constante) */
 .card-base.fury-card {
-    animation: fury-pulse 0.8s ease-in-out infinite alternate !important;
     border: 2px solid #ff5500 !important;
+    animation: fury-pulse-fixed 0.8s ease-in-out infinite alternate !important;
 }
-
-@keyframes fury-pulse {
-    0% { box-shadow: 0 0 10px #ff2a00, inset 0 0 5px #ff2a00; transform: scale(1) translateY(0); }
-    100% { box-shadow: 0 0 30px #ff6600, inset 0 0 20px #ff6600; transform: scale(1.02) translateY(-2px); }
+@keyframes fury-pulse-fixed {
+    0% { box-shadow: 0 0 10px #ff2a00, inset 0 0 5px #ff2a00; }
+    100% { box-shadow: 0 0 30px #ff6600, inset 0 0 20px #ff6600; }
 }
 /* ⚔️ ATAQUE DUPLO (Eletricidade e Sobrecarga) */
 .card-base.double-attack-card {
@@ -569,61 +577,180 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     z-index: 15 !important;
 }
 /* =========================================
-   ⚔️ UPGRADE VISUAL: STATUS DAS CARTAS (ATK / DEF) 🛡️
+   ⚔️ OVERRIDE DE STATUS (CRAVADOS NAS QUINAS) 🛡️
    ========================================= */
 
+/* 1. O Container fica invisível e sem flexbox */
 .card-stats {
-    position: absolute;
-    bottom: -10px; /* Faz os escudos "saltarem" um pouco para fora da carta */
-    left: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 5px;
-    box-sizing: border-box;
-    z-index: 10;
+    position: absolute !important;
+    top: 0 !important; 
+    left: 0 !important;
+    width: 100% !important; 
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 50 !important;
+    display: block !important; /* Desliga o flexbox que causava o bug na Imagem 2 */
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
+/* 2. As Bolhas Base perfeitas */
 .stat-badge {
-    width: 40px; /* Tamanho maior (era provavelmnete 25 ou 30px) */
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.4rem; /* Fonte bem maior e visível */
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: 900; /* Super negrito */
-    color: #ffffff;
+    position: absolute !important;
+    width: 42px !important; 
+    height: 42px !important;
+    border-radius: 50% !important;
+    clip-path: none !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    font-size: 1.3rem !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-weight: 900 !important; 
+    color: #ffffff !important;
+    margin: 0 !important;
 }
 
-/* ⚔️ ATAQUE: Fogo e Neon Vermelho/Laranja */
+/* 3. O Ataque (Cravado na quina Esquerda Superior) */
 .stat-atk {
-    background: radial-gradient(circle, #ff3300 0%, #880000 100%);
-    border: 3px solid #ffcc00;
-    text-shadow: 2px 2px 0px #000000, 0 0 10px #ffff00;
-    box-shadow: 0 5px 15px rgba(255, 50, 0, 0.8), inset 0 0 8px rgba(0,0,0,0.5);
-    transform: translateX(-5px); /* Puxa um pouco para a esquerda */
+    top: -15px !important;
+    left: -15px !important;
+    background: radial-gradient(circle, #ff3300 0%, #880000 100%) !important;
+    border: 3px solid #ffcc00 !important;
+    text-shadow: 2px 2px 0px #000000, -1px -1px 0px #000000, 0 0 10px #ffff00 !important;
+    box-shadow: 0 5px 15px rgba(255, 50, 0, 0.8), inset 0 0 10px rgba(0,0,0,0.7) !important;
+    transform: none !important; /* Remove offsets que bugavam no mobile */
 }
 
-/* 🛡️ DEFESA: Escudo Ciano/Azul Profundo */
+/* 4. A Defesa (Cravada na quina Direita Superior) */
 .stat-def {
-    background: radial-gradient(circle, #00bbff 0%, #002288 100%);
-    border: 3px solid #00ffff;
-    text-shadow: 2px 2px 0px #000000, 0 0 10px #ffffff;
-    box-shadow: 0 5px 15px rgba(0, 150, 255, 0.8), inset 0 0 8px rgba(0,0,0,0.5);
-    transform: translateX(5px); /* Puxa um pouco para a direita */
+    top: -15px !important;
+    right: -15px !important;
+    background: radial-gradient(circle, #00bbff 0%, #002288 100%) !important;
+    border: 3px solid #00ffff !important;
+    text-shadow: 2px 2px 0px #000000, -1px -1px 0px #000000, 0 0 10px #ffffff !important;
+    box-shadow: 0 5px 15px rgba(0, 150, 255, 0.8), inset 0 0 10px rgba(0,0,0,0.7) !important;
+    transform: none !important;
 }
 
-/* Quando o equipamento ou magia for jogado (badge roxo central) */
+/* 5. Magias e Equipamentos (Centro Topo) */
 .card-stats .stat-badge[style*="background:#b0279b"] {
-    background: radial-gradient(circle, #ff00ff 0%, #440044 100%) !important;
-    border: 3px solid #ff88ff;
-    width: auto;
-    padding: 0 15px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(255, 0, 255, 0.8);
-    margin: 0 auto;
-    transform: translateY(-5px);
+    top: -15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    padding: 0 15px !important;
+    border-radius: 10px !important;
 }
 
+/* 6. Ícone de Raça/Tipo (Desce para não cruzar com a Defesa) */
+.card-type-icon {
+    top: auto !important;
+    bottom: 65px !important; 
+    right: -10px !important;
+    z-index: 30 !important;
+    box-shadow: 0 0 10px rgba(0,0,0,1) !important;
+}
+
+/* 7. O Custo (RAM) no fundo ao centro */
+.card-cost {
+    bottom: -15px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.6), inset 0 0 10px rgba(0,0,0,0.5) !important;
+}
+
+/* 8. Emojis de Efeitos Movidos para o Centro Superior para não sobrepor a Defesa */
+.card-base.taunt-card::after { content: "🛡️"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 60; filter: drop-shadow(0 0 10px #ff9900); }
+.card-base.stealth-card::after { content: "💨"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 60; }
+.card-base.shield-card::after { content: "🔰"; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 1.8rem; z-index: 60; filter: drop-shadow(0 0 5px cyan); }
+
+/* =========================================
+   ✨ HUD DE BUFFS E EFEITOS TECH (VFX)
+   ========================================= */
+.card-hud-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* Deixa cliques passarem */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 150;
+    border-radius: inherit;
+    overflow: hidden; /* Mantém o scanline dentro da carta */
+}
+
+.buff-float-text {
+    font-family: 'Courier New', Courier, monospace;
+    color: #00f3ff;
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.8), 0 0 20px #000;
+    font-size: 2rem;
+    font-weight: 900;
+    opacity: 0;
+    transform: translateY(20px);
+    z-index: 200;
+    position: absolute;
+}
+
+/* Moldura tecnológica e Scanline */
+.tech-frame {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    border: 2px solid transparent;
+    background: rgba(0, 243, 255, 0.05);
+    box-sizing: border-box;
+}
+
+.tech-frame.ui-active {
+    border-color: #00f3ff;
+    animation: tech-pulse 0.2s ease-in-out infinite alternate;
+}
+
+.tech-frame.ui-active::after {
+    content: "";
+    position: absolute;
+    top: -100%; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(0, 243, 255, 0.4), transparent);
+    animation: scanline 1.5s linear infinite;
+}
+
+@keyframes scanline { 0% { top: -100%; } 100% { top: 100%; } }
+@keyframes tech-pulse { from { opacity: 0.8; box-shadow: inset 0 0 10px #00f3ff; } to { opacity: 1; box-shadow: inset 0 0 30px #00f3ff; } }
+
+/* Partículas de Dados (Bits explodindo) */
+.tech-bit-particle {
+    position: fixed;
+    width: 6px; height: 6px;
+    background: #00f3ff;
+    box-shadow: 0 0 10px #00f3ff, 0 0 5px white;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+}
+
+/* =========================================
+   🎯 ANCORAGEM MAGNÉTICA (Apenas GSAP)
+   ========================================= */
+.slot {
+    position: relative !important;
+}
+
+.slot .card-base {
+    position: absolute !important;
+    margin: 0 !important;
+    /* SEM TOP, SEM LEFT, SEM TRANSFORM. O GSAP FARÁ ISSO. */
+}
+
+.slot .card-base.attacker-selected {
+    box-shadow: 0 0 30px #00ffff, inset 0 0 20px #00ffff !important;
+    border-color: #00ffff !important;
+    filter: brightness(1.3) !important;
+    /* GARANTA QUE NÃO HÁ "transform:" AQUI! */
+}
+/* 4. Conserta a seleção de Magias/Equipamentos na mão */
+.card-base.deployment-selected {
+    box-shadow: 0 0 40px #00ff00, inset 0 0 20px #00ff00 !important;
+    border-color: #00ff00 !important;
+    filter: brightness(1.3) !important;
+}
