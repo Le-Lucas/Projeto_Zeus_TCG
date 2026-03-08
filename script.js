@@ -119,7 +119,7 @@ const baseDeck = [
     { title: "Inspetor de Perimetro", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./drone2.png"},
     { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./hacker_elite.png" },
     { title: "Sentinela Corp Muralha", tipo: "automato", raridade: "rara", custo: 5, atk: 2, def: 7, efeito: "provocar", text: "⚡ Sobrecarga", img: "./muralha.png" },
-    { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./fantasma.png" },
+    { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./infiltrado.png" },
     { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
     { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" },
 
