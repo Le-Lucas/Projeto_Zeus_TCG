@@ -419,32 +419,79 @@ function updateAuras() {
 
 function atualizarHudSobrecarga() {
     let sbHud = document.getElementById("sobrecarga-hud");
+    
+    // ⚡ Injeta a animação de "Pulso Crítico" no CSS se não existir
+    if (!document.getElementById("anim-sobrecarga")) {
+        const style = document.createElement("style");
+        style.id = "anim-sobrecarga";
+        style.innerHTML = `
+            @keyframes pulse-sobrecarga {
+                0% { box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000; }
+                100% { box-shadow: 0 0 25px #ff0000, inset 0 0 25px #ff0000; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     if (!sbHud) {
         sbHud = document.createElement("div");
         sbHud.id = "sobrecarga-hud";
-        sbHud.style.cssText = "position:absolute; right: 20px; top: 35%; transform:translateY(-50%); background:rgba(10,5,5,0.9); border:2px solid #ff3300; padding:10px; color:#ff3300; font-family:'Courier New', monospace; font-weight:bold; box-shadow:0 0 15px rgba(255,0,0,0.5); border-radius:5px; z-index:50; text-align:center; pointer-events:none; transition: all 0.3s ease;";
+        // ⚡ AJUSTE AQUI: "left" aumentado para empurrar para a direita, "bottom" levemente ajustado. Padding menor.
+        sbHud.style.cssText = "position:absolute; left: 60px; bottom: 100px; background:rgba(10,5,5,0.85); border:1px solid #444; padding:8px 12px; border-radius:5px; z-index:50; pointer-events:none; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);";
         document.body.appendChild(sbHud);
     }
 
     if (sobrecargaAtiva.player > 0 || sobrecargaAtiva.enemy > 0) {
-        sbHud.style.display = "block";
+        sbHud.style.display = "flex";
         
-        let pText = sobrecargaAtiva.player === 5 ? "MAX (BÔNUS ATIVO!)" : `${sobrecargaAtiva.player}/5`;
-        let eText = sobrecargaAtiva.enemy === 5 ? "MAX (BÔNUS ATIVO!)" : `${sobrecargaAtiva.enemy}/5`;
-        let pColor = sobrecargaAtiva.player === 5 ? "#00ffff" : "#ff3300";
-        let eColor = sobrecargaAtiva.enemy === 5 ? "#00ffff" : "#ff3300";
+        // 🟢 Lógica de Cores do Reator
+        const getCor = (lvl) => {
+            if (lvl >= 5) return "#ff0000"; // Nível Crítico (Vermelho)
+            if (lvl >= 3) return "#ffcc00"; // Nível Médio (Amarelo)
+            if (lvl >= 1) return "#00ff00"; // Nível Baixo (Verde)
+            return "transparent";
+        };
 
-        sbHud.innerHTML = `<div style="color:#fff; margin-bottom:8px;">⚠️ NÍVEL DE SOBRECARGA ⚠️</div>
-                           <div style="color:${pColor}; text-shadow:0 0 5px ${pColor};">Sua Tropa: ${pText}</div>
-                           <div style="color:${eColor}; text-shadow:0 0 5px ${eColor};">Inimiga: ${eText}</div>`;
+        // 🚨 Lógica de Animação
+        const getAnimacao = (lvl, cor) => {
+            if (lvl >= 5) return "animation: pulse-sobrecarga 0.6s infinite alternate;";
+            return `box-shadow: 0 0 8px ${cor};`;
+        };
 
-        if(sobrecargaAtiva.player === 5 || sobrecargaAtiva.enemy === 5) {
-            sbHud.style.borderColor = "#00ffff";
-            sbHud.style.boxShadow = "0 0 25px rgba(0,255,255,0.8)";
-        } else {
-            sbHud.style.borderColor = "#ff3300";
+        let pLvl = sobrecargaAtiva.player;
+        let eLvl = sobrecargaAtiva.enemy;
+        let pCor = getCor(pLvl);
+        let eCor = getCor(eLvl);
+
+        // ⚡ AJUSTE AQUI: Fontes menores (0.65rem e 0.55rem), gap menor (15px), e barras menores (14x55px).
+        sbHud.innerHTML = `
+            <div style="color:#fff; font-size:0.65rem; font-family:'Courier New', monospace; font-weight:bold; letter-spacing:1px; margin-bottom:8px; text-shadow: 0 0 5px #fff;">⚡ SOBRECARGA</div>
+            
+            <div style="display:flex; gap: 15px; width: 100%; justify-content: center;">
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width: 14px; height: 55px; background: rgba(255,255,255,0.1); border: 1px solid #555; border-radius: 3px; position: relative; overflow: hidden; margin-bottom: 4px;">
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: ${(pLvl/5)*100}%; background: ${pCor}; transition: height 0.3s ease, background 0.3s ease; ${getAnimacao(pLvl, pCor)}"></div>
+                    </div>
+                    <div style="color:#00ffff; font-size:0.55rem; font-family:'Courier New', monospace; font-weight:bold;">VOCÊ</div>
+                </div>
+
+                <div style="display:flex; flex-direction:column; align-items:center;">
+                    <div style="width: 14px; height: 55px; background: rgba(255,255,255,0.1); border: 1px solid #555; border-radius: 3px; position: relative; overflow: hidden; margin-bottom: 4px;">
+                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: ${(eLvl/5)*100}%; background: ${eCor}; transition: height 0.3s ease, background 0.3s ease; ${getAnimacao(eLvl, eCor)}"></div>
+                    </div>
+                    <div style="color:#ff0055; font-size:0.55rem; font-family:'Courier New', monospace; font-weight:bold;">NEXUS</div>
+                </div>
+            </div>
+        `;
+
+        if (pLvl === 5 || eLvl === 5) {
+            sbHud.style.borderColor = "#ff0000";
             sbHud.style.boxShadow = "0 0 15px rgba(255,0,0,0.5)";
+        } else {
+            sbHud.style.borderColor = "#444";
+            sbHud.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
         }
+
     } else {
         sbHud.style.display = "none";
     }
