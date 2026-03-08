@@ -3,7 +3,12 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-window.onerror = function(msg) { if (msg.includes("gsap is not defined")) return true; return false; };
+window.onerror = function(msg, url, line) { 
+    if (msg.includes("gsap is not defined")) return true; 
+    alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
+    return false; 
+};
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ==========================================
@@ -20,7 +25,6 @@ function preloadAssets() {
     imageUrls.forEach(url => { const img = new Image(); img.src = url; });
     console.log(`[SISTEMA] Iniciando download fantasma de ${imageUrls.size} texturas...`);
 }
-
 
 // ==========================================
 // 1. MOTOR DE ESCALA E TOASTS
@@ -86,7 +90,7 @@ const baseDeck = [
     { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "https://files.catbox.moe/ebt0u6.png" },
     { title: "Barreira Eletrônica", tipo: "estrutura", raridade: "comum", custo: 2, atk: 0, def: 7, efeito: "provocar", img: "https://files.catbox.moe/b097ur.png" },
     { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
-    { title: "Interceptor de Zeus", tipo: "automato", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "sentinela", img: "https://files.catbox.moe/05e01v.png" },
+    { title: "Interceptor de Zeus", tipo: "automato", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "https://files.catbox.moe/05e01v.png" },
     { title: "Cobaia Estágio 1", tipo: "tropa", raridade: "rara", custo: 4, atk: 3, def: 6, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
     { title: "Sobrevivente Rebelde", tipo: "tropa", raridade: "rara", custo: 4, atk: 5, def: 2, efeito: "ataque_duplo", img: "https://i.postimg.cc/bNQHh5Xx/Sobrevivente-Rebelde.png" },
     { title: "Exoesqueleto Mk.II", tipo: "tropa", raridade: "rara", custo: 6, atk: 5, def: 5, efeito: "nenhum", img: "https://i.postimg.cc/qMfXWTFQ/Exoesqueleto-Mk-II.png" },
@@ -94,7 +98,7 @@ const baseDeck = [
     { title: "Mutante Instável", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
     { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
     { title: "Blindado de Transporte", tipo: "mecanizado", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
-    { title: "Quimera Alada", tipo: "tropa", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "voar", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
+    { title: "Quimera Alada", tipo: "tropa", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "furia", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
     { title: "Ceifador da Unidade", tipo: "tropa", raridade: "epica", custo: 6, atk: 6, def: 5, efeito: "roubo_vida", img: "https://i.postimg.cc/pLcvXqzj/Ceifador-da-Unidade.png" },
     { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "https://i.postimg.cc/q7tTtyx1/Sentinela-Omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
     { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "https://i.postimg.cc/0yXv2cDX/Projeto-Zeus-Alfa.png" },
@@ -109,7 +113,25 @@ const baseDeck = [
     { title: "Hack de Sobrecarga", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "dano_4", img: "https://files.catbox.moe/tl6rvy.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
     { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "https://i.postimg.cc/Gm5vcHy5/Colete-de-klevar.png" },
     { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "https://i.postimg.cc/R0KzzDWy/rifle.png" },
-    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "furia", text: "+3 ATK, Fúria, perde -3 HP.", img: "https://i.postimg.cc/bvkjjBGh/chip.png" }
+    { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "nenhum", text: "+3 ATK, Fúria, perde -3 HP.", img: "https://i.postimg.cc/bvkjjBGh/chip.png" },
+    // UNIDADES DE ALERTA (Agentes e Resistência)
+    { title: "Gladiador de Subsolo", tipo: "agente", raridade: "rara", custo: 2, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./gladiador.png" },
+    { title: "Inspetor de Perimetro", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./drone2.png"},
+    { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./hacker_elite.png" },
+    { title: "Sentinela Corp Muralha", tipo: "automato", raridade: "rara", custo: 5, atk: 2, def: 7, efeito: "provocar", text: "⚡ Sobrecarga", img: "./muralha.png" },
+    { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./fantasma.png" },
+    { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
+    { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" },
+
+    // FEITIÇOS E EQUIPAMENTOS DE ALERTA
+    //{ title: "Protocolo de Caos", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "sobrecarga +2", text: "Aumenta sobrecarga em 2.", img: "./caos.png" },
+   // { title: "Sobrecarga de BIOS", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano 2", text: "Causa 2 de dano.", img: "./bios.png" },
+   // { title: "Silenciar Alarmes", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "sobrecarga -2", text: "Reduza o seu sobrecarga ou o do oponente em -2.", img: "./silenciar.png" },
+   // { title: "Backup de Emergência", tipo: "feitico", raridade: "epica", custo: 4, atk: 0, def: 0, efeito: "sobrecarga +5", text: "Sobe seu sobrecarga para 5.", img: "./backup.png" },
+   // { title: "Blecaute Total", tipo: "feitico", raridade: "lendaria", custo: 6, atk: 0, def: 0, efeito: "sobrecarga -5", text: "Zera sobrecarga inimiga", img: "./blecaute.png" },
+   // { title: "Espelho de Frequência", tipo: "feitico", raridade: "epica", custo: 7, atk: 0, def: 0, efeito: "sobrecarga-3", text: "sobrecarga -3", img: "./espelho.png" },
+   // { title: "Carga de Sacrifício", tipo: "feitico", raridade: "epica", custo: 5, atk: 0, def: 0, efeito: "dano 4", text:"causa 4 de dano a uma unidade inimiga", img: "./sacrificio.png" },
+    //{ title: "Amplificador de Sinal", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "sobrecarga", text: "Equipar: Ao final do turno, aumente seu sobrecarga em +1.", img: "./amplificador.png" }
 ];
 
 // ==========================================
@@ -124,6 +146,8 @@ let attackToken = "player"; // Quem ataca na rodada
 let currentStep = "deploy_attacker"; // deploy_attacker -> deploy_defender -> combat
 let isPlayerTurn = true; 
 let selectedAttacker = null, selectedCardFromHand = null, turnTime = 80, timerInterval, gameIsOver = false, isSystemLocked = false, draggedCard = null, selectedHeroObj = null;
+// Memória das correntes de Sobrecarga
+let sobrecargaAtiva = { player: 0, enemy: 0 };
 
 // ==========================================
 // 4. INICIALIZAÇÃO
@@ -234,6 +258,7 @@ function initDeckBuilder() {
     renderVitrine();
     document.getElementById("btn-back-from-deck").onclick = () => { playSound("click"); document.getElementById("deck-builder-screen").classList.remove("active"); document.getElementById("hero-screen").classList.add("active"); };
 }
+
 function renderVitrine() {
     const poolGrid = document.getElementById("card-pool-grid"); if(!poolGrid) return; poolGrid.innerHTML = "";
     let uniqueCards = []; playerCollection.forEach(card => { if(!uniqueCards.find(c => c.title === card.title)) uniqueCards.push(card); });
@@ -241,11 +266,14 @@ function renderVitrine() {
     uniqueCards.forEach(card => { const div = document.createElement("div"); div.className = `pool-card ${card.raridade}`; div.innerHTML = `<div class="inspect-btn" title="Inspecionar">👁️</div><img src="${card.img}" class="pool-img"><div class="pool-info"><div class="pool-title">${card.title}</div><div class="pool-cost">${card.custo}⚡</div></div>`; div.onclick = (e) => { if(e.target.classList.contains("inspect-btn")) openInspectModal(card); else addCardToDeck(card); }; poolGrid.appendChild(div); });
     updateDeckUI();
 }
+
 function openInspectModal(cardData) {
     playSound("click"); const container = document.getElementById("inspect-card-container"); if(!container) return; container.innerHTML = ""; const visualCard = createCard(cardData); visualCard.onclick = null; visualCard.ondragstart = null; visualCard.style.position = "relative"; visualCard.style.cursor = "default"; container.appendChild(visualCard); document.getElementById("inspect-modal").classList.add("active");
 }
+
 function addCardToDeck(card) { if (customDeck.length < 15) { if (customDeck.filter(c => c.title === card.title).length < 3) { customDeck.push({...card}); updateDeckUI(); } else { playSound("error"); alert("Máximo de 3 cópias iguais no deck."); } } }
 function removeCardFromDeck(index) { customDeck.splice(index, 1); updateDeckUI(); }
+
 function updateDeckUI() {
     const deckList = document.getElementById("current-deck-list"); if(!deckList) return; deckList.innerHTML = ""; customDeck.sort((a,b) => a.custo - b.custo);
     customDeck.forEach((card, index) => { const d = document.createElement("div"); d.className="deck-item"; d.innerHTML=`<span>${card.title}</span> <span style="color:cyan">${card.custo}⚡</span>`; d.onclick=()=>removeCardFromDeck(index); deckList.appendChild(d); });
@@ -262,6 +290,7 @@ function initMarket() {
         div.onclick = () => { playSound("click"); openMarketModal(card, copies); }; grid.appendChild(div);
     });
 }
+
 function openMarketModal(card, copies) {
     document.getElementById("transact-title").innerText = card.title; document.getElementById("transact-copies").innerText = copies; document.getElementById("transaction-modal").classList.add("active");
     const custo = card.raridade === 'lendaria' ? 500 : (card.raridade === 'epica' ? 200 : (card.raridade === 'rara' ? 100 : 50));
@@ -269,6 +298,8 @@ function openMarketModal(card, copies) {
     document.getElementById("btn-buy-card").onclick = () => { if(playerFragments >= custo) { playerFragments -= custo; playerCollection.push({...card}); initMarket(); openMarketModal(card, copies+1); playSound("deploy"); document.getElementById("fragment-count").textContent = playerFragments; } else { playSound("error"); alert("HDs INSUFICIENTES"); } };
     document.getElementById("btn-sell-card").innerText = `VENDER (+${custo/5}💽)`;
     document.getElementById("btn-sell-card").onclick = () => { if(copies > 0) { playerFragments += custo/5; const idx = playerCollection.findIndex(c => c.title === card.title); if(idx > -1) playerCollection.splice(idx,1); initMarket(); openMarketModal(card, copies-1); playSound("click"); document.getElementById("fragment-count").textContent = playerFragments; } };
+    
+    // 🚨 A CHAVE QUE FALTAVA ERA AQUI!
     document.getElementById("btn-close-transaction").onclick = () => document.getElementById("transaction-modal").classList.remove("active");
 }
 
@@ -296,25 +327,92 @@ function recalculateStats(c) {
     if (activeEffect === "furtividade") c.classList.add("stealth-card"); 
     if (activeEffect === "furia") c.classList.add("fury-card");
     
-    if (c.dataset.type !== "feitico" && currentHp <= 0 && c.dataset.dead !== "true") { c.dataset.dead = "true"; processCardEffect("UltimoSuspiro", c, c.parentElement.dataset.owner); if(window.VFX && window.VFX.death) VFX.death(c); else c.remove(); setTimeout(updateAuras, 300); }
+    if (c.dataset.type !== "feitico" && currentHp <= 0 && c.dataset.dead !== "true") { 
+        c.dataset.dead = "true"; 
+        processCardEffect("UltimoSuspiro", c, c.parentElement.dataset.owner); 
+        if(window.VFX && window.VFX.death) VFX.death(c); else c.remove(); 
+        setTimeout(updateAuras, 300); 
+    }
 }
 
 function updateAuras() {
-    ["player-field", "enemy-field"].forEach(f => {
+    ;["player-field", "enemy-field"].forEach(f => {
         const field = document.getElementById(f); if(!field) return;
-        const cards = Array.from(field.querySelectorAll('.card-base')); cards.forEach(c => { c.dataset.auraAtk = 0; c.dataset.auraHp = 0; c.classList.remove("aura-taunt"); });
+        const owner = f.split("-")[0];
+        const cards = Array.from(field.querySelectorAll('.card-base')); 
+        
+        cards.forEach(c => { c.dataset.auraAtk = 0; c.dataset.auraHp = 0; c.classList.remove("aura-taunt"); });
         const temGeneral = cards.some(c => c.dataset.name === "General Mão de Ferro" && c.dataset.dead !== "true");
+
+        const tropasSobrecarga = cards.filter(c => {
+            let ef = c.dataset.effect || c.dataset.originalEffect || "";
+            return ef.includes("sobrecarga") && c.dataset.dead !== "true" && c.dataset.type !== "feitico";
+        });
+        
+        let nivelSobrecarga = tropasSobrecarga.length;
+        sobrecargaAtiva[owner] = nivelSobrecarga; 
+
         cards.forEach(c => {
             if (c.dataset.dead === "true" || c.dataset.type === "feitico") return;
-            let aAtk = 0; let aHp = 0; if (temGeneral && c.dataset.name !== "General Mão de Ferro") { aHp += 2; c.classList.add("aura-taunt"); }
+            let aAtk = 0; let aHp = 0; 
+            
+            if (temGeneral && c.dataset.name !== "General Mão de Ferro") { aHp += 2; c.classList.add("aura-taunt"); }
+            
+            let ef = c.dataset.effect || c.dataset.originalEffect || "";
+            if (nivelSobrecarga === 5 && ef.includes("sobrecarga")) {
+                aAtk += 5;
+                aHp += 5;
+                if(window.VFX && window.VFX.pulse && !c.dataset.pulsingSobrecarga) {
+                    c.dataset.pulsingSobrecarga = "true";
+                    VFX.pulse(c, "#00ffff", 1.2, 2000); 
+                }
+            } else {
+                c.dataset.pulsingSobrecarga = ""; 
+            }
+
             c.dataset.auraAtk = aAtk; c.dataset.auraHp = aHp; recalculateStats(c);
         });
     });
+
+    atualizarHudSobrecarga();
+} // 🚨 A CHAVE DO UPDATEAURAS ESTÁ AQUI
+
+function atualizarHudSobrecarga() {
+    let sbHud = document.getElementById("sobrecarga-hud");
+    if (!sbHud) {
+        sbHud = document.createElement("div");
+        sbHud.id = "sobrecarga-hud";
+        sbHud.style.cssText = "position:absolute; right: 20px; top: 35%; transform:translateY(-50%); background:rgba(10,5,5,0.9); border:2px solid #ff3300; padding:10px; color:#ff3300; font-family:'Courier New', monospace; font-weight:bold; box-shadow:0 0 15px rgba(255,0,0,0.5); border-radius:5px; z-index:50; text-align:center; pointer-events:none; transition: all 0.3s ease;";
+        document.body.appendChild(sbHud);
+    }
+
+    if (sobrecargaAtiva.player > 0 || sobrecargaAtiva.enemy > 0) {
+        sbHud.style.display = "block";
+        
+        let pText = sobrecargaAtiva.player === 5 ? "MAX (BÔNUS ATIVO!)" : `${sobrecargaAtiva.player}/5`;
+        let eText = sobrecargaAtiva.enemy === 5 ? "MAX (BÔNUS ATIVO!)" : `${sobrecargaAtiva.enemy}/5`;
+        let pColor = sobrecargaAtiva.player === 5 ? "#00ffff" : "#ff3300";
+        let eColor = sobrecargaAtiva.enemy === 5 ? "#00ffff" : "#ff3300";
+
+        sbHud.innerHTML = `<div style="color:#fff; margin-bottom:8px;">⚠️ NÍVEL DE SOBRECARGA ⚠️</div>
+                           <div style="color:${pColor}; text-shadow:0 0 5px ${pColor};">Sua Tropa: ${pText}</div>
+                           <div style="color:${eColor}; text-shadow:0 0 5px ${eColor};">Inimiga: ${eText}</div>`;
+
+        if(sobrecargaAtiva.player === 5 || sobrecargaAtiva.enemy === 5) {
+            sbHud.style.borderColor = "#00ffff";
+            sbHud.style.boxShadow = "0 0 25px rgba(0,255,255,0.8)";
+        } else {
+            sbHud.style.borderColor = "#ff3300";
+            sbHud.style.boxShadow = "0 0 15px rgba(255,0,0,0.5)";
+        }
+    } else {
+        sbHud.style.display = "none";
+    }
 }
 
 function getCardDesc(item) {
     if (item.text) return item.text; let eff = item.efeito; if (!eff || eff === "nenhum") return "";
-    const dict = { "provocar": "🛡️ Provocar: Inimigos devem atacar esta unidade.", "ataque_duplo": "⚔️ Ataque Duplo: Pode atacar 2 vezes.", "roubo_vida": "❤️ Roubo de Vida.", "escudo_divino": "🔰 Escudo Divino.", "escudo": "🔰 Escudo.", "furtividade": "🥷 Furtividade.", "voar": "🦅 Voar.", "regeneracao": "🧬 Regeneração 1.", "cura_turno": "💉 Cura 1 HP do Herói.", "reciclar": "♻️ Reciclar.", "investida": "⚡ Ataque Rápido.", "ataque_rapido": "⚡ Ataque Rápido.", "atordoar": "🔌 Atordoar.", "dano_area": "💥 Dano em Área." };
+    const dict = { "sobrecarga": "⚡ Sobrecarga: Com 5 no campo, todas ganham +5/+5.", "provocar": "🛡️ Provocar: Inimigos devem atacar esta unidade.", "ataque_duplo": "⚔️ Ataque Duplo: Pode atacar 2 vezes.", "roubo_vida": "❤️ Roubo de Vida.", "escudo_divino": "🔰 Escudo Divino.", "escudo": "🔰 Escudo.", "furtividade": "🥷 Furtividade.", "voar": "🦅 Voar.", "regeneracao": "🧬 Regeneração 1.", "cura_turno": "💉 Cura 1 HP do Herói.", "reciclar": "♻️ Reciclar.", "investida": "⚡ Ataque Rápido.", "ataque_rapido": "⚡ Ataque Rápido.", "atordoar": "🔌 Atordoar.", "dano_area": "💥 Dano em Área." };
     return dict[eff] || `Efeito: ${eff.replace(/_/g, ' ').toUpperCase()}`;
 }
 
@@ -333,8 +431,17 @@ function createCard(item) {
     c.innerHTML = `<div class="card-title">${item.title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>`;
     
     let pressTimer; 
-    c.onmouseenter = () => { if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && selectedCardFromHand !== c) { gsap.to(c, { y: -40, scale: 0.85, zIndex: 100, duration: 0.2 }); } };
-    c.onmouseleave = () => { clearTimeout(pressTimer); if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && selectedCardFromHand !== c) { gsap.to(c, { y: 0, scale: 0.7, zIndex: c.dataset.origZ, duration: 0.2 }); } };
+    c.onmouseenter = () => { 
+        if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && !selectedCardFromHand) { 
+            gsap.to(c, { y: -40, scale: 0.85, zIndex: 100, duration: 0.2 }); 
+        } 
+    };
+    c.onmouseleave = () => { 
+        clearTimeout(pressTimer); 
+        if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && selectedCardFromHand !== c) { 
+            gsap.to(c, { y: 0, scale: 0.7, zIndex: c.dataset.origZ, duration: 0.2 }); 
+        } 
+    };
     c.onclick = handleCardClick; 
     c.oncontextmenu = (e) => { e.preventDefault(); openInspectModal(item); };
     c.ontouchstart = () => { pressTimer = setTimeout(() => { openInspectModal(item); }, 500); };
@@ -355,30 +462,38 @@ function handleCardClick(e) {
 
     if(p.id === "hand"){ 
         playSound("click"); 
-        if(selectedCardFromHand === c){ selectedCardFromHand = null; c.classList.remove("deployment-selected"); arrangeHand(); } 
-        else { if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected"); selectedCardFromHand = c; c.classList.add("deployment-selected"); gsap.to(c, { scale: 1.3, y: -120, rotation: 0, zIndex: 100, duration: 0.3, ease: "back.out(1.7)" }); arrangeHand(c); } 
+        if(selectedCardFromHand === c){ 
+            selectedCardFromHand = null; 
+            c.classList.remove("deployment-selected"); 
+            arrangeHand(); 
+        } 
+        else { 
+            if(selectedCardFromHand) selectedCardFromHand.classList.remove("deployment-selected"); 
+            selectedCardFromHand = c; 
+            c.classList.add("deployment-selected"); 
+            gsap.to(c, { scale: 0.10, y: -20, rotation: 0, zIndex: 100, duration: 0.3, ease: "back.out(1.7)" }); 
+            arrangeHand(c); 
+        } 
     } 
     else if (isSpellSelected) { executeSpell(selectedCardFromHand, c, p.dataset.owner); }
-    else if (isEquipSelected) { executeEquip(selectedCardFromHand, c, p.dataset.owner); } 
-  else if(p.dataset.owner === "player" && currentStep === "combat" && attackToken === "player"){ 
+    else if (isEquipSelected) { executeEquip(selectedCardFromHand, c, p.dataset.owner); }
+    else if(p.dataset.owner === "player" && currentStep === "combat" && attackToken === "player"){ 
         if(c.dataset.hasAttacked === "true" || c.classList.contains("exhausted")) { playSound("error"); return; }
         
-        // 1. Se clicar na mesma carta para DESMARCAR
         if(selectedAttacker === c) { 
             selectedAttacker = null; 
             c.classList.remove("attacker-selected"); 
-            gsap.to(c, { scale: 0.60, y: 0, duration: 0.2, zIndex: 10 }); // Volta a colar no chão
+            gsap.to(c, { scale: 0.60, y: 0, duration: 0.2, zIndex: 10 }); 
         } 
-        // 2. Se clicar para SELECIONAR um novo atacante
         else { 
             if(selectedAttacker) {
                 selectedAttacker.classList.remove("attacker-selected"); 
-                gsap.to(selectedAttacker, { scale: 0.60, y: 0, duration: 0.2, zIndex: 10 }); // Devolve a anterior ao chão
+                gsap.to(selectedAttacker, { scale: 0.60, y: 0, duration: 0.2, zIndex: 10 }); 
             }
             selectedAttacker = c; 
             c.classList.add("attacker-selected"); 
             playSound("click"); 
-            gsap.to(c, { scale: 0.68, y: -20, duration: 0.2, ease: "back.out(2)", zIndex: 100 }); // Levanta da mesa!
+            gsap.to(c, { scale: 0.68, y: -20, duration: 0.2, ease: "back.out(2)", zIndex: 100 }); 
         } 
     }
     else if(p.dataset.owner === "enemy" && selectedAttacker){ 
@@ -451,11 +566,28 @@ function executeSpell(spellCard, targetElement, targetOwner) {
 }
 
 function processCardEffect(gatilho, cartaObj, owner) {
-    const efeito = cartaObj.dataset.effect || cartaObj.dataset.originalEffect; const isPlayer = owner === "player";
+    const efeito = cartaObj.dataset.effect || cartaObj.dataset.originalEffect; 
+    const isPlayer = owner === "player";
+
     if (gatilho === "AoJogar") {
-        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { let revivida = graveyard.player.pop(); updateLifeAndMana(); let novaCarta = createCard(revivida); document.getElementById("hand").appendChild(novaCarta); gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); if(typeof arrangeHand === "function") arrangeHand(); playSound("deploy"); }
-        if (efeito === "atordoar") { const targets = document.getElementById(isPlayer ? "enemy-field" : "player-field").querySelectorAll('.card-base'); if(targets.length > 0) { const t = targets[Math.floor(Math.random() * targets.length)]; t.classList.add("exhausted"); t.dataset.hasAttacked = "true"; if(window.VFX && window.VFX.stun) VFX.stun(t); } }
-        if (efeito === "roubo_energia" && isPlayer) { enemyLife -= 1; updateLifeAndMana(); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("enemy-hero"), "#ff00ff"); }
+        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
+            let revivida = graveyard.player.pop(); updateLifeAndMana(); 
+            let novaCarta = createCard(revivida); document.getElementById("hand").appendChild(novaCarta); 
+            gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
+            if(typeof arrangeHand === "function") arrangeHand(); playSound("deploy"); 
+        }
+        
+        if (efeito === "atordoar") { 
+            const targets = document.getElementById(isPlayer ? "enemy-field" : "player-field").querySelectorAll('.card-base'); 
+            if(targets.length > 0) { 
+                const t = targets[Math.floor(Math.random() * targets.length)]; t.classList.add("exhausted"); t.dataset.hasAttacked = "true"; if(window.VFX && window.VFX.stun) VFX.stun(t); 
+            } 
+        }
+        
+        if (efeito === "roubo_energia" && isPlayer) { 
+            enemyLife -= 1; updateLifeAndMana(); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("enemy-hero"), "#ff00ff"); 
+        }
+        
         const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
         
         if (efeito === "tropa_coordenada") {
@@ -486,10 +618,37 @@ function processCardEffect(gatilho, cartaObj, owner) {
                 } 
             });
         }
-    } 
+    }
     
-    if (gatilho === "UltimoSuspiro") { graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); if (efeito === "evocar_recruta") { const slot = cartaObj.parentElement; setTimeout(() => { if(slot && !slot.querySelector('.card-base')) { const recruit = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha")); recruit.dataset.owner = owner; gsap.set(recruit, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); slot.appendChild(recruit); recruit.dataset.hasAttacked="false"; if(window.VFX && window.VFX.onSummon) VFX.onSummon(recruit, "provocar"); } }, 500); } }
-    if (gatilho === "FimDeTurno") { if (efeito === "cura_turno" && isPlayer) { playerLife = Math.min(playerLife+1, maxLife); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("player-hero"), "#00ff00"); } if (efeito === "regeneracao") { cartaObj.dataset.damageTaken = Math.max(0, (parseInt(cartaObj.dataset.damageTaken) || 0) - 1); recalculateStats(cartaObj); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(cartaObj, "#00ff00"); } }
+    if (gatilho === "UltimoSuspiro") { 
+        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); 
+
+        if (efeito === "evocar_recruta") { 
+            const slot = cartaObj.parentElement; 
+            setTimeout(() => { 
+                if(slot && !slot.querySelector('.card-base')) { 
+                    const recruit = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha")); 
+                    recruit.dataset.owner = owner; 
+                    gsap.set(recruit, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); 
+                    slot.appendChild(recruit); 
+                    recruit.dataset.hasAttacked="false"; 
+                    if(window.VFX && window.VFX.onSummon) VFX.onSummon(recruit, "provocar"); 
+                } 
+            }, 500); 
+        } 
+    }
+
+    if (gatilho === "FimDeTurno") { 
+        if (efeito === "cura_turno" && isPlayer) { 
+            playerLife = Math.min(playerLife+1, maxLife); 
+            if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("player-hero"), "#00ff00"); 
+        } 
+        if (efeito === "regeneracao") { 
+            cartaObj.dataset.damageTaken = Math.max(0, (parseInt(cartaObj.dataset.damageTaken) || 0) - 1); 
+            recalculateStats(cartaObj); 
+            if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(cartaObj, "#00ff00"); 
+        } 
+    }
 }
 
 // ==========================================
@@ -635,7 +794,14 @@ function updateUIState() {
 let maxTurnTime = 80;
 function startTimer(s) { turnTime = s; maxTurnTime = s; const container = document.getElementById("elevator-timer"); if (container && container.children.length !== s) { container.innerHTML = ""; for(let i = 1; i <= s; i++) { let node = document.createElement("div"); node.className = "timer-node pending"; node.id = "timer-node-" + i; node.innerText = i; container.appendChild(node); } } updateElevatorTimer(); clearInterval(timerInterval); timerInterval = setInterval(() => { if(!isSystemLocked && !gameIsOver) { turnTime--; updateElevatorTimer(); if(turnTime <= 0) handleActionBtn(); } }, 1000); }
 function updateElevatorTimer() { const container = document.getElementById("elevator-timer"); if(!container) return; let elapsed = maxTurnTime - turnTime + 1; for(let i = 1; i <= maxTurnTime; i++) { let node = document.getElementById("timer-node-" + i); if (node) { if (i === elapsed) node.className = "timer-node active"; else if (i < elapsed) node.className = "timer-node passed"; else node.className = "timer-node pending"; } } }
-function updateLifeAndMana() { if(document.getElementById("mana")) document.getElementById("mana").innerText = `${playerMana}/${maxMana}`; if(document.getElementById("player-life")) document.getElementById("player-life").innerText = playerLife; if(document.getElementById("enemy-life")) document.getElementById("enemy-life").innerText = enemyLife; if(document.getElementById("cards-in-deck")) document.getElementById("cards-in-deck").innerText = playerDeck.length; if(document.getElementById("cards-in-grave")) document.getElementById("cards-in-grave").innerText = graveyard.player.length; }
+function updateLifeAndMana() { 
+    if(document.getElementById("mana")) document.getElementById("mana").innerText = `${playerMana}/${maxMana}`; 
+    if(document.getElementById("player-life")) document.getElementById("player-life").innerText = playerLife; 
+    if(document.getElementById("enemy-life")) document.getElementById("enemy-life").innerText = enemyLife; 
+    if(document.getElementById("cards-in-deck")) document.getElementById("cards-in-deck").innerText = playerDeck.length; 
+    if(document.getElementById("cards-in-grave")) document.getElementById("cards-in-grave").innerText = graveyard.player.length; 
+}
+
 function createSlots(f, o) { for(let i=0; i<5; i++) { const s = document.createElement("div"); s.className = "slot"; s.dataset.owner = o; if(o === "player") { s.onclick = (e) => { if(selectedCardFromHand) executePlayCard(e.currentTarget, selectedCardFromHand); }; s.ondragover = (e) => { e.preventDefault(); }; s.ondrop = (e) => { e.preventDefault(); if (isSystemLocked || !draggedCard || draggedCard.dataset.type === "feitico") return; executePlayCard(e.currentTarget, draggedCard); }; } f.appendChild(s); } }
 
 function executePlayCard(slot, card) {
@@ -814,7 +980,6 @@ async function aiDeployPhase() {
         for(let i=0; i < cobaiasToSpawn; i++) {
             const cobaiaToken = { title: "Clone Instável", tipo: "tropa", raridade: "comum", custo: 0, atk: 2, def: 1, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" };
             const el = createCard(cobaiaToken); el.dataset.owner="enemy"; emptySlots[i].appendChild(el); playSound("deploy");
-            /// 👇 Âncora de chumbo para as tropas da IA
             gsap.set(el, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, x: 0, y: 0, rotation: 0, margin: 0 });
             el.dataset.hasAttacked = "false"; el.classList.remove("exhausted");
             if(window.VFX && window.VFX.onSummon) VFX.onSummon(el, "provocar"); processCardEffect("AoJogar", el, "enemy"); await sleep(500);
@@ -851,3 +1016,45 @@ async function aiCombatPhase() {
     await sleep(500); 
     if (!gameIsOver) advancePhase();
 }
+
+// ==========================================
+// 🕵️ OVERRIDE DO DIRETOR (EASTER EGG)
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const avatarDiretor = document.getElementById("player-avatar") || document.querySelector(".player-profile img"); 
+    
+    if (avatarDiretor) {
+        let clickCount = 0;
+        let clickTimer = null;
+
+        avatarDiretor.addEventListener("click", () => {
+            clickCount++;
+            
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0; 
+                }, 1000); 
+            }
+            
+            if (clickCount === 3) {
+                clearTimeout(clickTimer);
+                clickCount = 0;
+                
+                if (window.AutoBattler) {
+                    playSound("deploy"); 
+                    document.body.style.transition = "filter 0.1s";
+                    document.body.style.filter = "invert(1) hue-rotate(180deg)";
+                    setTimeout(() => document.body.style.filter = "none", 150);
+                    
+                    setTimeout(() => {
+                        alert("⚠️ OVERRIDE DO DIRETOR: PROTOCOLO AUTO-BATTLER INICIADO ⚠️");
+                        AutoBattler.init(); 
+                    }, 200);
+                } else {
+                    console.error("Módulo battler.js não encontrado!");
+                }
+            }
+        });
+        avatarDiretor.style.cursor = "crosshair"; 
+    }
+});
