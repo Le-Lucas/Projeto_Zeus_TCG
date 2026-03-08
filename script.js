@@ -3,11 +3,11 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-window.onerror = function(msg, url, line) { 
-    if (msg.includes("gsap is not defined")) return true; 
-    alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
-    return false; 
-};
+//window.onerror = function(msg, url, line) { 
+   // if (msg.includes("gsap is not defined")) return true; 
+   // alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
+   // return false; 
+//};
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -78,50 +78,51 @@ const campaignData = [
 ];
 
 const baseDeck = [
-    { title: "Agente Novato", tipo: "tropa", raridade: "comum", custo: 1, atk: 1, def: 2, efeito: "nenhum", img: "https://i.postimg.cc/3JgCTq5Q/soldado-novato.png" },
-    { title: "Drone de Varredura", tipo: "tropa", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "nenhum", img: "https://i.postimg.cc/pXDYHSbN/Drone-de-Varredura.png" },
-    { title: "Segurança Aegis", tipo: "tropa", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "https://i.postimg.cc/284FDtps/Seguranca-Aegis.png" },
-    { title: "Atirador Furtivo", tipo: "tropa", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "nenhum", img: "https://i.postimg.cc/Fsjg46t8/Atirador-Furtivo.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
-    { title: "Ciborgue Falho", tipo: "tropa", raridade: "comum", custo: 3, atk: 3, def: 3, efeito: "nenhum", img: "https://i.postimg.cc/65dLXPsS/Ciborgue-Falho.png" },
-    { title: "Mercenário", tipo: "tropa", raridade: "comum", custo: 3, atk: 4, def: 2, efeito: "nenhum", img: "https://i.postimg.cc/4Nzbg0C2/Mercenario.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
-    { title: "Infiltrador das Sombras", tipo: "humano", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "furtividade", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRhZoPOtDbsR6X1lPe9V86rfBHlh2Q9TrW7sg&s" },
+    { title: "Agente Novato", tipo: "tropa", raridade: "comum", custo: 1, atk: 1, def: 2, efeito: "nenhum", img: "./soldado_novato.png" },
+    { title: "Drone de Varredura", tipo: "tropa", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "nenhum", img: "./drone de varredura.png" },
+    { title: "Segurança Aegis", tipo: "tropa", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "./segurança aegis.png" },
+    { title: "Atirador Furtivo", tipo: "tropa", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "nenhum", img: "./atiradorfurtivo.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
+    { title: "Ciborgue Falho", tipo: "tropa", raridade: "comum", custo: 3, atk: 3, def: 3, efeito: "nenhum", img: "./ciborgue falho.png" },
+    { title: "Mercenário", tipo: "tropa", raridade: "comum", custo: 3, atk: 4, def: 2, efeito: "nenhum", img: "./mercenario.png", som_ataque: "https://files.catbox.moe/mij0mg.wav" },
+    { title: "Infiltrador das Sombras", tipo: "humano", raridade: "comum", custo: 1, atk: 2, def: 1, efeito: "furtividade", img: "./infiltrador das sombras.png" },
     { title: "Sucateiro da Zona Sul", tipo: "humano", raridade: "comum", custo: 2, atk: 1, def: 3, efeito: "reciclar", img: "https://files.catbox.moe/dbnyi2.png" },
-    { title: "Cadete de Patrulha", tipo: "soldado", raridade: "comum", custo: 1, atk: 1, def: 3, efeito: "provocar", img: "https://files.catbox.moe/ui0skk.png" },
-    { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "https://files.catbox.moe/ebt0u6.png" },
+    { title: "Cadete de Patrulha", tipo: "soldado", raridade: "comum", custo: 1, atk: 1, def: 3, efeito: "provocar", img: "./cadete de patrulha.png" },
+    { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "./escudeiro de elite.png" },
     { title: "Barreira Eletrônica", tipo: "estrutura", raridade: "comum", custo: 2, atk: 0, def: 7, efeito: "provocar", img: "https://files.catbox.moe/b097ur.png" },
-    { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
+    { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "./k9.png" },
     { title: "Interceptor de Zeus", tipo: "automato", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "https://files.catbox.moe/05e01v.png" },
     { title: "Cobaia Estágio 1", tipo: "tropa", raridade: "rara", custo: 4, atk: 3, def: 6, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
     { title: "Sobrevivente Rebelde", tipo: "tropa", raridade: "rara", custo: 4, atk: 5, def: 2, efeito: "ataque_duplo", img: "https://i.postimg.cc/bNQHh5Xx/Sobrevivente-Rebelde.png" },
     { title: "Exoesqueleto Mk.II", tipo: "tropa", raridade: "rara", custo: 6, atk: 5, def: 5, efeito: "nenhum", img: "https://i.postimg.cc/qMfXWTFQ/Exoesqueleto-Mk-II.png" },
-    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
+    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "./medico.png" },
     { title: "Mutante Instável", tipo: "tropa", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
-    { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
+    { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "./hacker do mainframe.png" },
     { title: "Blindado de Transporte", tipo: "mecanizado", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
     { title: "Quimera Alada", tipo: "tropa", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "furia", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
     { title: "Ceifador da Unidade", tipo: "tropa", raridade: "epica", custo: 6, atk: 6, def: 5, efeito: "roubo_vida", img: "https://i.postimg.cc/pLcvXqzj/Ceifador-da-Unidade.png" },
-    { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "https://i.postimg.cc/q7tTtyx1/Sentinela-Omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
-    { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "https://i.postimg.cc/0yXv2cDX/Projeto-Zeus-Alfa.png" },
-    { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "https://files.catbox.moe/wkfzj3.png" },
+    { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "./sentinela omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
+    { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "./projeto zeus alfa.png" },
+    { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "./general mao de ferro.png" },
     { title: "O Punho da Resistência", tipo: "mecanizado", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
     { title: "Pacificador V.9", tipo: "mecanizado", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
     { title: "Enxame de Nanobots", tipo: "automato", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "sinergia_automato", text: "Ganha +1/+1 por Autômato.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKmEat6w4aafi5kCkFL9_gVZvCcdfsufUR6A&s" },
     { title: "Esquadrão Tático", tipo: "humano", raridade: "comum", custo: 4, atk: 3, def: 2, efeito: "tropa_coordenada", text: "Invoca Aegis ou +1/+1.", img: "https://files.catbox.moe/vynjlp.png" }, 
     { title: "Clone Instável", tipo: "tropa", raridade: "comum", custo: 0, atk: 2, def: 1, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
     { title: "Kit Médico Tático", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "cura_3", img: "https://i.postimg.cc/DyqdTNV5/Kit-Medico-Tatico.png" },
-    { title: "Sobrecarga de Sistema", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "dano_2", text: "Causa 2 de dano a uma unidade.", img: "https://i.postimg.cc/B6WDKkNS/Sobrecarga-de-Sistema.png" },
+    { title: "Sobrecarga de Sistema", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "dano_2", text: "Causa 2 de dano a uma unidade.", img: "./sobrecarga.png" },
     { title: "Hack de Sobrecarga", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "dano_4", img: "https://files.catbox.moe/tl6rvy.png", som_drop: "https://files.catbox.moe/9h871i.wav" },
-    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "https://i.postimg.cc/Gm5vcHy5/Colete-de-klevar.png" },
+    { title: "Colete de Kevlar", tipo: "equipamento", raridade: "comum", custo: 1, atk: 0, def: 2, efeito: "nenhum", text: "Concede +2 de HP.", img: "./colete de klevar.png" },
     { title: "Rifle de Plasma", tipo: "equipamento", raridade: "comum", custo: 2, atk: 2, def: 0, efeito: "nenhum", text: "Concede +2 de ATK.", img: "https://i.postimg.cc/R0KzzDWy/rifle.png" },
     { title: "Chip Berserker", tipo: "equipamento", raridade: "epica", custo: 3, atk: 3, def: -3, efeito: "nenhum", text: "+3 ATK, Fúria, perde -3 HP.", img: "https://i.postimg.cc/bvkjjBGh/chip.png" },
-    // UNIDADES DE ALERTA (Agentes e Resistência)
+    
+    // UNIDADES DE SOBRECARGA (Agentes e Resistência)
     { title: "Gladiador de Subsolo", tipo: "agente", raridade: "rara", custo: 2, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./gladiador.png" },
     { title: "Inspetor de Perimetro", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./drone2.png"},
-    { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./hacker_elite.png" },
+    { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./hack elite.png" },
     { title: "Sentinela Corp Muralha", tipo: "automato", raridade: "rara", custo: 5, atk: 2, def: 7, efeito: "provocar", text: "⚡ Sobrecarga", img: "./muralha.png" },
     { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./fantasma.png" },
     { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
-    { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" },
+    { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" }
 
     // FEITIÇOS E EQUIPAMENTOS DE ALERTA
     //{ title: "Protocolo de Caos", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "sobrecarga +2", text: "Aumenta sobrecarga em 2.", img: "./caos.png" },
