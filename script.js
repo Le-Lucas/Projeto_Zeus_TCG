@@ -437,7 +437,7 @@ function atualizarHudSobrecarga() {
         sbHud = document.createElement("div");
         sbHud.id = "sobrecarga-hud";
         // ⚡ AJUSTE AQUI: "left" aumentado para empurrar para a direita, "bottom" levemente ajustado. Padding menor.
-        sbHud.style.cssText = "position:absolute; left: 60px; bottom: 100px; background:rgba(10,5,5,0.85); border:1px solid #444; padding:8px 12px; border-radius:5px; z-index:50; pointer-events:none; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);";
+        sbHud.style.cssText = "position:absolute; left: 100px; bottom: 110px; background:rgba(10,5,5,0.85); border:1px solid #444; padding:8px 12px; border-radius:5px; z-index:50; pointer-events:none; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);";
         document.body.appendChild(sbHud);
     }
 
