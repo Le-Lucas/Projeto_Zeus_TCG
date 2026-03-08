@@ -104,31 +104,24 @@ const VFX = {
     if (ef.includes("roubo_vida")) this.showBuff(attacker, "HP ABSORVIDO", "#00ff66");
   },
 
-  onDamage(target, efeito) {
-    let ef = efeito || ""; // Proteção também no dano
-
-    gsap.fromTo(target, 
-      { filter: "brightness(3) sepia(1) hue-rotate(-50deg) saturate(10)", x: -10 }, 
-      { filter: "brightness(1) sepia(0)", x: 0, duration: 0.3, onComplete: () => { gsap.to(target, {x: 0, duration: 0.1, clearProps: "filter"}); } }
-    );
-    this.triggerTechBits(target, "#ff3333", 10);
+triggerTechBits(target, color, amount = 10) {
+      if (!target) return;
+      const rect = target.getBoundingClientRect();
+      for (let i = 0; i < amount; i++) {
+          const bit = document.createElement("div");
+          bit.style.cssText = `position:fixed; width:5px; height:5px; background:${color}; box-shadow:0 0 8px ${color}; pointer-events:none; z-index:9999; left:${rect.left + rect.width/2}px; top:${rect.top + rect.height/2}px; border-radius:1px;`;
+          document.body.appendChild(bit);
+          gsap.to(bit, {
+              x: (Math.random() - 0.5) * 120,
+              y: (Math.random() - 0.5) * 120,
+              opacity: 0,
+              rotation: Math.random() * 360,
+              duration: Math.random() * 0.5 + 0.4,
+              ease: "power2.out",
+              onComplete: () => bit.remove()
+          });
+      }
   },
-    );
-    this.triggerTechBits(target, "#ff3333", 10);
-  },
-
-  shield(card) { 
-      this.showBuff(card, "ESCUDO DESTRUÍDO", "#ffffff"); 
-  },
-  
-  fury(card) { 
-      this.showBuff(card, "FÚRIA ATIVADA!", "#ff3300"); 
-  },
-
-  stun(card) {
-      this.showBuff(card, "SISTEMA CORROMPIDO", "#ff00ff");
-  },
-
   // NOVA MORTE EM GLITCH
   death(card) {
     card.style.zIndex = "9000";
