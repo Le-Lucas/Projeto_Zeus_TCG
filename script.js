@@ -3,12 +3,6 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-//window.onerror = function(msg, url, line) { 
-   // if (msg.includes("gsap is not defined")) return true; 
-   // alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
-   // return false; 
-//};
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ==========================================
@@ -134,6 +128,44 @@ const baseDeck = [
    // { title: "Carga de Sacrifício", tipo: "feitico", raridade: "epica", custo: 5, atk: 0, def: 0, efeito: "dano 4", text:"causa 4 de dano a uma unidade inimiga", img: "./sacrificio.png" },
     //{ title: "Amplificador de Sinal", tipo: "equipamento", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "sobrecarga", text: "Equipar: Ao final do turno, aumente seu sobrecarga em +1.", img: "./amplificador.png" }
 ];
+
+// ==========================================
+// 🗣️ SISTEMA DE DIÁLOGOS (VOICE LINES)
+// ==========================================
+const falasPorTipo = {
+    "automato": [
+        "Bip. Boop. Sistema online.",
+        "Diretriz 4: Exterminar.",
+        "Analisando fraquezas do alvo...",
+        "Bateria em 100%. Iniciando ataque."
+    ],
+    "humano": [
+        "Alvo na mira! Fogo de cobertura!",
+        "Só mais um dia no escritório...",
+        "Eles não sabem o que os atingiu.",
+        "Ninguém fica para trás!"
+    ],
+    "soldado": [
+        "Posição assegurada, Comandante!",
+        "Escudos erguidos. Pode vir!",
+        "Mantendo a linha de frente!"
+    ],
+    "agente": [
+        "Iniciando protocolo fantasma.",
+        "Eles nem vão ver de onde veio.",
+        "Câmeras desativadas. Entrando."
+    ],
+    "mecanizado": [
+        "*Som de engrenagens pesadas*",
+        "Armadura pesada pronta para o impacto.",
+        "Esmagando a resistência."
+    ],
+    "tropa": [ // Para cobrir os mutantes e ciborgues genéricos
+        "Grrrraaaargh!",
+        "Carregando armas...",
+        "Pronto para a carnificina!"
+    ]
+};
 
 // ==========================================
 // 3. VARIÁVEIS GLOBAIS DE ESTADO
@@ -571,6 +603,17 @@ function processCardEffect(gatilho, cartaObj, owner) {
     const isPlayer = owner === "player";
 
     if (gatilho === "AoJogar") {
+        
+        // ⚡ INJEÇÃO DAS FALAS (VOICE LINES) ⚡
+        let raca = cartaObj.dataset.raca; // Pega o tipo da carta (automato, humano, etc)
+        if (falasPorTipo[raca]) {
+            let listaFalas = falasPorTipo[raca];
+            // Escolhe uma fala aleatória da lista
+            let falaSorteada = listaFalas[Math.floor(Math.random() * listaFalas.length)];
+            projetarFalaHolografica(cartaObj, falaSorteada);
+        }
+       
+        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) {
         if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
             let revivida = graveyard.player.pop(); updateLifeAndMana(); 
             let novaCarta = createCard(revivida); document.getElementById("hand").appendChild(novaCarta); 
@@ -801,6 +844,51 @@ function updateLifeAndMana() {
     if(document.getElementById("enemy-life")) document.getElementById("enemy-life").innerText = enemyLife; 
     if(document.getElementById("cards-in-deck")) document.getElementById("cards-in-deck").innerText = playerDeck.length; 
     if(document.getElementById("cards-in-grave")) document.getElementById("cards-in-grave").innerText = graveyard.player.length; 
+}
+
+function projetarFalaHolografica(cartaObj, texto) {
+    if (!cartaObj || !texto) return;
+
+    const falaEl = document.createElement("div");
+    falaEl.innerText = `"${texto}"`;
+    falaEl.style.cssText = `
+        position: absolute;
+        bottom: 110%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 20, 20, 0.85);
+        border: 1px solid #00ffff;
+        color: #00ffff;
+        padding: 5px 10px;
+        font-size: 0.7rem;
+        font-family: 'Courier New', monospace;
+        white-space: nowrap;
+        border-radius: 4px;
+        pointer-events: none;
+        z-index: 200;
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        text-shadow: 0 0 5px #00ffff;
+    `;
+    
+    // Pequeno triângulo do balão
+    const seta = document.createElement("div");
+    seta.style.cssText = `
+        content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+        border-width: 5px; border-style: solid; border-color: #00ffff transparent transparent transparent;
+    `;
+    falaEl.appendChild(seta);
+    cartaObj.appendChild(falaEl);
+
+    // Animação GSAP (Sobe, flutua, e some)
+    gsap.fromTo(falaEl, 
+        { y: 10, opacity: 0, scale: 0.5 }, 
+        { y: -10, opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }
+    );
+
+    // Desaparece depois de 2.5 segundos
+    setTimeout(() => {
+        gsap.to(falaEl, { y: -30, opacity: 0, duration: 0.5, onComplete: () => falaEl.remove() });
+    }, 2500);
 }
 
 function createSlots(f, o) { for(let i=0; i<5; i++) { const s = document.createElement("div"); s.className = "slot"; s.dataset.owner = o; if(o === "player") { s.onclick = (e) => { if(selectedCardFromHand) executePlayCard(e.currentTarget, selectedCardFromHand); }; s.ondragover = (e) => { e.preventDefault(); }; s.ondrop = (e) => { e.preventDefault(); if (isSystemLocked || !draggedCard || draggedCard.dataset.type === "feitico") return; executePlayCard(e.currentTarget, draggedCard); }; } f.appendChild(s); } }
