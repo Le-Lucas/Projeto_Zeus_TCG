@@ -3,11 +3,6 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-//window.onerror = function(msg, url, line) { 
-   // if (msg.includes("gsap is not defined")) return true; 
-   // alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
-   // return false; 
-//};
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -978,6 +973,7 @@ function startGameDirect(mode, arenaClass) {
     if (typeof checkTutorial === "function") {
         checkTutorial(); 
     }
+    atualizarIdentidadeNaUI();
 }
 
 function initGame(levelIndex, arenaClass) {
@@ -1226,17 +1222,55 @@ function checkGameOver() {
     if (playerLife > 0 && enemyLife > 0) return; if (gameIsOver) return; 
     gameIsOver = true; clearInterval(timerInterval); isSystemLocked = true; 
     const playerWon = playerLife > 0; const modal = document.getElementById("game-over-modal"); let recompensaHTML = "";
-    if (playerWon) { let ganho = Math.floor(Math.random() * 100) + 50; playerFragments += ganho; recompensaHTML = `<h2 style="color: #00ffff; margin: 15px 0; text-shadow: 0 0 10px #00ffff;">+${ganho} 💽 HDs EXTRAÍDOS</h2>`; playSound("deploy"); } else { playSound("error"); }
+    
+    // ⚡ 1. O CONTADOR SILENCIOSO DE PARTIDAS
+    let partidasJogadas = parseInt(localStorage.getItem("zeusMatchesPlayed")) || 0;
+    partidasJogadas++;
+    localStorage.setItem("zeusMatchesPlayed", partidasJogadas);
+
+    // 2. CÁLCULO DA RECOMPENSA NORMAL
+    if (playerWon) { 
+        let ganho = Math.floor(Math.random() * 100) + 50; 
+        playerFragments += ganho; 
+        recompensaHTML = `<h2 style="color: #00ffff; margin: 15px 0; text-shadow: 0 0 10px #00ffff;">+${ganho} 💽 HDs EXTRAÍDOS</h2>`; 
+        playSound("deploy"); 
+    } else { 
+        playSound("error"); 
+    }
+
+    // ⚡ 3. O GATILHO DO PROTOCOLO VETERANO (3 PARTIDAS)
+    let deckRewardHTML = "";
+    let recompensaJaEntregue = localStorage.getItem("zeusDeck3Partidas");
+    
+    if (partidasJogadas === 3 && !recompensaJaEntregue) {
+        playerFragments += 100; // Bônus massivo para comprar pacotes e formar o deck!
+        localStorage.setItem("zeusDeck3Partidas", "true"); // Marca que já recebeu para não dar de novo
+        
+        deckRewardHTML = `
+            <div style="border: 2px dashed #ff00ff; padding: 10px; margin: 15px 0; background: rgba(255,0,255,0.1);">
+                <h3 style="color: #ff00ff; text-shadow: 0 0 15px #ff00ff; margin: 0;">🎁 RECOMPENSA DE VETERANO 🎁</h3>
+                <p style="color: #fff; font-size: 0.9rem;">Parabéns por sobreviver a 3 simulações! <br> <b>+100 💽 HDs BÔNUS</b> depositados.</p>
+            </div>
+        `;
+        // Um som extra de vitória se bater a meta
+        setTimeout(() => playSound("deploy"), 500); 
+    }
+    
+    // ⚡ 4. SALVA TUDO NO HD
+    saveProgress(); 
     
     let botoesAcao = `<button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>`;
     if (playerWon && currentLevel !== "casual") {
-        if (currentLevel < campaignData.length - 1) { botoesAcao = `<button class="open-btn" onclick="nextCampaignLevel()" style="margin-top: 20px; color: #00ff00; border-color: #00ff00;">[ AVANÇAR PARA SETOR ${currentLevel + 2} ]</button><button class="cmd-btn" onclick="location.reload()" style="margin-top: 10px; border-color: #444; color: #777;">[ EXTRAIR E SAIR ]</button>`; } 
-        else { recompensaHTML += `<h3 style="color: gold; text-shadow: 0 0 15px gold; margin-top: 10px;">👑 PROJETO ZEUS ENCERRADO 👑</h3><p style="color: #fff;">A Matriz está limpa, Operador.</p>`; }
+        if (currentLevel < campaignData.length - 1) { 
+            botoesAcao = `<button class="open-btn" onclick="nextCampaignLevel()" style="margin-top: 20px; color: #00ff00; border-color: #00ff00;">[ AVANÇAR PARA SETOR ${currentLevel + 2} ]</button><button class="cmd-btn" onclick="location.reload()" style="margin-top: 10px; border-color: #444; color: #777;">[ EXTRAIR E SAIR ]</button>`; 
+        } else { 
+            recompensaHTML += `<h3 style="color: gold; text-shadow: 0 0 15px gold; margin-top: 10px;">👑 PROJETO ZEUS ENCERRADO 👑</h3><p style="color: #fff;">A Matriz está limpa, Operador.</p>`; 
+        }
     }
-    modal.innerHTML = `<div class="modal-content final-screen" style="border-color: ${playerWon ? '#00ff00' : '#ff0000'}; background: rgba(5,5,10,0.95);"><h1 class="final-title" style="color: ${playerWon ? '#00ff00' : '#ff0000'}; font-size: 2.5rem; margin-top: 15px;">${playerWon ? "SISTEMA HACKEADO" : "FALHA CRÍTICA"}</h1>${recompensaHTML}<div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">${botoesAcao}</div></div>`;
+    
+    modal.innerHTML = `<div class="modal-content final-screen" style="border-color: ${playerWon ? '#00ff00' : '#ff0000'}; background: rgba(5,5,10,0.95);"><h1 class="final-title" style="color: ${playerWon ? '#00ff00' : '#ff0000'}; font-size: 2.5rem; margin-top: 15px;">${playerWon ? "SISTEMA HACKEADO" : "FALHA CRÍTICA"}</h1>${recompensaHTML}${deckRewardHTML}<div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">${botoesAcao}</div></div>`;
     setTimeout(() => modal.classList.add("active"), 1000); 
 }
-
 // ==========================================
 // 9. FUNÇÕES DE MÃO E MULTIPLAYER
 // ==========================================
@@ -1581,23 +1615,23 @@ function atualizarIdentidadeNaUI() {
     // 1. Atualiza os Nomes
     document.querySelectorAll(".hero-name, .player-name-display").forEach(el => el.innerText = playerName);
     
-    const painelJogador = document.getElementById("player-hero");
-    if (painelJogador) {
-        const textos = painelJogador.querySelectorAll("div, span, p");
-        textos.forEach(el => {
-            if (el.innerText.trim().toUpperCase() === "OPERADOR") {
-                el.innerText = playerName.toUpperCase();
-                el.style.color = "#00ffff"; 
-                el.style.textShadow = "0 0 8px #00ffff";
-            }
-        });
-
-        // ⚡ 2. Atualiza a Foto do Avatar no painel!
-        // Procura a imagem dentro do seu herói (ajuste a classe se necessário)
-        const imagemHeroi = painelJogador.querySelector("img"); 
-        if (imagemHeroi && playerAvatar) {
-            imagemHeroi.src = playerAvatar;
+    // 2. Caça a palavra "OPERADOR" onde quer que ela esteja
+    document.querySelectorAll("div, span, p").forEach(el => {
+        if (el.innerText && el.innerText.trim().toUpperCase() === "OPERADOR") {
+            el.innerText = playerName.toUpperCase();
+            el.style.color = "#00ffff"; 
+            el.style.textShadow = "0 0 8px #00ffff";
         }
+    });
+
+    // ⚡ 3. CAÇADOR GLOBAL DE AVATAR
+    if (playerAvatar) {
+        // Procura todas as imagens que podem ser o Avatar (no Menu e no Jogo)
+        const imagensAvatar = document.querySelectorAll("#player-hero img, .hero-avatar-frame img, #avatar-display");
+        imagensAvatar.forEach(img => {
+            img.src = playerAvatar;
+            img.style.objectFit = "cover"; // Garante que a foto não fica esticada
+        });
     }
 }
 // ==========================================
@@ -1733,18 +1767,29 @@ function advanceTutorial() {
         </div>
     `;
 
-    // Aplica o Holofote no elemento da tela, se existir no passo atual
+    // Aplica o Holofote no elemento da tela e move a caixa
     if (current.highlight) {
         let el = document.getElementById(current.highlight);
         if (el) {
             el.classList.add("tutorial-highlight");
-        } else {
-            console.warn("Elemento do tutorial não encontrado:", current.highlight);
-        }
-    }
+            
+            // ⚡ O CÁLCULO DE POSIÇÃO DINÂMICA
+            let rect = el.getBoundingClientRect();
+            let posY = rect.bottom + 20; // Fica um pouco abaixo do alvo
+            let posX = rect.left + (rect.width / 2); // Fica centralizado com o alvo
 
-    // Animação GSAP da caixa pulsando
-    gsap.fromTo(box, {scale: 0.9, opacity: 0}, {scale: 1, opacity: 1, duration: 0.3, ease: "back.out(1.5)"});
+            // Se for sair por baixo da tela, joga a caixa para CIMA do alvo
+            if (posY + 250 > window.innerHeight) {
+                posY = rect.top - 200;
+            }
+
+            // Anima a caixa voando para o novo local
+            gsap.to(box, { top: posY, left: posX, bottom: "auto", transform: "translateX(-50%) scale(1)", opacity: 1, duration: 0.4, ease: "power2.out" });
+        }
+    } else {
+        // Se não tiver alvo, fica centralizada na tela
+        gsap.to(box, { top: "50%", left: "50%", bottom: "auto", transform: "translate(-50%, -50%) scale(1)", opacity: 1, duration: 0.4, ease: "power2.out" });
+    }
 
     // Lógica dos Botões
     if (document.getElementById("btn-tut-skip")) {
@@ -1754,4 +1799,4 @@ function advanceTutorial() {
         tutorialStep++;
         advanceTutorial();
     };
-}
+  }
