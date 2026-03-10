@@ -204,7 +204,7 @@ window.VFX = VFX;
 /* =========================================================
    2. VISUAL FX ENGINE (THREE.JS - CHUVA DE DADOS CYBERPUNK)
    ========================================================= */
-const canvas = document.getElementById('bg-canvas');
+const vfxcanvas = document.getElementById('bg-canvas');
 if (canvas && typeof THREE !== 'undefined') {
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.02);
@@ -265,7 +265,7 @@ function initAvatarParticles() {
     const particleSystems = [];
 
     frames.forEach(frame => {
-        const canvas = frame.querySelector("canvas");
+        const vfxcanvas = frame.querySelector("canvas");
         if (!canvas) return;
         
         const ctx = canvas.getContext("2d");
