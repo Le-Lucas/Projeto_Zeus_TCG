@@ -3,11 +3,11 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-window.onerror = function(msg, url, line) { 
-    if (msg.includes("gsap is not defined")) return true; 
-    alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
-    return false; 
-};
+//window.onerror = function(msg, url, line) { 
+   // if (msg.includes("gsap is not defined")) return true; 
+   // alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
+   // return false; 
+//};
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
