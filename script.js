@@ -3,7 +3,6 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ==========================================
@@ -125,7 +124,49 @@ const imgAdao = "https://img.freepik.com/fotos-premium/retrato-de-um-homem-palid
 const campaignData = [
     { name: "CENA 1: COMPLEXO MILITAR", bossName: "DEFESA DO PERÍMETRO", bossHp: 15, bossImg: "https://files.catbox.moe/ui0skk.png", bgImg: "https://i.postimg.cc/ZY8N7bVC/cena1.jpg", deckTema: ["Agente Novato", "Drone de Varredura", "Segurança Aegis", "Atirador Furtivo", "Drone de Sucata"], dialogo: [{ ator: "O DIRETOR", img: imgDiretor, texto: "Operador, detectamos uma anomalia térmica no Setor X8E. Parece uma detonação não autorizada." }, { ator: "O DIRETOR", img: imgDiretor, texto: "Nossa inteligência sugere que operações clandestinas do Projeto Zeus estão acontecendo lá. Infiltre-se e neutralize a ameaça." }, { ator: "OPERADOR", img: imgOperador, texto: "Entendido, Diretor. Iniciando varredura no perímetro externo da base." }] },
     { name: "CENA 2: CELA DAS COBAIAS", bossName: "HORDAS DA INCUBAÇÃO", bossHp: 20, bossImg: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png", bgImg: "https://i.postimg.cc/05YSWkcj/cena2.jpg", deckTema: ["Cobaia Estágio 1", "Mutante Instável", "Ciborgue Falho", "Unidade K-9 Cibernética"], dialogo: [{ ator: "OPERADOR", img: imgOperador, texto: "Diretor, o perímetro foi limpo. Mas não houve explosão propriamente dita... os portões do Sub-1 foram arrombados de dentro para fora." }, { ator: "O DIRETOR", img: imgDiretor, texto: "Isso é impossível. Proceda com extrema cautela ao descer." }, { ator: "OPERADOR", img: imgOperador, texto: "Espera... tem algo se movendo nas sombras. Contato! Cobaias soltas e frenéticas! Cortando comunicação para engajamento!" }] },
-    { name: "CENA 3: LABS ZEUS", bossName: "ADÃO: O PRIMEIRO", bossHp: 40, bossImg: imgAdao, bgImg: "https://i.postimg.cc/ry14nVQz/cena3.jpg", deckTema: ["Projeto Zeus: Alfa", "O Punho da Resistência", "Sentinela Ômega", "Hack de Sobrecarga"], dialogo: [{ ator: "OPERADOR", img: imgOperador, texto: "Subnível 2 alcançado. Esquadrão de segurança abatido. Cientistas também... mas estão todos vivos, apenas nocauteados." }, { ator: "ADÃO", img: imgAdao, texto: "Se eu sou apenas um homem... por que não me canso igual a eles?" }, { ator: "ADÃO", img: imgAdao, texto: "Eles dizem que sou uma arma. A arma perfeita. Então por que eu hesito em puxar o gatilho?" }, { ator: "ADÃO", img: imgAdao, texto: "Ah... mais soldados chegando. Isso é tão irritante. Desliguem-se." }] }
+    { name: "CENA 3: LABS ZEUS", bossName: "ADÃO: O PRIMEIRO", bossHp: 40, bossImg: imgAdao, bgImg: "https://i.postimg.cc/ry14nVQz/cena3.jpg", deckTema: ["Projeto Zeus: Alfa", "O Punho da Resistência", "Sentinela Ômega", "Hack de Sobrecarga"], dialogo: [{ ator: "OPERADOR", img: imgOperador, texto: "Subnível 2 alcançado. Esquadrão de segurança abatido. Cientistas também... mas estão todos vivos, apenas nocauteados." }, { ator: "ADÃO", img: imgAdao, texto: "Se eu sou apenas um homem... por que não me canso igual a eles?" }, { ator: "ADÃO", img: imgAdao, texto: "Eles dizem que sou uma arma. A arma perfeita. Então por que eu hesito em puxar o gatilho?" }, { ator: "ADÃO", img: imgAdao, texto: "Ah... mais soldados chegando. Isso é tão irritante. Desliguem-se." }] }, // <--- Lembre-se da vírgula após a Cena 3!
+    { 
+        name: "CENA 4: QUEBRA DE CONTENÇÃO", 
+        bossName: "UNIDADE DE CHOQUE", 
+        bossHp: 30, 
+        bossImg: "https://files.catbox.moe/ui0skk.png", 
+        bgImg: "https://i.postimg.cc/ZY8N7bVC/cena1.jpg", 
+        deckTema: ["Segurança Aegis", "Atirador Furtivo", "Barreira Eletrônica", "Interceptor de Zeus", "Sentinela Corp Muralha"], 
+        dialogo: [
+            { ator: "MAJOR VOSS", img: "https://files.catbox.moe/wkfzj3.png", texto: "Então esse é o milagre científico... Recebemos relatórios de comportamento irregular. Ele entende a gente?" }, 
+            { ator: "ADÃO", img: imgAdao, texto: "Quem é ele? Ele parece um soldado... Ele veio me desligar?" }, 
+            { ator: "MAJOR VOSS", img: "https://files.catbox.moe/wkfzj3.png", texto: "Preciso confiar que ele não vai quebrar essa sala. (Estalo) Equipe de contenção! Unidade de choque para o laboratório principal!" },
+            { ator: "ADÃO", img: imgAdao, texto: "Eu não queria fazer isso. Mas eles vão tentar me machucar..." }
+        ] 
+    },
+    { 
+        name: "CENA 5: PROTOCOLO DE EMERGÊNCIA", 
+        bossName: "TENENTE KORSO", 
+        bossHp: 40, 
+        bossImg: "https://files.catbox.moe/nuxefh.png", 
+        bgImg: "https://i.postimg.cc/05YSWkcj/cena2.jpg", 
+        deckTema: ["Blindado de Transporte", "Exoesqueleto Mk.II", "Médico de Combate", "Sobrevivente Rebelde", "Hack de Sobrecarga"], 
+        dialogo: [
+            { ator: "TENENTE KORSO", img: "https://files.catbox.moe/nuxefh.png", texto: "Alvo no corredor! O Major ordenou: Não atirem letal! Armas de choque levantadas!" }, 
+            { ator: "ADÃO", img: imgAdao, texto: "Vocês estão com medo. Eu também estou." }, 
+            { ator: "TENENTE KORSO", img: "https://files.catbox.moe/nuxefh.png", texto: "Ele é rápido demais! Fogo de supressão, agora! Derrubem a anomalia!" },
+            { ator: "ADÃO", img: imgAdao, texto: "Eu não quero machucar ninguém..." }
+        ] 
+    },
+    { 
+        name: "CENA 6: VETERANO DE GUERRA", 
+        bossName: "MAJOR DARIUS VOSS", 
+        bossHp: 60, 
+        bossImg: "https://files.catbox.moe/wkfzj3.png", 
+        bgImg: "https://i.postimg.cc/ry14nVQz/cena3.jpg", 
+        deckTema: ["Branko", "Nyx", "Iris", "Leon", "Rourke", "General Mão de Ferro", "Pacificador V.9"], 
+        dialogo: [
+            { ator: "MAJOR VOSS", img: "https://files.catbox.moe/wkfzj3.png", texto: "Impressionante. Nenhum osso quebrado, nenhum sangue. Meus homens foram simplesmente... desligados." }, 
+            { ator: "ADÃO", img: imgAdao, texto: "Eu pedi para não me machucarem." }, 
+            { ator: "MAJOR VOSS", img: "https://files.catbox.moe/wkfzj3.png", texto: "Esquadrão EAO, preparem-se. Eu sou um veterano de mil batalhas, garoto. Vamos ver o que o milagre científico sabe fazer." },
+            { ator: "ADÃO", img: imgAdao, texto: "Você luta bem, Major. Mas eu só preciso de um movimento." }
+        ] 
+    }
 ];
 
 const baseDeck = [
@@ -173,7 +214,20 @@ const baseDeck = [
     { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./infiltrado.png" },
     { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
     { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" },
-
+    // ESQUADRÃO EAO
+    { title: "Branko", tipo: "tropa", raridade: "rara", custo: 7, atk: 2, def: 8, efeito: "atropelar, furia", text: "Fúria Crescente: Sempre que sobrevive a dano, ganha +2 de ATK.", img: "./branko.png" },
+    { title: "Nyx", tipo: "tropa", raridade: "rara", custo: 6, atk: 4, def: 4, efeito: "furtividade, Colmeia", text: "Colmeia: Grito de Guerra - Ganha +1/+1 por cada EAO aliado e copia palavra-chave.", img: "./nyx.png" },
+    { title: "Iris", tipo: "tropa", raridade: "rara", custo: 7, atk: 4, def: 6, efeito: "invocar_ataque, Colmeia", text: "Ao atacar, invoca Drone Lv.1. Colmeia: Ganha +1/+1 por EAO aliado e copia palavra.", img: "./iris.png" },
+    { title: "Leon", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 3, def: 6, efeito: "cura_area", text: "Médico de Combate: Ao final do turno, cura +3 em todos os aliados.", img: "./leon.png" },
+    { title: "Rourke", tipo: "tropa", raridade: "lendaria", custo: 9, atk: 7, def: 7, efeito: "escudo_divino, Colmeia", text: "Grito de Guerra: Concede +2/+2 aos aliados. Colmeia: Ganha status por EAO.", img: "./rourke.png" },
+    // ==========================================
+    // 🧬 EQUIPE DO LABORATÓRIO (Mutação, Veneno e Sacrifício)
+    // ==========================================
+    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia_volatil.png" },
+    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./besta_toxica.png" },
+    { title: "Tanque de Incubação", tipo: "estrutura", raridade: "rara", custo: 3, atk: 0, def: 6, efeito: "incubar", text: "Ao final do turno, invoca um [Clone Instável] se houver espaço.", img: "./tanque.png" },
+    { title: "Geneticista Chefe", tipo: "humano", raridade: "epica", custo: 5, atk: 3, def: 4, efeito: "extracao", text: "Grito de Guerra: Destrói um aliado aleatório. Se o fizer, compra 2 cartas.", img: "./geneticista.png" },
+    { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./amalgama.png" }
     // FEITIÇOS E EQUIPAMENTOS DE ALERTA
     //{ title: "Protocolo de Caos", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "sobrecarga +2", text: "Aumenta sobrecarga em 2.", img: "./caos.png" },
    // { title: "Sobrecarga de BIOS", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano 2", text: "Causa 2 de dano.", img: "./bios.png" },
@@ -301,7 +355,13 @@ function bootTerminal() {
     document.getElementById("btn-start-battle-direct").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.add("active"); };
     document.getElementById("btn-cancel-mode").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); };
     const btnModeStory = document.getElementById("btn-mode-story");
-    if(btnModeStory) { btnModeStory.onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); currentLevel = 0; startCampaignScene(); }; }
+    if(btnModeStory) { 
+        btnModeStory.onclick = () => { 
+            playSound("click"); 
+            document.getElementById("mode-selection-modal").classList.remove("active"); 
+            abrirMenuCapitulos(); // ⚡ AGORA ABRE O MENU DE EXPANSÕES!
+        }; 
+    }
     
     document.getElementById("btn-cancel-arena").onclick = () => { playSound("click"); document.getElementById("arena-selection-modal").classList.remove("active"); };
     document.getElementById("btn-mode-casual").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); document.getElementById("arena-selection-modal").classList.add("active"); };
@@ -407,7 +467,7 @@ function initMarket() {
     }
 
     grid.innerHTML = "";
-    // ... resto do seu código baseDeck.forEach(card => { ... )
+    
     baseDeck.forEach(card => {
         const copies = playerCollection.filter(c => c.title === card.title).length; const div = document.createElement("div"); div.className = `pool-card ${copies > 0 ? card.raridade : 'comum'}`;
         div.innerHTML = `<div class="copies-badge" style="position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.9); color: cyan; font-size: 0.8rem; font-weight: bold; padding: 3px 8px; border: 1px solid cyan; border-radius: 4px; z-index: 5;">x${copies}</div><img src="${card.img}" class="pool-img" style="filter: grayscale(${copies > 0 ? 0 : 1}) contrast(1.2); opacity: ${copies > 0 ? 1 : 0.4};"><div class="pool-info"><div class="pool-title" style="color: ${copies > 0 ? '#fff' : '#555'};">${card.title}</div><div class="pool-cost" style="color: ${copies > 0 ? '#00ffff' : '#444'};">${card.custo}⚡</div></div>`;
@@ -454,51 +514,100 @@ function comprarPacote() {
 
 function mostrarAnimacaoPacote(cartas) {
     let modal = document.getElementById("pack-modal");
+    
+    // Injeta o CSS 3D no HTML (só faz isso uma vez)
+    if (!document.getElementById("anim-3d-cards")) {
+        const style = document.createElement("style");
+        style.id = "anim-3d-cards";
+        style.innerHTML = `
+            .reward-container { display:flex; gap:30px; perspective:1200px; }
+            .reward-card { width:180px; height:260px; cursor:pointer; animation:floatCard 4s ease-in-out infinite; }
+            @keyframes floatCard { 0%{transform:translateY(0)} 50%{transform:translateY(-12px)} 100%{transform:translateY(0)} }
+            .card-inner { width:100%; height:100%; position:relative; transform-style:preserve-3d; transition:transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1); }
+            .reward-card.flipped .card-inner { transform:rotateY(180deg); }
+            .card-back, .card-front { position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:14px; display:flex; align-items:center; justify-content:center; }
+            .card-back { background:linear-gradient(145deg,#0a0505,#000); border:2px solid #00ffff; box-shadow: 0 0 15px rgba(0,255,255,0.5), inset 0 0 30px rgba(0,255,255,0.2); }
+            .card-front { transform:rotateY(180deg); } /* Sem fundo, pois o createCard já tem o fundo da carta */
+            .mystery-symbol { font-size:70px; color:#fff; text-shadow:0 0 20px #00ffff; font-family: monospace; }
+        `;
+        document.head.appendChild(style);
+    }
+
     if (!modal) {
         modal = document.createElement("div");
         modal.id = "pack-modal";
         document.body.appendChild(modal);
     }
     
-    // Fundo desfocado escuro para focar nas cartas
+    // Fundo desfocado
     modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,5,10,0.95); z-index:100000; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(8px);";
     
+    // O Botão começa invisível (opacity 0) e sem receber cliques (pointer-events none)
     modal.innerHTML = `
-        <h2 style="color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom: 40px; font-family:'Courier New', monospace;">📦 DADOS DESCRIPTOGRAFADOS 📦</h2>
-        <div id="pack-cards-container" style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap; perspective: 1000px;"></div>
-        <button id="btn-close-pack" style="margin-top:50px; background:transparent; border:2px solid #00ff00; color:#00ff00; padding:15px 30px; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; border-radius:4px; box-shadow: 0 0 15px rgba(0,255,0,0.4);">[ ADICIONAR AO INVENTÁRIO ]</button>
+        <h2 style="color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom: 40px; font-family:'Courier New', monospace;">📦 CLIQUE PARA DESCRIPTOGRAFAR 📦</h2>
+        <div id="pack-cards-container" class="reward-container"></div>
+        <button id="btn-close-pack" style="margin-top:50px; background:transparent; border:2px solid #00ff00; color:#00ff00; padding:15px 30px; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; border-radius:4px; box-shadow: 0 0 15px rgba(0,255,0,0.4); opacity:0; pointer-events:none; transition: opacity 0.5s;">[ ADICIONAR AO INVENTÁRIO ]</button>
     `;
     
     const container = modal.querySelector("#pack-cards-container");
+    let cartasReveladas = 0; // Contador para saber quando mostrar o botão de fechar
     
     cartas.forEach((cardData, index) => {
+        // Cria a carta do jogo usando o seu motor
         const cardEl = createCard(cardData);
-        // Prepara a carta para a animação (escondida e pequena)
-        cardEl.style.transform = "scale(0) rotateY(180deg)";
-        cardEl.style.opacity = "0";
-        cardEl.onclick = null; // Não deixa clicar na carta durante o pack
-        cardEl.ondragstart = null;
         cardEl.style.position = "relative";
-        container.appendChild(cardEl);
+        cardEl.onclick = null; 
+        cardEl.ondragstart = null;
+        cardEl.style.transform = "scale(1)"; // Zera a escala do createCard
+        cardEl.style.margin = "0";
+
+        // Cria a cápsula 3D
+        const wrapper = document.createElement("div");
+        wrapper.className = "reward-card";
+        wrapper.style.animationDelay = `${index * 0.3}s`; // Faz elas flutuarem em tempos diferentes
         
-        // Animação de revelação dramática (uma por uma)
-        setTimeout(() => {
-            playSound("hit"); // Dá um impacto quando a carta aparece
-            gsap.to(cardEl, {
-                scale: 1.1, 
-                rotationY: 0, 
-                opacity: 1, 
-                duration: 0.6, 
-                ease: "back.out(1.5)",
-                onComplete: () => {
-                    // Se for Lendária ou Épica, dá um pulso na carta!
-                    if (cardData.raridade === "lendaria" || cardData.raridade === "epica") {
-                        if(window.VFX && window.VFX.pulse) VFX.pulse(cardEl, cardData.raridade === "lendaria" ? "#ffcc00" : "#ff00ff", 1.2, 1000);
-                    }
-                    gsap.to(cardEl, {scale: 1, duration: 0.2});
+        wrapper.innerHTML = `
+            <div class="card-inner">
+                <div class="card-back">
+                    <div class="mystery-symbol">?</div>
+                </div>
+                <div class="card-front" id="front-slot-${index}"></div>
+            </div>
+        `;
+        
+        // Injeta a carta real dentro da face da frente
+        wrapper.querySelector(`#front-slot-${index}`).appendChild(cardEl);
+        container.appendChild(wrapper);
+        
+        // LÓGICA DO CLIQUE PARA VIRAR
+        wrapper.onclick = () => {
+            if (wrapper.classList.contains("flipped")) return; // Não vira duas vezes
+            
+            playSound("deploy");
+            wrapper.classList.add("flipped");
+            
+            // Efeito de impacto no flip
+            gsap.fromTo(wrapper, {scale:1}, {scale:1.15, duration:0.2, yoyo:true, repeat:1});
+            
+            // Chama a sua função de partículas
+            spawnRewardParticles(wrapper);
+
+            // Verifica se a carta é Rara e dá o pulso de brilho após a rotação
+            setTimeout(() => {
+                if (cardData.raridade === "lendaria" || cardData.raridade === "epica") {
+                    playSound("hit");
+                    if(window.VFX && window.VFX.pulse) VFX.pulse(cardEl, cardData.raridade === "lendaria" ? "#ffcc00" : "#ff00ff", 1.2, 1000);
                 }
-            });
-        }, index * 600 + 300); // 600ms de suspense entre cada carta!
+            }, 600); // 600ms = tempo da animação CSS rodar
+
+            // Libera o botão de sair só quando as 3 forem reveladas
+            cartasReveladas++;
+            if (cartasReveladas >= 3) {
+                const btnClose = document.getElementById("btn-close-pack");
+                btnClose.style.opacity = "1";
+                btnClose.style.pointerEvents = "auto";
+            }
+        };
     });
 
     modal.style.display = "flex";
@@ -515,6 +624,37 @@ function mostrarAnimacaoPacote(cartas) {
         }});
     };
 }
+
+// 💥 SISTEMA DE PARTÍCULAS DO PACOTE
+function spawnRewardParticles(cardWrapper) {
+    const rect = cardWrapper.getBoundingClientRect();
+    
+    for(let i=0; i<15; i++){
+        const p = document.createElement("div");
+        p.style.position = "fixed";
+        p.style.left = (rect.left + rect.width / 2) + "px";
+        p.style.top = (rect.top + rect.height / 2) + "px";
+        p.style.width = "6px";
+        p.style.height = "6px";
+        p.style.borderRadius = "50%";
+        p.style.background = "#00ffff";
+        p.style.boxShadow = "0 0 12px #00ffff";
+        p.style.zIndex = "100001"; // Fica por cima do modal
+
+        document.body.appendChild(p);
+
+        gsap.to(p, {
+            x: (Math.random() * 250 - 125), // Espalha para os lados
+            y: (Math.random() * 250 - 125), // Espalha para cima e baixo
+            opacity: 0,
+            scale: Math.random() * 2,
+            duration: Math.random() * 0.8 + 0.5,
+            ease: "power2.out",
+            onComplete: () => p.remove()
+        });
+    }
+}
+
 
 function openMarketModal(card, copies) {
     document.getElementById("transact-title").innerText = card.title; document.getElementById("transact-copies").innerText = copies; document.getElementById("transaction-modal").classList.add("active");
@@ -563,7 +703,7 @@ function recalculateStats(c) {
 }
 
 function updateAuras() {
-    ;["player-field", "enemy-field"].forEach(f => {
+    ["player-field", "enemy-field"].forEach(f => {
         const field = document.getElementById(f); if(!field) return;
         const owner = f.split("-")[0];
         const cards = Array.from(field.querySelectorAll('.card-base')); 
@@ -578,6 +718,10 @@ function updateAuras() {
         
         let nivelSobrecarga = tropasSobrecarga.length;
         sobrecargaAtiva[owner] = nivelSobrecarga; 
+
+        // ⚡ CONTAGEM DA COLMEIA EAO NO CAMPO
+        const nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
+        let aliadosEAO = cards.filter(c => nomesEAO.includes(c.dataset.name) && c.dataset.dead !== "true").length;
 
         cards.forEach(c => {
             if (c.dataset.dead === "true" || c.dataset.type === "feitico") return;
@@ -597,12 +741,20 @@ function updateAuras() {
                 c.dataset.pulsingSobrecarga = ""; 
             }
 
+            // ⚡ APLICAÇÃO MATEMÁTICA DA COLMEIA
+            if (ef.includes("Colmeia") && aliadosEAO > 1) {
+                let bonusColmeia = aliadosEAO - 1; // Dá o bónus pelos *outros* EAOs
+                aAtk += bonusColmeia;
+                aHp += bonusColmeia;
+            }
+
             c.dataset.auraAtk = aAtk; c.dataset.auraHp = aHp; recalculateStats(c);
         });
     });
 
     atualizarHudSobrecarga();
-} // 🚨 A CHAVE DO UPDATEAURAS ESTÁ AQUI
+}
+
 
 function atualizarHudSobrecarga() {
     let sbHud = document.getElementById("sobrecarga-hud");
@@ -692,24 +844,59 @@ function getCardDesc(item) {
 
 function createCard(item) { 
     if(!item) return document.createElement("div"); 
-    let isSpell = (item.tipo === 'feitico'); let isEquip = (item.tipo === 'equipamento'); let baseClass = (isSpell || isEquip) ? "feitico" : "tropa"; 
-    const c = document.createElement("div"); c.className = `card-base ${item.raridade || 'comum'} ${baseClass}`;
-    let safeAtk = Number(item.atk)||0; let safeDef = Number(item.def)||0; let safeCost = Number(item.custo)||0;
     
+    let isSpell = (item.tipo === 'feitico'); 
+    let isEquip = (item.tipo === 'equipamento'); 
+    let baseClass = (isSpell || isEquip) ? "feitico" : "tropa"; 
+    
+    let safeAtk = Number(item.atk)||0; 
+    let safeDef = Number(item.def)||0; 
+    let safeCost = Number(item.custo)||0;
+    const title = item.title || "Unidade Desconhecida";
+
+    // ⚡ CAÇADOR DE EAO: Verifica se a carta é do esquadrão de elite
+    const nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
+    const isEAO = nomesEAO.includes(title);
+
+    const c = document.createElement("div"); 
+    c.className = `card-base ${item.raridade || 'comum'} ${baseClass}`;
+    
+    // ⚡ INJETA A CLASSE HOLOGRÁFICA SE FOR EAO
+    if (isEAO) c.classList.add("card-eao");
+
     c.dataset.baseAtk = safeAtk; c.dataset.baseHp = safeDef; c.dataset.baseCost = safeCost; c.dataset.damageTaken = 0; c.dataset.equipBaseAtk = 0; c.dataset.equipBaseHp = 0; c.dataset.auraAtk = 0; c.dataset.auraHp = 0; c.dataset.originalEffect = item.efeito; c.dataset.equipEffect = "";
-    c.draggable = true; c.dataset.name = item.title; c.dataset.attack = safeAtk; c.dataset.hp = safeDef; c.dataset.cost = safeCost; c.dataset.type = baseClass; c.dataset.raca = item.tipo; c.dataset.effect = item.efeito; c.dataset.hasAttacked = "false";
-   // Onde você define os ícones na função createCard:
-let typeIcon = "⚔️"; 
-if(["mecanizado","drone","ciborgue", "automato"].includes(item.tipo)) typeIcon = "⚙️"; 
-if(["humano","medico","soldado", "agente", "resistencia"].includes(item.tipo)) typeIcon = "🧬"; 
-if(item.tipo === "estrutura") typeIcon = "🏗️"; 
-// ⚡ BASTA ADICIONAR ESTA LINHA PARA OS MUTANTES:
-if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; // Ícone de risco biológico!
-    let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1)); let starsHTML = '<div class="card-stars">'; for(let i=0; i<starsCount; i++) starsHTML += '<div class="star">★</div>'; starsHTML += '</div>';
-    let statsHTML = !(isSpell || isEquip) ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">${isEquip ? 'EQP' : 'MAG'}</div></div>`;
-    let cardDescription = getCardDesc(item); let descHTML = cardDescription ? `<div class="card-body"><div class="card-text">${cardDescription}</div></div>` : "";
-    c.innerHTML = `<div class="card-title">${item.title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>`;
+    c.draggable = true; c.dataset.name = title; c.dataset.attack = safeAtk; c.dataset.hp = safeDef; c.dataset.cost = safeCost; c.dataset.type = baseClass; c.dataset.raca = item.tipo; c.dataset.effect = item.efeito; c.dataset.hasAttacked = "false";
     
+    // Ícones e Estrelas
+    let typeIcon = "⚔️"; 
+    if(["automato"].includes(item.tipo)) typeIcon = "⚙️"; 
+    if(["humano","medico","soldado", "agente", "resistencia"].includes(item.tipo)) typeIcon = "🧬"; 
+    if(item.tipo === "estrutura") typeIcon = "🏗️"; 
+    if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; 
+    
+    let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1)); 
+    let starsHTML = '<div class="card-stars">'; 
+    for(let i=0; i<starsCount; i++) starsHTML += '<div class="star">★</div>'; 
+    starsHTML += '</div>';
+    
+    let statsHTML = !(isSpell || isEquip) ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">${isEquip ? 'EQP' : 'MAG'}</div></div>`;
+    let cardDescription = getCardDesc(item); 
+    let descHTML = cardDescription ? `<div class="card-body"><div class="card-text">${cardDescription}</div></div>` : "";
+    
+    // ⚡ A MÁGICA DA SEPARAÇÃO: EAO recebe a moldura holográfica, as outras não!
+    if (isEAO) {
+        c.innerHTML = `
+            <div class="card-frame" style="width:100%; height:100%; position:relative; border-radius:inherit;">
+                <div class="eao-holo-overlay"></div>
+                <div class="card-title">${title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>
+            </div>
+        `;
+    } else {
+        // Layout Normal do Projeto Zeus
+        c.innerHTML = `<div class="card-title">${title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>`;
+    }
+    
+    // Eventos de Mouse e Touch (Padrão do seu motor)
     let pressTimer; 
     c.onmouseenter = () => { 
         if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && !selectedCardFromHand) { 
@@ -727,8 +914,12 @@ if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; //
     c.ontouchstart = () => { pressTimer = setTimeout(() => { openInspectModal(item); }, 500); };
     c.ontouchend = () => { clearTimeout(pressTimer); };
 
+    // Drag & Drop
     c.ondragstart = (e) => { e.dataTransfer.setData('text/plain', 'carta'); if(isSystemLocked || c.parentElement.id !== "hand") { e.preventDefault(); return; } if(isSpell || isEquip) { e.preventDefault(); playSound("error"); alert("SISTEMA: Clique na carta na mão e depois no alvo."); return; } draggedCard = c; };
-    c.ondragend = () => { if (draggedCard) draggedCard = null; }; recalculateStats(c); return c; 
+    c.ondragend = () => { if (draggedCard) draggedCard = null; }; 
+    
+    recalculateStats(c); 
+    return c; 
 }
 
 // ==========================================
@@ -850,16 +1041,74 @@ function executeSpell(spellCard, targetElement, targetOwner) {
 function processCardEffect(gatilho, cartaObj, owner) {
     const efeito = cartaObj.dataset.effect || cartaObj.dataset.originalEffect; 
     const isPlayer = owner === "player";
-    
-    
 
     if (gatilho === "AoJogar") {
-      
+        
+        // ⚡ MECÂNICA: DANO EM ÁREA (Explosão no campo inimigo)
+        if (efeito.includes("dano_area")) {
+            let campoInimigo = document.getElementById(isPlayer ? "enemy-field" : "player-field").children;
+            let danoAoE = 2; 
+            playSound("hit"); 
+            if(typeof screenShake === "function") screenShake();
+            for (let i = 0; i < campoInimigo.length; i++) {
+                let alvoDOM = campoInimigo[i].querySelector('.card-base');
+                if (alvoDOM) {
+                    applyDamage(alvoDOM, danoAoE);
+                    if(window.VFX && window.VFX.showBuff) VFX.showBuff(alvoDOM, `-${danoAoE} DANO`, "#ff0000");
+                }
+            }
+        }
+
+        // ⚡ MECÂNICA: COLMEIA (Copia palavra-chave ao entrar)
+        if (efeito.includes("Colmeia")) {
+            let campoAliado = document.getElementById(isPlayer ? "player-field" : "enemy-field").children;
+            let efeitosDisponiveis = [];
+            let nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
+            let temOutroEAO = false;
+
+            for (let i = 0; i < campoAliado.length; i++) {
+                let cardDOM = campoAliado[i].querySelector('.card-base');
+                if (cardDOM && cardDOM !== cartaObj && nomesEAO.includes(cardDOM.dataset.name)) {
+                    temOutroEAO = true;
+                    let ef = cardDOM.dataset.effect || cardDOM.dataset.originalEffect || "";
+                    if (ef && ef !== "nenhum") efeitosDisponiveis.push(ef);
+                }
+            }
+
+            if (temOutroEAO) {
+                if (efeitosDisponiveis.length > 0) {
+                    let efeitoSorteado = efeitosDisponiveis[Math.floor(Math.random() * efeitosDisponiveis.length)];
+                    if (efeito.includes("furtividade") && efeitoSorteado.includes("provocar")) efeitoSorteado = "escudo_divino"; 
+                    cartaObj.dataset.originalEffect += "," + efeitoSorteado;
+                    recalculateStats(cartaObj);
+                }
+                if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, `COLMEIA ATIVADA`, "#ff00ff");
+            }
+        }
+
+        // ⚡ MECÂNICA: EXTRAÇÃO (Destrói aliado fraco para comprar cartas) - EQUIPE LAB
+        if (efeito.includes("extracao")) {
+            const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+            const aliados = Array.from(field.querySelectorAll('.card-base')).filter(c => c !== cartaObj && c.dataset.dead !== "true");
+            
+            if (aliados.length > 0) {
+                const alvo = aliados[Math.floor(Math.random() * aliados.length)];
+                alvo.dataset.dead = "true";
+                processCardEffect("UltimoSuspiro", alvo, owner);
+                if(window.VFX && window.VFX.death) VFX.death(alvo); else alvo.remove();
+                
+                if (isPlayer) {
+                    drawCard();
+                    setTimeout(drawCard, 300);
+                } 
+                if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, "EXTRAÇÃO SUCESSO!", "#00ffcc");
+            }
+        }
+        
         // ⚡ INJEÇÃO DAS FALAS (VOICE LINES) ⚡
-        let raca = cartaObj.dataset.raca; // Pega o tipo da carta (automato, humano, etc)
+        let raca = cartaObj.dataset.raca; 
         if (falasPorTipo[raca]) {
             let listaFalas = falasPorTipo[raca];
-            // Escolhe uma fala aleatória da lista
             let falaSorteada = listaFalas[Math.floor(Math.random() * listaFalas.length)];
             projetarFalaHolografica(cartaObj, falaSorteada);
         }
@@ -900,8 +1149,8 @@ function processCardEffect(gatilho, cartaObj, owner) {
             }
         }
         
-        const racasMaquinas = ["automato", "mecanizado", "drone", "ciborgue"];
-        if (racasMaquinas.includes(cartaObj.dataset.raca)) {
+        // ⚡ MECÂNICA: SINERGIA AUTÔMATO (Padronizado)
+        if (cartaObj.dataset.raca === "automato") {
             const aliados = field.querySelectorAll('.card-base'); 
             aliados.forEach(aliado => { 
                 let ef = aliado.dataset.effect || aliado.dataset.originalEffect;
@@ -929,10 +1178,32 @@ function processCardEffect(gatilho, cartaObj, owner) {
                     if(window.VFX && window.VFX.onSummon) VFX.onSummon(recruit, "provocar"); 
                 } 
             }, 500); 
-        } 
+        }
+        
+        // ⚡ MECÂNICA: PREDADOR (Fica gigante quando as cartas morrem) - EQUIPE LAB
+        ["player-field", "enemy-field"].forEach(f => {
+            const field = document.getElementById(f);
+            if (field) {
+                const predadores = Array.from(field.querySelectorAll('.card-base')).filter(c => {
+                    let ef = c.dataset.effect || c.dataset.originalEffect || "";
+                    return ef.includes("predador") && c.dataset.dead !== "true";
+                });
+                
+                predadores.forEach(predador => {
+                    predador.dataset.baseAtk = (parseInt(predador.dataset.baseAtk) || 0) + 2;
+                    predador.dataset.baseHp = (parseInt(predador.dataset.baseHp) || 0) + 2;
+                    predador.dataset.damageTaken = Math.max(0, (parseInt(predador.dataset.damageTaken) || 0) - 2);
+                    recalculateStats(predador);
+                    if(window.VFX && window.VFX.showBuff) VFX.showBuff(predador, "PREDADOR +2/+2", "#ff0055");
+                });
+            }
+        });
     }
 
     if (gatilho === "FimDeTurno") { 
+        // ⚡ PROTEÇÃO: Só ativa efeitos se for o FIM do turno do DONO da carta!
+        if (owner === attackToken) return;
+
         if (efeito === "cura_turno" && isPlayer) { 
             playerLife = Math.min(playerLife+1, maxLife); 
             if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("player-hero"), "#00ff00"); 
@@ -942,9 +1213,56 @@ function processCardEffect(gatilho, cartaObj, owner) {
             recalculateStats(cartaObj); 
             if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(cartaObj, "#00ff00"); 
         } 
+        
+        // ⚡ MECÂNICA: CURA EM ÁREA (Médico só cura quem precisa!)
+        if (efeito.includes("cura_area")) {
+            let campoAliado = document.getElementById(isPlayer ? "player-field" : "enemy-field").children;
+            let valorCura = 3;
+            let curouAlguem = false;
+
+            for (let i = 0; i < campoAliado.length; i++) {
+                let alvoDOM = campoAliado[i].querySelector('.card-base');
+                if (alvoDOM) {
+                    let danoAtual = parseInt(alvoDOM.dataset.damageTaken) || 0;
+                    if (danoAtual > 0) { 
+                        alvoDOM.dataset.damageTaken = Math.max(0, danoAtual - valorCura);
+                        recalculateStats(alvoDOM);
+                        if(window.VFX && window.VFX.showBuff) VFX.showBuff(alvoDOM, `+${valorCura} CURA`, "#00ff00");
+                        curouAlguem = true;
+                    }
+                }
+            }
+            if (curouAlguem) playSound("deploy");
+        }
+        
+        // ⚡ MECÂNICA: MUTAÇÃO (Ganha +1/+1 no fim do turno) - EQUIPE LAB
+        if (efeito.includes("mutacao")) {
+            cartaObj.dataset.baseAtk = (parseInt(cartaObj.dataset.baseAtk) || 0) + 1;
+            cartaObj.dataset.baseHp = (parseInt(cartaObj.dataset.baseHp) || 0) + 1;
+            recalculateStats(cartaObj);
+            if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, "MUTAÇÃO +1/+1", "#00ffcc");
+        }
+
+        // ⚡ MECÂNICA: INCUBAÇÃO (Gera um Clone Instável no fim do turno) - EQUIPE LAB
+        if (efeito.includes("incubar")) {
+            const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+            const emptySlots = Array.from(field.children).filter(s => !s.querySelector('.card-base'));
+            if (emptySlots.length > 0) {
+                const clone = createCard(baseDeck.find(c => c.title === "Clone Instável")); 
+                clone.dataset.owner = owner; 
+                emptySlots[0].appendChild(clone); 
+                
+                gsap.set(clone, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); 
+                clone.dataset.hasAttacked = "false"; 
+                clone.classList.remove("exhausted"); 
+                
+                if(window.VFX && window.VFX.onSummon) VFX.onSummon(clone, "provocar"); 
+                playSound("deploy");
+            }
+        }
     }
 }
-
+    
 // ==========================================
 // 8. O MOTOR DE FASES (PING-PONG)
 // ==========================================
@@ -1163,25 +1481,67 @@ function resolveCombat(atkCard, defCard, isPlayer, onFinish) {
         x: moveX, y: moveY, duration: 0.28, ease: "power3.in",
         onUpdate: () => { if(window.VFX && window.VFX.createTrail) window.VFX.createTrail(atkCard); },
         onComplete: () => {
-            // 2. CAIXA DE *****ÂNIO: Impede a carta de ficar presa se der erro
+            // ⚡ 2. CAIXA DE *****ÂNIO RESTAURADA (O "try" que tinha sumido)
             try {
-                let ef = atkCard.dataset.effect || ""; // Proteção de efeito vazio
+                let ef = atkCard.dataset.effect || ""; // Restauramos a leitura dos efeitos!
                 
                 if(window.VFX && window.VFX.onAttack) VFX.onAttack(atkCard, defCard, ef);
                 if(atkCard.dataset.somAtaque) { let a = new Audio(atkCard.dataset.somAtaque); a.play().catch(()=>{}); } else { playSound("hit"); }
-                
+
                 let dmgToDef = parseInt(atkCard.dataset.attack) || 0; 
                 let dmgToAtk = 0;
+                
                 if(!defCard.id.includes("hero")) dmgToAtk = parseInt(defCard.dataset.attack) || 0; 
                 
+                // ⚡ SALVA A VIDA ORIGINAL PARA O CÁLCULO DE ATROPELAR
+                let defesaOriginalDoAlvo = defCard.id.includes("hero") ? (isPlayer ? enemyLife : playerLife) : (parseInt(defCard.dataset.hp) || 0);
+
+                // (Mantenha o que estava antes até chegar aqui:)
                 if(defCard.id.includes("hero")) { 
                     if(isPlayer) enemyLife -= dmgToDef; else playerLife -= dmgToDef; 
                     screenShake(); 
                 } else { 
                     applyDamage(defCard, dmgToDef); 
+                    
+                    // ⚡ MECÂNICA: TÓXICO (Atacante envenena o Defensor)
+                    if (ef.includes("toxico") && dmgToDef > 0) {
+                        defCard.dataset.damageTaken = 999; // Dano letal imediato
+                        recalculateStats(defCard);
+                        if(window.VFX && window.VFX.showBuff) VFX.showBuff(defCard, "TÓXICO!", "#00ff00");
+                    }
                 }
                 
-                if (dmgToAtk > 0) applyDamage(atkCard, dmgToAtk);
+                if (dmgToAtk > 0) {
+                    applyDamage(atkCard, dmgToAtk);
+                    
+                    // ⚡ MECÂNICA: TÓXICO (Defensor envenena o Atacante se revidar)
+                    let efDef = defCard.dataset ? (defCard.dataset.effect || "") : "";
+                    if (efDef.includes("toxico") && !defCard.id.includes("hero")) {
+                        atkCard.dataset.damageTaken = 999; // Dano letal imediato
+                        recalculateStats(atkCard);
+                        if(window.VFX && window.VFX.showBuff) VFX.showBuff(atkCard, "TÓXICO!", "#00ff00");
+                    }
+                }
+                // (O resto do resolveCombat continua normal para baixo: Atropelar, Fúria, etc...)
+
+                // ⚡ MECÂNICA: ATROPELAR (Dano Excedente)
+                if (ef.includes("atropelar") && dmgToDef > defesaOriginalDoAlvo && !defCard.id.includes("hero")) {
+                    let danoExcedente = dmgToDef - defesaOriginalDoAlvo;
+                    if (danoExcedente > 0) {
+                        if(isPlayer) enemyLife -= danoExcedente; else playerLife -= danoExcedente;
+                        screenShake();
+                        if(window.VFX && window.VFX.showBuff) VFX.showBuff(document.getElementById(isPlayer ? "enemy-hero" : "player-hero"), `-${danoExcedente} ATROPELADO!`, "#ff0000");
+                    }
+                }
+
+                // ⚡ MECÂNICA: FÚRIA (Ganha ataque ao apanhar)
+                let efDef = defCard.dataset ? (defCard.dataset.effect || "") : "";
+                if (efDef.includes("furia") && !defCard.id.includes("hero") && (parseInt(defCard.dataset.hp) || 0) > 0) {
+                    defCard.dataset.baseAtk = (parseInt(defCard.dataset.baseAtk) || 0) + 2;
+                    recalculateStats(defCard);
+                    if(window.VFX && window.VFX.showBuff) VFX.showBuff(defCard, "FÚRIA! +2 ATK", "#ff0000");
+                }
+
                 if (ef.includes("roubo_vida") && isPlayer) playerLife = Math.min(playerLife + dmgToDef, maxLife);
                 
                 checkGameOver(); updateLifeAndMana(); 
@@ -1203,7 +1563,8 @@ function resolveCombat(atkCard, defCard, isPlayer, onFinish) {
                 } else { 
                     if(onFinish) onFinish(); 
                 }
-            } catch(e) {
+
+            } catch(e) { // 👈 O CATCH AGORA TEM O SEU "TRY"
                 console.error("Erro oculto no combate isolado!", e);
                 // FAIL-SAFE: Força a carta a voltar para o slot independentemente de qualquer erro!
                 gsap.to(atkCard, { x: 0, y: 0, scale: 0.60, duration: 0.45, ease: "power2.out", onComplete: () => { atkCard.style.zIndex = "10"; if(onFinish) onFinish(); }});
@@ -1260,13 +1621,25 @@ function checkGameOver() {
     saveProgress(); 
     
     let botoesAcao = `<button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>`;
+    
     if (playerWon && currentLevel !== "casual") {
-        if (currentLevel < campaignData.length - 1) { 
+        // ⚡ Verifica se chegou no fim do Capítulo 1 (Fase 3/Índice 2) ou Capítulo 2 (Fase 6/Índice 5)
+        let fimDeCapitulo = (currentLevel === 2 || currentLevel === 5);
+
+        if (!fimDeCapitulo && currentLevel < campaignData.length - 1) { 
             botoesAcao = `<button class="open-btn" onclick="nextCampaignLevel()" style="margin-top: 20px; color: #00ff00; border-color: #00ff00;">[ AVANÇAR PARA SETOR ${currentLevel + 2} ]</button><button class="cmd-btn" onclick="location.reload()" style="margin-top: 10px; border-color: #444; color: #777;">[ EXTRAIR E SAIR ]</button>`; 
         } else { 
-            recompensaHTML += `<h3 style="color: gold; text-shadow: 0 0 15px gold; margin-top: 10px;">👑 PROJETO ZEUS ENCERRADO 👑</h3><p style="color: #fff;">A Matriz está limpa, Operador.</p>`; 
+            // Mensagens de conclusão de capítulo!
+            if (currentLevel === 2) {
+                recompensaHTML += `<h3 style="color: gold; text-shadow: 0 0 15px gold; margin-top: 10px;">👑 PROJETO ZEUS CONCLUÍDO 👑</h3><p style="color: #fff;">A ameaça foi contida... ou assim você pensava.</p>`; 
+            } else if (currentLevel === 5) {
+                recompensaHTML += `<h3 style="color: #ff0055; text-shadow: 0 0 15px #ff0055; margin-top: 10px;">👑 CAÇADA CONCLUÍDA 👑</h3><p style="color: #fff;">O Complexo 7 caiu. Adão está livre.</p>`; 
+            }
+            // Força o jogador a voltar ao Menu, não deixa avançar!
+            botoesAcao = `<button class="cmd-btn" onclick="location.reload()" style="margin-top: 20px;">[ RETORNAR AO MENU ]</button>`;
         }
     }
+    
     
     modal.innerHTML = `<div class="modal-content final-screen" style="border-color: ${playerWon ? '#00ff00' : '#ff0000'}; background: rgba(5,5,10,0.95);"><h1 class="final-title" style="color: ${playerWon ? '#00ff00' : '#ff0000'}; font-size: 2.5rem; margin-top: 15px;">${playerWon ? "SISTEMA HACKEADO" : "FALHA CRÍTICA"}</h1>${recompensaHTML}${deckRewardHTML}<div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">${botoesAcao}</div></div>`;
     setTimeout(() => modal.classList.add("active"), 1000); 
@@ -1800,3 +2173,65 @@ function advanceTutorial() {
         advanceTutorial();
     };
   }
+  
+  // ==========================================
+// 📂 SISTEMA DE EXPANSÕES (CAPÍTULOS)
+// ==========================================
+function abrirMenuCapitulos() {
+    playSound("click");
+    let modal = document.createElement("div");
+    modal.id = "chapter-modal";
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,5,10,0.95); z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(8px);";
+    
+    // Verifica se o jogador já comprou/desbloqueou o Capítulo 2
+    let cap2Desbloqueado = localStorage.getItem("zeusCapitulo2") === "true";
+    let btnCap2 = cap2Desbloqueado 
+        ? `<button class="cmd-btn" onclick="iniciarCapitulo(3)" style="border-color:#ff0055; color:#ff0055; width:300px; margin-bottom:15px; box-shadow: 0 0 15px rgba(255,0,85,0.4);">[ JOGAR: COMPLEXO 7 ]</button>`
+        : `<button class="cmd-btn" onclick="comprarCapitulo(2, 1000)" style="border-color:#777; color:#ccc; width:300px; margin-bottom:15px;">🔒 DESBLOQUEAR CAP. 2 (1000 💽)</button>`;
+
+    modal.innerHTML = `
+        <h2 style="color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom: 40px; font-family:'Courier New', monospace;">📂 ARQUIVOS DE CAMPANHA</h2>
+        
+        <button class="cmd-btn" onclick="iniciarCapitulo(0)" style="border-color:#00ffff; color:#00ffff; width:300px; margin-bottom:15px; box-shadow: 0 0 15px rgba(0,255,255,0.4);">[ JOGAR: PROJETO ZEUS ]</button>
+        
+        ${btnCap2}
+        
+        <button class="cmd-btn" onclick="fecharMenuCapitulos()" style="border-color:#444; color:#777; width:300px; margin-top:30px;">[ VOLTAR AO MENU ]</button>
+    `;
+    document.body.appendChild(modal);
+}
+
+function fecharMenuCapitulos() {
+    playSound("click");
+    let modal = document.getElementById("chapter-modal");
+    if(modal) modal.remove();
+    document.getElementById("mode-selection-modal").classList.add("active"); // Volta pro menu de modos
+}
+
+function iniciarCapitulo(indiceInicial) {
+    playSound("deploy");
+    let modal = document.getElementById("chapter-modal");
+    if(modal) modal.remove();
+    
+    // Define a fase inicial (0 para o Cap 1, 3 para o Cap 2)
+    currentLevel = indiceInicial; 
+    startCampaignScene();
+}
+
+function comprarCapitulo(capitulo, preco) {
+    if (playerFragments >= preco) {
+        playSound("deploy");
+        playerFragments -= preco;
+        localStorage.setItem("zeusCapitulo" + capitulo, "true");
+        saveProgress();
+        document.getElementById("fragment-count").textContent = playerFragments;
+        alert("SISTEMA: EXPANSÃO DESBLOQUEADA COM SUCESSO!");
+        
+        // Recarrega o menu para mostrar o botão de Jogar
+        fecharMenuCapitulos();
+        setTimeout(abrirMenuCapitulos, 200);
+    } else {
+        playSound("error");
+        alert(`SISTEMA: HDs INSUFICIENTES. VOCÊ PRECISA DE ${preco} 💽.`);
+    }
+}  
