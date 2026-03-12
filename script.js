@@ -223,11 +223,11 @@ const baseDeck = [
     // ==========================================
     // 🧬 EQUIPE DO LABORATÓRIO (Mutação, Veneno e Sacrifício)
     // ==========================================
-    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia_volatil.jpg" },
-    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./besta_toxica.jpg" },
+    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia.jpg" },
+    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./toxica.jpg" },
     { title: "Tanque de Incubação", tipo: "estrutura", raridade: "rara", custo: 3, atk: 0, def: 6, efeito: "incubar", text: "Ao final do turno, invoca um [Clone Instável] se houver espaço.", img: "./tanque.jpg" },
     { title: "Geneticista Chefe", tipo: "humano", raridade: "epica", custo: 5, atk: 3, def: 4, efeito: "extracao", text: "Grito de Guerra: Destrói um aliado aleatório. Se o fizer, compra 2 cartas.", img: "./geneticista.jpg" },
-    { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./amalgama.jpg" }
+    { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./omega.jpg" }
     // FEITIÇOS E EQUIPAMENTOS DE ALERTA
     //{ title: "Protocolo de Caos", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "sobrecarga +2", text: "Aumenta sobrecarga em 2.", img: "./caos.png" },
    // { title: "Sobrecarga de BIOS", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano 2", text: "Causa 2 de dano.", img: "./bios.png" },
