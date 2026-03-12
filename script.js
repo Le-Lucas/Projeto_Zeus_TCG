@@ -854,49 +854,60 @@ function createCard(item) {
     let safeCost = Number(item.custo)||0;
     const title = item.title || "Unidade Desconhecida";
 
-    // ⚡ CAÇADOR DE EAO: Verifica se a carta é do esquadrão de elite
-    const nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
-    const isEAO = nomesEAO.includes(title);
-
     const c = document.createElement("div"); 
     c.className = `card-base ${item.raridade || 'comum'} ${baseClass}`;
-    
-    // ⚡ INJETA A CLASSE HOLOGRÁFICA SE FOR EAO
-    if (isEAO) c.classList.add("card-eao");
 
+    // Status lógicos do motor (Mantidos intactos)
     c.dataset.baseAtk = safeAtk; c.dataset.baseHp = safeDef; c.dataset.baseCost = safeCost; c.dataset.damageTaken = 0; c.dataset.equipBaseAtk = 0; c.dataset.equipBaseHp = 0; c.dataset.auraAtk = 0; c.dataset.auraHp = 0; c.dataset.originalEffect = item.efeito; c.dataset.equipEffect = "";
     c.draggable = true; c.dataset.name = title; c.dataset.attack = safeAtk; c.dataset.hp = safeDef; c.dataset.cost = safeCost; c.dataset.type = baseClass; c.dataset.raca = item.tipo; c.dataset.effect = item.efeito; c.dataset.hasAttacked = "false";
     
-    // Ícones e Estrelas
+    // Ícones Dinâmicos
     let typeIcon = "⚔️"; 
     if(["automato"].includes(item.tipo)) typeIcon = "⚙️"; 
     if(["humano","medico","soldado", "agente", "resistencia"].includes(item.tipo)) typeIcon = "🧬"; 
     if(item.tipo === "estrutura") typeIcon = "🏗️"; 
     if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; 
+    if(isSpell) typeIcon = "⚡";
+    if(isEquip) typeIcon = "🛡️";
     
+    // Gerador de Fita de Raridade (Estrelas verticais)
     let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1)); 
-    let starsHTML = '<div class="card-stars">'; 
-    for(let i=0; i<starsCount; i++) starsHTML += '<div class="star">★</div>'; 
-    starsHTML += '</div>';
+    let starsHTML = ''; 
+    for(let i=0; i<starsCount; i++) starsHTML += '<div class="cyber-star">★</div>'; 
+
+    let cardDescription = getCardDesc(item) || ""; 
     
-    let statsHTML = !(isSpell || isEquip) ? `<div class="card-stats"><div class="stat-badge stat-atk">${safeAtk}</div><div class="stat-badge stat-def">${safeDef}</div></div>` : `<div class="card-stats"><div class="stat-badge stat-atk" style="background:#b0279b; font-size:0.6rem;">${isEquip ? 'EQP' : 'MAG'}</div></div>`;
-    let cardDescription = getCardDesc(item); 
-    let descHTML = cardDescription ? `<div class="card-body"><div class="card-text">${cardDescription}</div></div>` : "";
-    
-    // ⚡ A MÁGICA DA SEPARAÇÃO: EAO recebe a moldura holográfica, as outras não!
-    if (isEAO) {
-        c.innerHTML = `
-            <div class="card-frame" style="width:100%; height:100%; position:relative; border-radius:inherit;">
-                <div class="eao-holo-overlay"></div>
-                <div class="card-title">${title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>
+    // ⚡ A INJEÇÃO DO NOVO HTML (CYBER-UI)
+    c.innerHTML = `
+        <div class="cyber-card-inner">
+            
+            <img src="${item.img || 'https://files.catbox.moe/w2j2w7.png'}" class="cyber-art" draggable="false">
+            
+            <div class="cyber-title-bar">
+                <span class="cyber-title-text">${title.toUpperCase()}</span>
             </div>
-        `;
-    } else {
-        // Layout Normal do Projeto Zeus
-        c.innerHTML = `<div class="card-title">${title}</div><div class="card-art-box"><img src="${item.img || ''}" class="card-art" draggable="false"></div><div class="card-type-icon">${typeIcon}</div>${starsHTML}${descHTML}${statsHTML}<div class="card-cost">${safeCost}</div>`;
-    }
+
+            <div class="cyber-text-box">
+                <div class="cyber-desc">${cardDescription}</div>
+            </div>
+            
+        </div>
+
+        <div class="cyber-orb orb-cost">${safeCost}</div>
+        
+        <div class="cyber-rarity-ribbon">
+            ${starsHTML}
+        </div>
+
+        <div class="cyber-orb orb-type">${typeIcon}</div>
+
+        ${!(isSpell || isEquip) ? `
+            <div class="cyber-orb orb-def">${safeDef}</div>
+            <div class="cyber-orb orb-atk">${safeAtk}</div>
+        ` : ''}
+    `;
     
-    // Eventos de Mouse e Touch (Padrão do seu motor)
+    // Eventos de Mouse e Touch (O seu motor de animação intacto)
     let pressTimer; 
     c.onmouseenter = () => { 
         if(c.parentElement && c.parentElement.id === "hand" && !draggedCard && !selectedCardFromHand) { 
@@ -909,19 +920,24 @@ function createCard(item) {
             gsap.to(c, { y: 0, scale: 0.7, zIndex: c.dataset.origZ, duration: 0.2 }); 
         } 
     };
+    
     c.onclick = handleCardClick; 
     c.oncontextmenu = (e) => { e.preventDefault(); openInspectModal(item); };
     c.ontouchstart = () => { pressTimer = setTimeout(() => { openInspectModal(item); }, 500); };
     c.ontouchend = () => { clearTimeout(pressTimer); };
 
-    // Drag & Drop
-    c.ondragstart = (e) => { e.dataTransfer.setData('text/plain', 'carta'); if(isSystemLocked || c.parentElement.id !== "hand") { e.preventDefault(); return; } if(isSpell || isEquip) { e.preventDefault(); playSound("error"); alert("SISTEMA: Clique na carta na mão e depois no alvo."); return; } draggedCard = c; };
+    // Drag & Drop Blindado
+    c.ondragstart = (e) => { 
+        e.dataTransfer.setData('text/plain', 'carta'); 
+        if(isSystemLocked || c.parentElement.id !== "hand") { e.preventDefault(); return; } 
+        if(isSpell || isEquip) { e.preventDefault(); playSound("error"); alert("SISTEMA: Clique na carta na mão e depois no alvo."); return; } 
+        draggedCard = c; 
+    };
     c.ondragend = () => { if (draggedCard) draggedCard = null; }; 
     
     recalculateStats(c); 
     return c; 
 }
-
 // ==========================================
 // 7. SISTEMA DE CLIQUES E EFEITOS
 // ==========================================
