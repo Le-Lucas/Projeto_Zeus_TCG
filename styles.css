@@ -754,3 +754,142 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     border-color: #00ff00 !important;
     filter: brightness(1.3) !important;
 }
+
+/* ==========================================
+   🧬 ESTRUTURA ELITE EAO (PROJEÇÃO 3D & HOLO)
+   ========================================== */
+
+/* 1. O Recipiente 3D (Ativa a perspectiva na carta base) */
+.card-eao {
+    perspective: 1000px;
+    border: none !important; /* Removemos a borda padrão */
+    background: transparent !important;
+    overflow: visible !important; /* Permite que o holo saia da carta */
+}
+
+/* 2. O Corpo da Carta (preserve-3d para camadas flutuarem) */
+.card-eao .card-frame {
+    transform-style: preserve-3d;
+    background: linear-gradient(145deg, #1a1a1a, #000) !important;
+    border: 2px solid #3d3d3d !important; /* Estrutura metálica escura */
+    box-shadow: 0 0 20px rgba(255, 170, 0, 0.2) !important; /* Glow base âmbar */
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+/* Efeito Hover 3D (A carta projeta-se para frente) */
+.card-eao:hover .card-frame {
+    transform: translateZ(20px) rotateX(5deg) rotateY(5deg) !important;
+    box-shadow: 0 10px 40px rgba(255, 170, 0, 0.5) !important;
+}
+
+/* ==========================================
+   ✨ SISTEMA HOLOGRÁFICO (BACK & FRONT)
+   ========================================== */
+
+/* O Container que segura as camadas holográficas */
+.card-eao .card-frame::before {
+    content: '';
+    position: absolute;
+    top: -10%; left: -10%; width: 120%; height: 120%;
+    
+    /* 3. Overlay TRASEIRO (Textura de Grelha de Dados) */
+    background-image: 
+        linear-gradient(0deg, transparent 24%, rgba(255, 170, 0, .05) 25%, rgba(255, 170, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 170, 0, .05) 75%, rgba(255, 170, 0, .05) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(255, 170, 0, .05) 25%, rgba(255, 170, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 170, 0, .05) 75%, rgba(255, 170, 0, .05) 76%, transparent 77%, transparent);
+    background-size: 20px 20px;
+    
+    transform: translateZ(-10px); /* Flutua ATRÁS dos elementos */
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+/* 4. Overlay DIANTEIRO (Scanlines e Brilho Iridescente) */
+.card-eao .eao-holo-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    
+    /* Scanlines CSS puros */
+    background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 1px,
+        transparent 1px,
+        transparent 2px
+    );
+    
+    transform: translateZ(15px); /* Flutua na FRENTE de tudo (imagem/texto) */
+    opacity: 0.6;
+    mix-blend-mode: screen; /* Faz brilhar sobre o conteúdo */
+    pointer-events: none;
+    z-index: 10;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Animação do Brilho Holográfico Dianteiro (Passa uma luz) */
+.card-eao .eao-holo-overlay::after {
+    content: '';
+    position: absolute;
+    top: -150%; left: -150%; width: 300%; height: 300%;
+    background: linear-gradient(
+        135deg,
+        transparent 45%,
+        rgba(255, 200, 0, 0.3) 50%,
+        transparent 55%
+    );
+    animation: holoShimmer 4s infinite;
+}
+
+@keyframes holoShimmer {
+    0% { transform: translateX(0) translateY(0); }
+    100% { transform: translateX(50%) translateY(50%); }
+}
+
+/* ==========================================
+   🔤 FONTES E CORES DIFERENCIADAS (EAO)
+   ========================================== */
+
+/* Título (Fonte Mono, cor Âmbar LED) */
+.card-eao .card-title {
+    font-family: 'Courier New', monospace !important;
+    color: #ffaa00 !important;
+    text-shadow: 0 0 10px #ffaa00, 0 0 20px rgba(255,170,0,0.5) !important;
+    letter-spacing: -1px;
+    transform: translateZ(5px); /* Flutua um pouco */
+}
+
+/* Texto de Descrição (Fonte Mono limpa) */
+.card-eao .card-text {
+    font-family: 'Courier New', monospace !important;
+    color: #ccc !important;
+    font-size: 11px !important;
+    transform: translateZ(2px);
+}
+
+/* Caixas de Status (ATK/DEF estilo display LED) */
+.card-eao .stat-box {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid #ffaa00 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 0 10px rgba(255,170,0,0.3) !important;
+    transform: translateZ(8px); /* Flutuam bem alto */
+}
+
+.card-eao .stat-value {
+    color: #ffaa00 !important; /* Dourado LED */
+    font-family: 'Courier New', monospace !important;
+    text-shadow: 0 0 8px #ffaa00 !important;
+}
+
+/* Ajuste para Personagens Sem Fundo (Holograma 3D Real) */
+.card-eao .card-image {
+    /* Removemos o mix-blend-mode antigo e adicionamos um drop-shadow Âmbar */
+    filter: sepia(50%) hue-rotate(10deg) brightness(1.2) drop-shadow(0 0 15px rgba(255, 170, 0, 0.6)); 
+    opacity: 0.95;
+    
+    /* ⚡ O SEGREDO DO 3D: Joga o personagem MUITO para frente e aumenta um pouco o tamanho */
+    transform: translateZ(30px) scale(1.15); 
+    
+    /* Permite que partes do personagem vazem das bordas da carta */
+    overflow: visible; 
+}
