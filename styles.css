@@ -754,142 +754,181 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     border-color: #00ff00 !important;
     filter: brightness(1.3) !important;
 }
-
 /* ==========================================
-   🧬 ESTRUTURA ELITE EAO (PROJEÇÃO 3D & HOLO)
+   🔥 NOVA ARQUITETURA DE CARTAS: CYBER-UI 🔥
    ========================================== */
 
-/* 1. O Recipiente 3D (Ativa a perspectiva na carta base) */
-.card-eao {
-    perspective: 1000px;
-    border: none !important; /* Removemos a borda padrão */
+/* A Base da Carta (Permite que as esferas flutuem para fora) */
+.card-base {
+    position: relative;
+    width: 200px;
+    height: 280px;
     background: transparent !important;
-    overflow: visible !important; /* Permite que o holo saia da carta */
+    border: none !important;
+    overflow: visible !important; /* Muito importante! */
+    perspective: 1000px;
 }
 
-/* 2. O Corpo da Carta (preserve-3d para camadas flutuarem) */
-.card-eao .card-frame {
-    transform-style: preserve-3d;
-    background: linear-gradient(145deg, #1a1a1a, #000) !important;
-    border: 2px solid #3d3d3d !important; /* Estrutura metálica escura */
-    box-shadow: 0 0 20px rgba(255, 170, 0, 0.2) !important; /* Glow base âmbar */
-    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
-}
-
-/* Efeito Hover 3D (A carta projeta-se para frente) */
-.card-eao:hover .card-frame {
-    transform: translateZ(20px) rotateX(5deg) rotateY(5deg) !important;
-    box-shadow: 0 10px 40px rgba(255, 170, 0, 0.5) !important;
-}
-
-/* ==========================================
-   ✨ SISTEMA HOLOGRÁFICO (BACK & FRONT)
-   ========================================== */
-
-/* O Container que segura as camadas holográficas */
-.card-eao .card-frame::before {
-    content: '';
+/* O Fundo Metálico e o Glow Diagonal (Laranja Esquerda / Ciano Direita) */
+.cyber-card-inner {
     position: absolute;
-    top: -10%; left: -10%; width: 120%; height: 120%;
-    
-    /* 3. Overlay TRASEIRO (Textura de Grelha de Dados) */
-    background-image: 
-        linear-gradient(0deg, transparent 24%, rgba(255, 170, 0, .05) 25%, rgba(255, 170, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 170, 0, .05) 75%, rgba(255, 170, 0, .05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(255, 170, 0, .05) 25%, rgba(255, 170, 0, .05) 26%, transparent 27%, transparent 74%, rgba(255, 170, 0, .05) 75%, rgba(255, 170, 0, .05) 76%, transparent 77%, transparent);
-    background-size: 20px 20px;
-    
-    transform: translateZ(-10px); /* Flutua ATRÁS dos elementos */
-    opacity: 0.8;
-    pointer-events: none;
-}
-
-/* 4. Overlay DIANTEIRO (Scanlines e Brilho Iridescente) */
-.card-eao .eao-holo-overlay {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    
-    /* Scanlines CSS puros */
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(0, 0, 0, 0.1),
-        rgba(0, 0, 0, 0.1) 1px,
-        transparent 1px,
-        transparent 2px
-    );
-    
-    transform: translateZ(15px); /* Flutua na FRENTE de tudo (imagem/texto) */
-    opacity: 0.6;
-    mix-blend-mode: screen; /* Faz brilhar sobre o conteúdo */
-    pointer-events: none;
-    z-index: 10;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #0d0d12;
     border-radius: 12px;
+    /* Borda Gradiente Simulada */
+    box-shadow: 
+        -3px -3px 12px rgba(255, 170, 0, 0.5), /* Glow Laranja Topo/Esquerda */
+        3px 3px 12px rgba(0, 255, 255, 0.5),   /* Glow Ciano Baixo/Direita */
+        inset 0 0 20px rgba(0, 0, 0, 0.8);
+    border-top: 2px solid #ffaa00;
+    border-left: 2px solid #ffaa00;
+    border-bottom: 2px solid #00ffff;
+    border-right: 2px solid #00ffff;
     overflow: hidden;
+    z-index: 1;
 }
 
-/* Animação do Brilho Holográfico Dianteiro (Passa uma luz) */
-.card-eao .eao-holo-overlay::after {
-    content: '';
+/* 🖼️ Arte do Personagem */
+.cyber-art {
     position: absolute;
-    top: -150%; left: -150%; width: 300%; height: 300%;
-    background: linear-gradient(
-        135deg,
-        transparent 45%,
-        rgba(255, 200, 0, 0.3) 50%,
-        transparent 55%
-    );
-    animation: holoShimmer 4s infinite;
+    bottom: 20%; /* Sobe um pouco para não esconder os pés na caixa de texto */
+    left: -10%;
+    width: 120%;
+    height: 100%;
+    object-fit: contain; /* Mantém a proporção do PNG transparente */
+    z-index: 2; /* Fica acima do fundo, atrás do vidro */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
 }
 
-@keyframes holoShimmer {
-    0% { transform: translateX(0) translateY(0); }
-    100% { transform: translateX(50%) translateY(50%); }
+/* 💠 A Caixa de Texto Glassmorphism (Vidro Fosco Hi-Tech) */
+.cyber-text-box {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 38%;
+    background: rgba(20, 25, 30, 0.4); /* Fundo escuro levemente transparente */
+    backdrop-filter: blur(8px); /* A MÁGICA DO VIDRO FOSCO */
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    z-index: 3; /* Acima do personagem */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    /* Grelha holográfica fininha no vidro */
+    background-image: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px);
+    box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
 }
 
-/* ==========================================
-   🔤 FONTES E CORES DIFERENCIADAS (EAO)
-   ========================================== */
-
-/* Título (Fonte Mono, cor Âmbar LED) */
-.card-eao .card-title {
-    font-family: 'Courier New', monospace !important;
-    color: #ffaa00 !important;
-    text-shadow: 0 0 10px #ffaa00, 0 0 20px rgba(255,170,0,0.5) !important;
-    letter-spacing: -1px;
-    transform: translateZ(5px); /* Flutua um pouco */
+.cyber-desc {
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    text-align: center;
+    text-shadow: 1px 1px 2px #000;
+    font-weight: bold;
 }
 
-/* Texto de Descrição (Fonte Mono limpa) */
-.card-eao .card-text {
-    font-family: 'Courier New', monospace !important;
-    color: #ccc !important;
-    font-size: 11px !important;
-    transform: translateZ(2px);
+/* 🏷️ Título Centralizado no Topo */
+.cyber-title-bar {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8), transparent);
+    padding: 2px 20px;
+    z-index: 4;
+    border-bottom: 1px solid rgba(255, 170, 0, 0.5);
 }
 
-/* Caixas de Status (ATK/DEF estilo display LED) */
-.card-eao .stat-box {
-    background: rgba(0, 0, 0, 0.8) !important;
-    border: 1px solid #ffaa00 !important;
-    border-radius: 4px !important;
-    box-shadow: 0 0 10px rgba(255,170,0,0.3) !important;
-    transform: translateZ(8px); /* Flutuam bem alto */
+.cyber-title-text {
+    color: #ffaa00;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    font-weight: bold;
+    text-shadow: 0 0 5px #ffaa00;
+    white-space: nowrap;
 }
 
-.card-eao .stat-value {
-    color: #ffaa00 !important; /* Dourado LED */
-    font-family: 'Courier New', monospace !important;
-    text-shadow: 0 0 8px #ffaa00 !important;
+/* 🔮 ORBES FLUTUANTES (Status e Custo nas bordas) */
+.cyber-orb {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    font-size: 18px;
+    z-index: 10; /* Sempre no topo de tudo */
+    border: 2px solid #fff;
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 
-/* Ajuste para Personagens Sem Fundo (Holograma 3D Real) */
-.card-eao .card-image {
-    /* Removemos o mix-blend-mode antigo e adicionamos um drop-shadow Âmbar */
-    filter: sepia(50%) hue-rotate(10deg) brightness(1.2) drop-shadow(0 0 15px rgba(255, 170, 0, 0.6)); 
-    opacity: 0.95;
-    
-    /* ⚡ O SEGREDO DO 3D: Joga o personagem MUITO para frente e aumenta um pouco o tamanho */
-    transform: translateZ(30px) scale(1.15); 
-    
-    /* Permite que partes do personagem vazem das bordas da carta */
-    overflow: visible; 
+/* Esfera de Custo (Topo Esquerda - Laranja) */
+.orb-cost {
+    top: -12px; left: -12px;
+    background: radial-gradient(circle at 30% 30%, #ffcc00, #aa5500);
+    border-color: #ffd700;
+    color: white;
+    box-shadow: 0 0 15px #ffaa00, inset 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Esfera de Tipo (Topo Direita - Azul/Ciano) */
+.orb-type {
+    top: -12px; right: -12px;
+    background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa);
+    border-color: #aaffff;
+    font-size: 20px;
+    box-shadow: 0 0 15px #00ffff, inset 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* Esfera de Defesa/Vida (Baixo Esquerda - Ciano) */
+.orb-def {
+    bottom: -12px; left: -12px;
+    background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa);
+    border-color: #aaffff;
+    color: white;
+    box-shadow: 0 0 15px #00ffff;
+}
+
+/* Esfera de Ataque (Baixo Direita - Laranja/Ferrugem) */
+.orb-atk {
+    bottom: -12px; right: -12px;
+    background: radial-gradient(circle at 30% 30%, #ff5500, #882200);
+    border-color: #ffaa00;
+    color: white;
+    box-shadow: 0 0 15px #ff5500;
+}
+
+/* 🎀 Fita de Raridade (Abaixo do Custo) */
+.cyber-rarity-ribbon {
+    position: absolute;
+    top: 25px;
+    left: -2px;
+    width: 24px;
+    background: linear-gradient(180deg, #444, #111);
+    border: 1px solid #777;
+    border-top: none;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    z-index: 9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    box-shadow: 2px 5px 10px rgba(0,0,0,0.6);
+}
+
+.cyber-star {
+    color: #ffd700;
+    font-size: 10px;
+    text-shadow: 0 0 5px #ffaa00;
+    line-height: 1;
 }
