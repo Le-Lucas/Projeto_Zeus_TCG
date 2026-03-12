@@ -427,9 +427,80 @@ function renderVitrine() {
     updateDeckUI();
 }
 
-function openInspectModal(cardData) {
-    playSound("click"); const container = document.getElementById("inspect-card-container"); if(!container) return; container.innerHTML = ""; const visualCard = createCard(cardData); visualCard.onclick = null; visualCard.ondragstart = null; visualCard.style.position = "relative"; visualCard.style.cursor = "default"; container.appendChild(visualCard); document.getElementById("inspect-modal").classList.add("active");
+function openInspectModal(item) {
+    if (!item) return;
+    
+    let modal = document.getElementById("inspect-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "inspect-modal";
+        document.body.appendChild(modal);
+    }
+
+    // ⚡ CAÇADOR DE EAO e Variáveis
+    const title = item.title || "Unidade Desconhecida";
+    const nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
+    const isEAO = nomesEAO.includes(title);
+
+    let safeAtk = Number(item.atk)||0; 
+    let safeDef = Number(item.def)||0; 
+    let safeCost = Number(item.custo)||0;
+    let isSpell = (item.tipo === 'feitico'); 
+    let isEquip = (item.tipo === 'equipamento');
+
+    // Ícones
+    let typeIcon = "⚔️"; 
+    if(["automato"].includes(item.tipo)) typeIcon = "⚙️"; 
+    if(["humano","medico","soldado", "agente", "resistencia"].includes(item.tipo)) typeIcon = "🧬"; 
+    if(item.tipo === "estrutura") typeIcon = "🏗️"; 
+    if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; 
+    if(isSpell) typeIcon = "⚡";
+    if(isEquip) typeIcon = "🛡️";
+
+    // Estrelas
+    let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1)); 
+    let starsHTML = ''; 
+    for(let i=0; i<starsCount; i++) starsHTML += '<div class="cyber-star">★</div>'; 
+
+    let cardDescription = getCardDesc(item) || "";
+
+    // Fundo do Modal
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5, 5, 10, 0.95); z-index:100000; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(8px);";
+
+    // ⚡ INJEÇÃO DA CYBER-UI (Ampliada para inspeção)
+    modal.innerHTML = `
+        <div class="card-base ${isEAO ? 'card-eao' : ''}" style="transform: scale(1.5); margin-bottom: 80px; pointer-events: none;">
+            <div class="cyber-card-inner">
+                <img src="${item.img || 'https://files.catbox.moe/w2j2w7.png'}" class="cyber-art">
+                <div class="cyber-title-bar"><span class="cyber-title-text">${title.toUpperCase()}</span></div>
+                <div class="cyber-text-box"><div class="cyber-desc" style="font-size: 11px;">${cardDescription}</div></div>
+            </div>
+            
+            <div class="cyber-orb orb-cost">${safeCost}</div>
+            <div class="cyber-rarity-ribbon">${starsHTML}</div>
+            <div class="cyber-orb orb-type">${typeIcon}</div>
+            
+            ${!(isSpell || isEquip) ? `
+                <div class="cyber-orb orb-def">${safeDef}</div>
+                <div class="cyber-orb orb-atk">${safeAtk}</div>
+            ` : ''}
+        </div>
+        
+        <button id="btn-close-inspect" style="background:transparent; border:2px solid #00ffff; color:#00ffff; padding:12px 35px; font-family:'Courier New', monospace; font-weight:bold; font-size: 16px; cursor:pointer; border-radius:4px; box-shadow: 0 0 15px rgba(0,255,255,0.4); z-index: 100001; transition: all 0.3s;">FECHAR ARQUIVO</button>
+    `;
+
+    modal.style.display = "flex";
+
+    // Evento de fechar (com efeito hover simples no botão)
+    const btnClose = document.getElementById("btn-close-inspect");
+    btnClose.onmouseover = () => { btnClose.style.background = "rgba(0, 255, 255, 0.2)"; };
+    btnClose.onmouseout = () => { btnClose.style.background = "transparent"; };
+    btnClose.onclick = () => {
+        if(typeof playSound === "function") playSound("click");
+        modal.style.display = "none";
+    };
 }
+
 
 function addCardToDeck(card) { if (customDeck.length < 15) { if (customDeck.filter(c => c.title === card.title).length < 3) { customDeck.push({...card}); updateDeckUI(); } else { playSound("error"); alert("Máximo de 3 cópias iguais no deck."); } } }
 function removeCardFromDeck(index) { customDeck.splice(index, 1); updateDeckUI(); }
