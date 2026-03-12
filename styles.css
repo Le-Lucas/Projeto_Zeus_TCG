@@ -786,19 +786,30 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     border-right: 2px solid #00ffff;
     overflow: hidden;
     z-index: 1;
+    overflow: hidden !important;
 }
 
-/* 🖼️ Arte do Personagem */
+/* 🖼️ Arte do Personagem (CORRIGIDO PARA ENCAIXAR) */
 .cyber-art {
     position: absolute;
-    bottom: 20%; /* Sobe um pouco para não esconder os pés na caixa de texto */
-    left: -10%;
-    width: 120%;
+    /* Centraliza e encaixa dentro do quadro principal */
+    top: 0; 
+    left: 0; 
+    width: 100%; 
     height: 100%;
-    object-fit: contain; /* Mantém a proporção do PNG transparente */
-    z-index: 2; /* Fica acima do fundo, atrás do vidro */
+    
+    /* ⚡ O SEGREDO DO PARALLAX: Joga o corpo para trás do vidro, mas o Z-index da carta permite flutuar */
+    object-fit: cover; /* Ou 'contain', teste qual PNG fica melhor no enquadramento */
+    object-position: top center; /* Foca na cabeça/peito */
+    
+    z-index: 2; /* Atrás do vidro (.cyber-text-box tem Z: 3) */
+    
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
-}
+    
+    /* 💥 EFEITO DE SALTAR DA CARTA (Opcional, dá uma vibe AAA)
+       Se você quiser que ele saia levemente da borda de cima:
+    transform: scale(1.1) translateY(-10px); 
+    */
 
 /* 💠 A Caixa de Texto Glassmorphism (Vidro Fosco Hi-Tech) */
 .cyber-text-box {
