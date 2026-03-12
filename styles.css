@@ -755,82 +755,63 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     filter: brightness(1.3) !important;
 }
 /* ==========================================
-   🔥 NOVA ARQUITETURA DE CARTAS: CYBER-UI 🔥
+   🔥 NOVA ARQUITETURA GLOBAL: CYBER-UI 🔥
    ========================================== */
 
-/* A Base da Carta (Permite que as esferas flutuem para fora) */
+/* A Base da Carta (Permite que as esferas flutuem) */
 .card-base {
     position: relative;
     width: 200px;
     height: 280px;
     background: transparent !important;
     border: none !important;
-    overflow: visible !important; /* Muito importante! */
+    overflow: visible !important; 
     perspective: 1000px;
 }
 
-/* O Fundo Metálico e o Glow Diagonal (Laranja Esquerda / Ciano Direita) */
+/* 1. O QUADRO PRINCIPAL (TEMA PADRÃO: PRATA E ROXO NEON) */
 .cyber-card-inner {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background: #0d0d12;
     border-radius: 12px;
-    /* Borda Gradiente Simulada */
-    box-shadow: 
-        -3px -3px 12px rgba(255, 170, 0, 0.5), /* Glow Laranja Topo/Esquerda */
-        3px 3px 12px rgba(0, 255, 255, 0.5),   /* Glow Ciano Baixo/Direita */
-        inset 0 0 20px rgba(0, 0, 0, 0.8);
-    border-top: 2px solid #ffaa00;
-    border-left: 2px solid #ffaa00;
-    border-bottom: 2px solid #00ffff;
-    border-right: 2px solid #00ffff;
-    overflow: hidden;
+    /* ⚡ O SEGREDO DO ENCAIXE: Corta a imagem para ela não vazar da carta! */
+    overflow: hidden !important; 
     z-index: 1;
-    overflow: hidden !important;
+    
+    /* Cores Padrão (Prata no topo/esquerda, Roxo na base/direita) */
+    box-shadow: -3px -3px 12px rgba(192, 192, 192, 0.4), 3px 3px 12px rgba(176, 39, 155, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    border-top: 2px solid #c0c0c0;
+    border-left: 2px solid #c0c0c0;
+    border-bottom: 2px solid #b0279b;
+    border-right: 2px solid #b0279b;
 }
 
-/* 🖼️ Arte do Personagem (CORRIGIDO PARA ENCAIXAR) */
+/* 🖼️ A ARTE DO PERSONAGEM (Centralizada e contida) */
 .cyber-art {
     position: absolute;
-    /* Centraliza e encaixa dentro do quadro principal */
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%;
-    
-    /* ⚡ O SEGREDO DO PARALLAX: Joga o corpo para trás do vidro, mas o Z-index da carta permite flutuar */
-    object-fit: cover; /* Ou 'contain', teste qual PNG fica melhor no enquadramento */
-    object-position: top center; /* Foca na cabeça/peito */
-    
-    z-index: 2; /* Atrás do vidro (.cyber-text-box tem Z: 3) */
-    
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; /* Faz o PNG preencher o espaço sem distorcer */
+    object-position: top center; /* Foca na cabeça/peitoral */
+    z-index: 2; 
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.8));
-    
-    /* 💥 EFEITO DE SALTAR DA CARTA (Opcional, dá uma vibe AAA)
-       Se você quiser que ele saia levemente da borda de cima:
-    transform: scale(1.1) translateY(-10px); 
-    */
+}
 
-/* 💠 A Caixa de Texto Glassmorphism (Vidro Fosco Hi-Tech) */
+/* 💠 CAIXA DE TEXTO (Vidro Fosco Hi-Tech) */
 .cyber-text-box {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
+    bottom: 10px; left: 10px; right: 10px;
     height: 38%;
-    background: rgba(20, 25, 30, 0.4); /* Fundo escuro levemente transparente */
-    backdrop-filter: blur(8px); /* A MÁGICA DO VIDRO FOSCO */
+    background: rgba(20, 25, 30, 0.5); 
+    backdrop-filter: blur(8px); 
     -webkit-backdrop-filter: blur(8px);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 8px;
-    z-index: 3; /* Acima do personagem */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    z-index: 3; 
+    display: flex; align-items: center; justify-content: center;
     padding: 8px;
-    /* Grelha holográfica fininha no vidro */
-    background-image: 
-        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px);
+    background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.03) 2px, rgba(255, 255, 255, 0.03) 4px);
     box-shadow: 0 -5px 15px rgba(0,0,0,0.5);
 }
 
@@ -843,103 +824,84 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
     font-weight: bold;
 }
 
-/* 🏷️ Título Centralizado no Topo */
+/* 🏷️ BARRA DE TÍTULO */
 .cyber-title-bar {
     position: absolute;
-    top: 5px;
-    left: 50%;
+    top: 5px; left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8), transparent);
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.9), transparent);
     padding: 2px 20px;
     z-index: 4;
-    border-bottom: 1px solid rgba(255, 170, 0, 0.5);
+    border-bottom: 1px solid rgba(192, 192, 192, 0.5); /* Prata */
 }
 
 .cyber-title-text {
-    color: #ffaa00;
+    color: #ffffff; /* Branco Prateado */
     font-family: 'Courier New', monospace;
     font-size: 13px;
     font-weight: bold;
-    text-shadow: 0 0 5px #ffaa00;
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #c0c0c0;
     white-space: nowrap;
 }
 
-/* 🔮 ORBES FLUTUANTES (Status e Custo nas bordas) */
+/* 🔮 ORBES FLUTUANTES GLOBAIS */
 .cyber-orb {
     position: absolute;
-    width: 42px;
-    height: 42px;
+    width: 42px; height: 42px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Courier New', monospace;
-    font-weight: bold;
-    font-size: 18px;
-    z-index: 10; /* Sempre no topo de tudo */
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Courier New', monospace; font-weight: bold; font-size: 18px;
+    z-index: 10; 
     border: 2px solid #fff;
     box-shadow: 0 0 10px rgba(0,0,0,0.8);
 }
 
-/* Esfera de Custo (Topo Esquerda - Laranja) */
+/* Orbes Padrão (Prata/Roxo) */
 .orb-cost {
     top: -12px; left: -12px;
-    background: radial-gradient(circle at 30% 30%, #ffcc00, #aa5500);
-    border-color: #ffd700;
-    color: white;
-    box-shadow: 0 0 15px #ffaa00, inset 0 0 10px rgba(255,255,255,0.5);
+    background: radial-gradient(circle at 30% 30%, #e0e0e0, #555);
+    border-color: #ffffff; color: #000;
+    box-shadow: 0 0 15px #c0c0c0, inset 0 0 10px rgba(255,255,255,0.8);
 }
-
-/* Esfera de Tipo (Topo Direita - Azul/Ciano) */
 .orb-type {
     top: -12px; right: -12px;
-    background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa);
-    border-color: #aaffff;
-    font-size: 20px;
-    box-shadow: 0 0 15px #00ffff, inset 0 0 10px rgba(255,255,255,0.5);
+    background: radial-gradient(circle at 30% 30%, #b0279b, #4a0040);
+    border-color: #ff55ff; font-size: 20px;
+    box-shadow: 0 0 15px #b0279b, inset 0 0 10px rgba(255,255,255,0.5);
 }
-
-/* Esfera de Defesa/Vida (Baixo Esquerda - Ciano) */
 .orb-def {
     bottom: -12px; left: -12px;
     background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa);
-    border-color: #aaffff;
-    color: white;
+    border-color: #aaffff; color: white;
     box-shadow: 0 0 15px #00ffff;
 }
-
-/* Esfera de Ataque (Baixo Direita - Laranja/Ferrugem) */
 .orb-atk {
     bottom: -12px; right: -12px;
     background: radial-gradient(circle at 30% 30%, #ff5500, #882200);
-    border-color: #ffaa00;
-    color: white;
+    border-color: #ffaa00; color: white;
     box-shadow: 0 0 15px #ff5500;
 }
 
-/* 🎀 Fita de Raridade (Abaixo do Custo) */
+/* 🎀 FITA DE RARIDADE */
 .cyber-rarity-ribbon {
-    position: absolute;
-    top: 25px;
-    left: -2px;
-    width: 24px;
+    position: absolute; top: 25px; left: -2px; width: 24px;
     background: linear-gradient(180deg, #444, #111);
-    border: 1px solid #777;
-    border-top: none;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    z-index: 9;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding-top: 10px;
-    padding-bottom: 5px;
-    box-shadow: 2px 5px 10px rgba(0,0,0,0.6);
+    border: 1px solid #777; border-top: none; border-radius: 0 0 4px 4px;
+    z-index: 9; display: flex; flex-direction: column; align-items: center;
+    padding-top: 10px; padding-bottom: 5px; box-shadow: 2px 5px 10px rgba(0,0,0,0.6);
 }
+.cyber-star { color: #ffd700; font-size: 10px; text-shadow: 0 0 5px #ffaa00; line-height: 1; }
 
-.cyber-star {
-    color: #ffd700;
-    font-size: 10px;
-    text-shadow: 0 0 5px #ffaa00;
-    line-height: 1;
+/* ==========================================
+   ⭐ OVERRIDE: TEMA EXCLUSIVO EAO (DOURADO E CIANO)
+   ========================================== */
+
+.card-eao .cyber-card-inner {
+    box-shadow: -3px -3px 12px rgba(255, 170, 0, 0.5), 3px 3px 12px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    border-top: 2px solid #ffaa00; border-left: 2px solid #ffaa00;
+    border-bottom: 2px solid #00ffff; border-right: 2px solid #00ffff;
 }
+.card-eao .cyber-title-bar { border-bottom: 1px solid rgba(255, 170, 0, 0.5); }
+.card-eao .cyber-title-text { color: #ffaa00; text-shadow: 0 0 5px #ffaa00; }
+.card-eao .orb-cost { background: radial-gradient(circle at 30% 30%, #ffcc00, #aa5500); border-color: #ffd700; color: white; box-shadow: 0 0 15px #ffaa00; }
+.card-eao .orb-type { background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa); border-color: #aaffff; box-shadow: 0 0 15px #00ffff; }
