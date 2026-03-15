@@ -3,6 +3,12 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
+window.onerror = function(msg, url, line) { 
+    if (msg.includes("gsap is not defined")) return true; 
+    alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
+    return false; 
+};
+
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ==========================================
@@ -109,11 +115,42 @@ window.alert = function(msg) {
     toast.classList.add("show"); clearTimeout(toast.timer); toast.timer = setTimeout(() => { toast.classList.remove("show"); }, 3500);
 };
 
-const sfx = { bgm: new Audio("https://files.catbox.moe/5j62nk.mp3"), click: new Audio("https://files.catbox.moe/nslg07.wav"), deploy: new Audio("https://files.catbox.moe/bi22a9.wav"), hit: new Audio("https://files.catbox.moe/vwoemb.wav"), error: new Audio("https://files.catbox.moe/f1wdc8.mp3") };
-sfx.bgm.loop = true; sfx.bgm.volume = 0.4;
-function playSound(type) { if(sfx[type]) { if(type !== 'bgm') sfx[type].currentTime = 0; sfx[type].play().catch(()=>{}); } }
-function screenShake() { const b = document.getElementById("board"); if(b) { b.animate([{ transform: "translate(8px, 8px)" }, { transform: "translate(-8px, -8px)" }, { transform: "translate(8px, -8px)" }, { transform: "translate(0, 0)" }], { duration: 400 }); } }
+const sfx = { 
+    bgm: new Audio("https://files.catbox.moe/5j62nk.mp3"), 
+    click: new Audio("https://files.catbox.moe/nslg07.wav"), 
+    deploy: new Audio("https://files.catbox.moe/bi22a9.wav"), 
+    hit: new Audio("https://files.catbox.moe/vwoemb.wav"), 
+    error: new Audio("https://files.catbox.moe/f1wdc8.mp3") 
+};
 
+// 🎚️ MESA DE SOM (MIXAGEM PROFISSIONAL)
+sfx.bgm.loop = true; 
+sfx.bgm.volume = 0.15;  // ⚡ Música de fundo suave (15%)
+
+// Nivelamento dos Efeitos Especiais (Evita estourar o áudio)
+sfx.click.volume = 0.4; // 40%
+sfx.deploy.volume = 0.5; // 50%
+sfx.hit.volume = 0.6;    // 60% (Um pouco mais alto para dar impacto no ataque)
+sfx.error.volume = 0.3;  // 30% (Sons de erro costumam ser estridentes)
+
+function playSound(type) { 
+    if(sfx[type]) { 
+        if(type !== 'bgm') sfx[type].currentTime = 0; 
+        sfx[type].play().catch(()=>{}); 
+    } 
+}
+
+function screenShake() { 
+    const b = document.getElementById("board"); 
+    if(b) { 
+        b.animate([
+            { transform: "translate(8px, 8px)" }, 
+            { transform: "translate(-8px, -8px)" }, 
+            { transform: "translate(8px, -8px)" }, 
+            { transform: "translate(0, 0)" }
+        ], { duration: 400 }); 
+    } 
+}
 // ==========================================
 // 2. BANCO DE DADOS (CAMPANHA & CARTAS)
 // ==========================================
@@ -189,14 +226,14 @@ const baseDeck = [
     { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
     { title: "Mutante Instável", tipo: "mutante", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
     { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
-    { title: "Blindado de Transporte", tipo: "mecanizado", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
+    { title: "Blindado de Transporte", tipo: "automato", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
     { title: "Quimera Alada", tipo: "mutante", raridade: "epica", custo: 4, atk: 3, def: 4, efeito: "furia", img: "https://i.postimg.cc/mrcscCyq/Quimera-Alada.png" },
     { title: "Ceifador da Unidade", tipo: "tropa", raridade: "epica", custo: 6, atk: 6, def: 5, efeito: "roubo_vida", img: "https://i.postimg.cc/pLcvXqzj/Ceifador-da-Unidade.png" },
     { title: "Sentinela Ômega", tipo: "tropa", raridade: "epica", custo: 7, atk: 5, def: 7, efeito: "escudo", img: "https://i.postimg.cc/q7tTtyx1/Sentinela-Omega.png", som_ataque: "https://files.catbox.moe/5nlm3z.wav" },
     { title: "Projeto Zeus: Alfa", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 8, def: 8, efeito: "nenhum", img: "https://i.postimg.cc/0yXv2cDX/Projeto-Zeus-Alfa.png" },
     { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "https://files.catbox.moe/wkfzj3.png" },
-    { title: "O Punho da Resistência", tipo: "mecanizado", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
-    { title: "Pacificador V.9", tipo: "mecanizado", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
+    { title: "O Punho da Resistência", tipo: "automato", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
+    { title: "Pacificador V.9", tipo: "automato", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
     { title: "Enxame de Nanobots", tipo: "automato", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "sinergia_automato", text: "Ganha +1/+1 por Autômato.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKmEat6w4aafi5kCkFL9_gVZvCcdfsufUR6A&s" },
     { title: "Esquadrão Tático", tipo: "humano", raridade: "comum", custo: 4, atk: 3, def: 2, efeito: "tropa_coordenada", text: "Invoca Aegis ou +1/+1.", img: "https://files.catbox.moe/vynjlp.png" }, 
     { title: "Clone Instável", tipo: "mutante", raridade: "comum", custo: 2, atk: 2, def: 1, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
@@ -209,7 +246,7 @@ const baseDeck = [
     // UNIDADES DE ALERTA (Agentes e Resistência)
     { title: "Gladiador de Subsolo", tipo: "agente", raridade: "rara", custo: 2, atk: 2, def: 2, efeito: "sobrecarga, atropelar", text: "⚡ Sobrecarga", img: "./gladiador.png" },
     { title: "Inspetor de Perimetro", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./drone2.png"},
-    { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./elite.png" },
+    { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./hacker_elite.png" },
     { title: "Sentinela Corp Muralha", tipo: "automato", raridade: "rara", custo: 5, atk: 2, def: 7, efeito: "sobrecarga,provocar", text: "⚡ Sobrecarga", img: "./muralha.png" },
     { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./infiltrado.png" },
     { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
@@ -223,11 +260,11 @@ const baseDeck = [
     // ==========================================
     // 🧬 EQUIPE DO LABORATÓRIO (Mutação, Veneno e Sacrifício)
     // ==========================================
-    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia.jpg" },
-    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./toxica.jpg" },
-    { title: "Tanque de Incubação", tipo: "estrutura", raridade: "rara", custo: 3, atk: 0, def: 6, efeito: "incubar", text: "Ao final do turno, invoca um [Clone Instável] se houver espaço.", img: "./tanque.jpg" },
-    { title: "Geneticista Chefe", tipo: "humano", raridade: "epica", custo: 5, atk: 3, def: 4, efeito: "extracao", text: "Grito de Guerra: Destrói um aliado aleatório. Se o fizer, compra 2 cartas.", img: "./geneticista.jpg" },
-    { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./omega.jpg" }
+    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia_volatil.png" },
+    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./besta_toxica.png" },
+    { title: "Tanque de Incubação", tipo: "estrutura", raridade: "rara", custo: 3, atk: 0, def: 6, efeito: "incubar", text: "Ao final do turno, invoca um [Clone Instável] se houver espaço.", img: "./tanque.png" },
+    { title: "Geneticista Chefe", tipo: "humano", raridade: "epica", custo: 5, atk: 3, def: 4, efeito: "extracao", text: "Grito de Guerra: Destrói um aliado aleatório. Se o fizer, compra 2 cartas.", img: "./geneticista.png" },
+    { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./amalgama.png" }
     // FEITIÇOS E EQUIPAMENTOS DE ALERTA
     //{ title: "Protocolo de Caos", tipo: "feitico", raridade: "rara", custo: 3, atk: 0, def: 0, efeito: "sobrecarga +2", text: "Aumenta sobrecarga em 2.", img: "./caos.png" },
    // { title: "Sobrecarga de BIOS", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "dano 2", text: "Causa 2 de dano.", img: "./bios.png" },
@@ -427,6 +464,9 @@ function renderVitrine() {
     updateDeckUI();
 }
 
+// ==========================================
+// 🔎 SISTEMA DE INSPEÇÃO HOLO-LENS
+// ==========================================
 function openInspectModal(item) {
     if (!item) return;
     
@@ -437,71 +477,38 @@ function openInspectModal(item) {
         document.body.appendChild(modal);
     }
 
-    // ⚡ CAÇADOR DE EAO e Variáveis
-    const title = item.title || "Unidade Desconhecida";
-    const nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
-    const isEAO = nomesEAO.includes(title);
+    // Fundo em Vidro Fosco Escuro
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5, 10, 15, 0.95); z-index:100000; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(10px);";
 
-    let safeAtk = Number(item.atk)||0; 
-    let safeDef = Number(item.def)||0; 
-    let safeCost = Number(item.custo)||0;
-    let isSpell = (item.tipo === 'feitico'); 
-    let isEquip = (item.tipo === 'equipamento');
-
-    // Ícones
-    let typeIcon = "⚔️"; 
-    if(["automato"].includes(item.tipo)) typeIcon = "⚙️"; 
-    if(["humano","medico","soldado", "agente", "resistencia"].includes(item.tipo)) typeIcon = "🧬"; 
-    if(item.tipo === "estrutura") typeIcon = "🏗️"; 
-    if(item.tipo === "mutante" || item.tipo === "biologico") typeIcon = "☣️"; 
-    if(isSpell) typeIcon = "⚡";
-    if(isEquip) typeIcon = "🛡️";
-
-    // Estrelas
-    let starsCount = item.raridade === "lendaria" ? 5 : (item.raridade === "epica" ? 3 : (item.raridade === "rara" ? 2 : 1)); 
-    let starsHTML = ''; 
-    for(let i=0; i<starsCount; i++) starsHTML += '<div class="cyber-star">★</div>'; 
-
-    let cardDescription = getCardDesc(item) || "";
-
-    // Fundo do Modal
-    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5, 5, 10, 0.95); z-index:100000; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(8px);";
-
-    // ⚡ INJEÇÃO DA CYBER-UI (Ampliada para inspeção)
+    // Estrutura Base
     modal.innerHTML = `
-        <div class="card-base ${isEAO ? 'card-eao' : ''}" style="transform: scale(1.5); margin-bottom: 80px; pointer-events: none;">
-            <div class="cyber-card-inner">
-                <img src="${item.img || 'https://files.catbox.moe/w2j2w7.png'}" class="cyber-art">
-                <div class="cyber-title-bar"><span class="cyber-title-text">${title.toUpperCase()}</span></div>
-                <div class="cyber-text-box"><div class="cyber-desc" style="font-size: 11px;">${cardDescription}</div></div>
-            </div>
-            
-            <div class="cyber-orb orb-cost">${safeCost}</div>
-            <div class="cyber-rarity-ribbon">${starsHTML}</div>
-            <div class="cyber-orb orb-type">${typeIcon}</div>
-            
-            ${!(isSpell || isEquip) ? `
-                <div class="cyber-orb orb-def">${safeDef}</div>
-                <div class="cyber-orb orb-atk">${safeAtk}</div>
-            ` : ''}
-        </div>
-        
-        <button id="btn-close-inspect" style="background:transparent; border:2px solid #00ffff; color:#00ffff; padding:12px 35px; font-family:'Courier New', monospace; font-weight:bold; font-size: 16px; cursor:pointer; border-radius:4px; box-shadow: 0 0 15px rgba(0,255,255,0.4); z-index: 100001; transition: all 0.3s;">FECHAR ARQUIVO</button>
+        <div id="inspect-card-container" style="transform: scale(1.6); margin-bottom: 70px; pointer-events: none;"></div>
+        <button id="btn-close-inspect" style="background:rgba(0, 255, 255, 0.1); border:2px solid #00ffff; color:#00ffff; padding:12px 35px; font-family:'Courier New', monospace; font-weight:bold; font-size: 16px; cursor:pointer; border-radius:4px; box-shadow: 0 0 15px rgba(0,255,255,0.4); z-index: 100001; transition: 0.3s; text-transform: uppercase;">FECHAR ARQUIVO</button>
     `;
 
+    // ⚡ A MÁGICA: Usa o seu próprio motor para criar o clone perfeito!
+    let previewCard = createCard(item);
+    
+    // Trava de Centralização (Impede que a carta tente fugir usando CSS absoluto)
+    previewCard.style.position = "relative";
+    previewCard.style.transform = "none";
+    previewCard.style.left = "0";
+    previewCard.style.top = "0";
+    previewCard.style.margin = "0";
+    
+    document.getElementById("inspect-card-container").appendChild(previewCard);
     modal.style.display = "flex";
 
-    // Evento de fechar (com efeito hover simples no botão)
+    // Botão de Fechar
     const btnClose = document.getElementById("btn-close-inspect");
-    btnClose.onmouseover = () => { btnClose.style.background = "rgba(0, 255, 255, 0.2)"; };
-    btnClose.onmouseout = () => { btnClose.style.background = "transparent"; };
+    btnClose.onmouseover = () => { btnClose.style.background = "rgba(0, 255, 255, 0.3)"; btnClose.style.boxShadow = "0 0 30px #00ffff"; };
+    btnClose.onmouseout = () => { btnClose.style.background = "rgba(0, 255, 255, 0.1)"; btnClose.style.boxShadow = "0 0 15px rgba(0,255,255,0.4)"; };
     btnClose.onclick = () => {
         if(typeof playSound === "function") playSound("click");
         modal.style.display = "none";
+        document.getElementById("inspect-card-container").innerHTML = ""; // Limpa a memória
     };
 }
-
-
 function addCardToDeck(card) { if (customDeck.length < 15) { if (customDeck.filter(c => c.title === card.title).length < 3) { customDeck.push({...card}); updateDeckUI(); } else { playSound("error"); alert("Máximo de 3 cópias iguais no deck."); } } }
 function removeCardFromDeck(index) { customDeck.splice(index, 1); updateDeckUI(); }
 
@@ -1009,6 +1016,7 @@ function createCard(item) {
     recalculateStats(c); 
     return c; 
 }
+
 // ==========================================
 // 7. SISTEMA DE CLIQUES E EFEITOS
 // ==========================================
@@ -1418,9 +1426,43 @@ function handleActionBtn() {
 
 function advancePhase(fromNetwork = false) {
     if (gameIsOver) return;
-    if (currentStep === "deploy_attacker") currentStep = "deploy_defender";
-    else if (currentStep === "deploy_defender") currentStep = "combat";
-    else if (currentStep === "combat") { startNewRound(fromNetwork); return; }
+
+    // ⚡ REGRA DE 10 TURNOS (Morte Súbita Blindada V2)
+    if (currentTurn > 10) { 
+        // Lógica de Morte Súbita: Zera a vida do perdedor à força!
+        if (playerLife > enemyLife) {
+            enemyLife = 0; 
+            alert("Morte Súbita: Vitória por Sobrevivência Tática!");
+        } else if (enemyLife > playerLife) {
+            playerLife = 0; 
+            alert("Morte Súbita: Derrota por Exaustão Crítica!");
+        } else {
+            // No empate, ambos morrem
+            playerLife = 0;
+            enemyLife = 0;
+            alert("Morte Súbita: Empate Absoluto!");
+        }
+        
+        updateLifeAndMana(); // Atualiza a HUD para mostrar o '0' de vida
+        checkGameOver();     // ⚡ Chama a SUA função real que dá as recompensas
+        
+        // ⚡ GATILHO P2P: Avisa o outro PC para ele também processar o fim do turno
+        if (window.conexao && window.conexao.open && !fromNetwork) {
+            window.enviarPacote({ acao: "AVANCAR_FASE" }); 
+        }
+        return; // Trava a rodada aqui
+    }
+
+    // Fluxo normal das fases
+    if (currentStep === "deploy_attacker") {
+        currentStep = "deploy_defender";
+    } else if (currentStep === "deploy_defender") {
+        currentStep = "combat";
+    } else if (currentStep === "combat") { 
+        startNewRound(fromNetwork); 
+        return; 
+    }
+    
     updateUIState();
 }
 
@@ -1441,16 +1483,18 @@ function startNewRound(fromNetwork = false) {
         } catch(erroOculto) { console.error(erroOculto); }
     });
     
-    if (attackToken === "player" || (!window.conexao)) { 
-        if(maxMana < 10) maxMana++; 
-        playerMana = maxMana; 
-        drawCard(); 
-    }
+    // ⚡ CORREÇÃO DA RAM: Agora AMBOS os jogadores sobem a RAM e compram carta juntos!
+    if(maxMana < 10) maxMana++; 
+    playerMana = maxMana; 
+    drawCard(); 
     
     updateUIState();
-    if(window.conexao && window.conexao.open && attackToken === "enemy" && !fromNetwork) { window.enviarPacote({ acao: "PASSAR_TURNO" }); }
+    
+    // O Host avisa o Cliente para também virar o turno
+    if(window.conexao && window.conexao.open && attackToken === "enemy" && !fromNetwork) { 
+        window.enviarPacote({ acao: "PASSAR_TURNO" }); 
+    }
 }
-
 function setButton3DState(btn, text, color) {
     if (!btn || btn.innerText === text) return;
     if (btn.parentElement) btn.parentElement.style.perspective = "800px";
@@ -2322,3 +2366,111 @@ function comprarCapitulo(capitulo, preco) {
         alert(`SISTEMA: HDs INSUFICIENTES. VOCÊ PRECISA DE ${preco} 💽.`);
     }
 }  
+
+
+// ==========================================
+// 🎁 SISTEMA GACHA (ABERTURA DE PACOTES)
+// ==========================================
+let cardsFlippedInPack = 0;
+
+// ⚡ Chame esta função "openGachaPack()" quando o jogador ganhar um pacote após as vitórias ou comprar no mercado!
+function openGachaPack() {
+    let modal = document.getElementById("pack-modal");
+    
+    // Se não existir, cria o HTML na hora
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "pack-modal";
+        document.body.appendChild(modal);
+    }
+
+    // Estrutura Inicial do Pacote Fechado
+    modal.innerHTML = `
+        <h2 style="color:#00ffff; font-family:'Courier New', monospace; text-shadow: 0 0 15px #00ffff; margin-bottom: 40px; letter-spacing: 3px; font-size: 2rem;" id="pack-title">PACOTE DE DADOS CRIPTOGRAFADO</h2>
+        
+        <div class="pack-container" id="booster-pack" onclick="crackPack()">
+            <div class="pack-text">DESCRIPTOGRAFAR<br>[ CLIQUE ]</div>
+        </div>
+
+        <div class="pack-cards-reveal" id="pack-cards-area"></div>
+        <button id="btn-close-pack" onclick="closePackModal()">COLETAR DADOS E FECHAR</button>
+    `;
+
+    modal.classList.add("active");
+    if(typeof playSound === "function") playSound("deploy");
+}
+
+function crackPack() {
+    if(typeof playSound === "function") playSound("hit");
+    if(typeof screenShake === "function") screenShake();
+    
+    document.getElementById("booster-pack").style.display = "none";
+    
+    const title = document.getElementById("pack-title");
+    title.innerText = "ESCOLHA OS ARQUIVOS...";
+    title.style.color = "#ffaa00";
+    title.style.textShadow = "0 0 15px #ffaa00";
+    
+    const cardsArea = document.getElementById("pack-cards-area");
+    cardsArea.style.display = "flex";
+    cardsArea.innerHTML = "";
+    cardsFlippedInPack = 0;
+
+    // Sorteia 3 cartas do baseDeck
+    for(let i=0; i<3; i++) {
+        let randomCardInfo = baseDeck[Math.floor(Math.random() * baseDeck.length)];
+        
+        // Cria a armadura 3D
+        let wrapper = document.createElement("div");
+        wrapper.className = "gacha-card-wrapper";
+        
+        // Costas da Carta
+        let back = document.createElement("div");
+        back.className = "gacha-card-face gacha-card-back";
+        
+        // Frente da Carta (Usa o seu motor Cyber-UI existente)
+        let front = document.createElement("div");
+        front.className = "gacha-card-face gacha-card-front";
+        let realCardDOM = createCard(randomCardInfo);
+        
+        // ⚡ TRAVA DE SEGURANÇA: Remove os eventos do hover e clique para não atrapalhar o giro
+        realCardDOM.onmouseenter = null; 
+        realCardDOM.onmouseleave = null;
+        realCardDOM.onclick = null;
+        realCardDOM.ondragstart = null;
+        realCardDOM.style.position = "relative"; // Ajuste para ficar certinho dentro do wrapper
+        realCardDOM.style.transform = "none"; 
+        
+        front.appendChild(realCardDOM);
+        wrapper.appendChild(back);
+        wrapper.appendChild(front);
+
+        // O Clique que vira a carta
+        wrapper.onclick = () => {
+            if(!wrapper.classList.contains("flipped")) {
+                if(typeof playSound === "function") playSound("deploy");
+                wrapper.classList.add("flipped");
+                cardsFlippedInPack++;
+                
+                // ⚡ AQUI VOCÊ ADICIONA A CARTA AO INVENTÁRIO DO JOGADOR ⚡
+                // Exemplo: playerCollection.push(randomCardInfo); ou saveCollection();
+
+                // Se as 3 foram viradas, libera o botão de saída
+                if(cardsFlippedInPack === 3) {
+                    title.innerText = "AQUISIÇÃO CONCLUÍDA!";
+                    title.style.color = "#00ff00";
+                    title.style.textShadow = "0 0 15px #00ff00";
+                    document.getElementById("btn-close-pack").style.display = "block";
+                }
+            }
+        };
+
+        cardsArea.appendChild(wrapper);
+    }
+}
+
+function closePackModal() {
+    if(typeof playSound === "function") playSound("click");
+    document.getElementById("pack-modal").classList.remove("active");
+    // Lógica para descontar pacote: ex: playerPacks--;
+}
