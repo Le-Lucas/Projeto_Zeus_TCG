@@ -249,7 +249,7 @@ const baseDeck = [
     { title: "Hacker de Elite", tipo: "agente", raridade: "epica", custo: 4, atk: 3, def: 3, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./elite.png" },
     { title: "Sentinela Corp Muralha", tipo: "automato", raridade: "rara", custo: 5, atk: 2, def: 7, efeito: "sobrecarga,provocar", text: "⚡ Sobrecarga", img: "./muralha.png" },
     { title: "Infiltrado Fantasma", tipo: "agente", raridade: "epica", custo: 3, atk: 2, def: 2, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./infiltrado.png" },
-    { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./propagandista.png" },
+    { title: "Propagandista Digital", tipo: "resistencia", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "sobrecarga, invocar", text: "⚡ Sobrecarga", img: "./propagandista.png" },
     { title: "Estação de Monitoramento", tipo: "estrutura", raridade: "rara", custo: 4, atk: 0, def: 5, efeito: "sobrecarga", text: "⚡ Sobrecarga", img: "./estacao.png" },
     // ESQUADRÃO EAO
     { title: "Branko", tipo: "tropa", raridade: "rara", custo: 7, atk: 2, def: 8, efeito: "atropelar, furia", text: "Fúria Crescente: Sempre que sobrevive a dano, ganha +2 de ATK.", img: "./branko.png" },
@@ -260,8 +260,8 @@ const baseDeck = [
     // ==========================================
     // 🧬 EQUIPE DO LABORATÓRIO (Mutação, Veneno e Sacrifício)
     // ==========================================
-    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./cobaia_volatil.png" },
-    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./besta_toxica.png" },
+    { title: "Cobaia Volátil", tipo: "mutante", raridade: "comum", custo: 2, atk: 1, def: 2, efeito: "mutacao", text: "Evolução: Ao final do seu turno, ganha +1/+1.", img: "./volatil.png" },
+    { title: "Besta Tóxica", tipo: "mutante", raridade: "rara", custo: 4, atk: 2, def: 5, efeito: "toxico", text: "Toxina: Qualquer tropa inimiga que sofra dano desta unidade é destruída.", img: "./toxica.png" },
     { title: "Tanque de Incubação", tipo: "estrutura", raridade: "rara", custo: 3, atk: 0, def: 6, efeito: "incubar", text: "Ao final do turno, invoca um [Clone Instável] se houver espaço.", img: "./tanque.png" },
     { title: "Geneticista Chefe", tipo: "humano", raridade: "epica", custo: 5, atk: 3, def: 4, efeito: "extracao", text: "Grito de Guerra: Destrói um aliado aleatório. Se o fizer, compra 2 cartas.", img: "./geneticista.png" },
     { title: "Amálgama Ômega", tipo: "mutante", raridade: "lendaria", custo: 9, atk: 5, def: 5, efeito: "atropelar, predador", text: "Predador: Sempre que QUALQUER tropa morre, ganha +2/+2 e Cura 2.", img: "./amalgama.png" }
