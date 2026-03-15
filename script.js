@@ -1508,7 +1508,6 @@ function setButton3DState(btn, text, color) {
         })
         .to(btn, { rotationX: 0, duration: 0.3, ease: "back.out(1.5)" });
 }
-
 function updateUIState() {
     updateLifeAndMana(); clearInterval(timerInterval); document.getElementById("turn-display").innerText = `TURNO ${currentTurn}`;
     
@@ -1523,11 +1522,26 @@ function updateUIState() {
     const pFrame = document.querySelector("#player-hero .hero-avatar-frame"); const eFrame = document.querySelector("#enemy-hero .hero-avatar-frame");
     if(pFrame && eFrame) {
         pFrame.style.boxShadow = "0 0 10px var(--theme-glow)"; eFrame.style.boxShadow = "0 0 10px rgba(255,0,0,0.3)";
-        if(attackToken === "player") pFrame.style.boxShadow = "0 0 35px #00ffff"; else eFrame.style.boxShadow = "0 0 35px #ff0000"; 
+        if(attackToken === "player") pFrame.style.boxShadow = "0 0 35px #00ffff"; else eFrame.style.boxShadow = "0 0 35px #ff0055"; 
     }
     
     let isP2P = (window.conexao && window.conexao.open); 
     const colorCyan = "#00ffff"; const colorRed = "#ff0055"; const colorYellow = "#ffcc00";
+
+    // ⚡ GATILHO DA ANIMAÇÃO DE OUTDOOR (Executa apenas 1x na virada do turno)
+    let phaseKey = currentTurn + "_" + currentStep + "_" + attackToken;
+    if (window.lastPhaseKey !== phaseKey) {
+        window.lastPhaseKey = phaseKey;
+        
+        // Dispara o letreiro gigante apenas no início do turno de cada jogador
+        if (currentStep === "deploy_attacker") {
+            if (attackToken === "player") {
+                showPhaseBanner("TURNO DE ATAQUE", true); // True = Vermelho
+            } else {
+                showPhaseBanner("TURNO DE DEFESA", false); // False = Ciano
+            }
+        }
+    }
 
     if (currentStep === "deploy_attacker") {
         if (attackToken === "player") { 
@@ -1555,7 +1569,6 @@ function updateUIState() {
         }
     }
 }
-
 let maxTurnTime = 80;
 function startTimer(s) { turnTime = s; maxTurnTime = s; const container = document.getElementById("elevator-timer"); if (container && container.children.length !== s) { container.innerHTML = ""; for(let i = 1; i <= s; i++) { let node = document.createElement("div"); node.className = "timer-node pending"; node.id = "timer-node-" + i; node.innerText = i; container.appendChild(node); } } updateElevatorTimer(); clearInterval(timerInterval); timerInterval = setInterval(() => { if(!isSystemLocked && !gameIsOver) { turnTime--; updateElevatorTimer(); if(turnTime <= 0) handleActionBtn(); } }, 1000); }
 function updateElevatorTimer() { const container = document.getElementById("elevator-timer"); if(!container) return; let elapsed = maxTurnTime - turnTime + 1; for(let i = 1; i <= maxTurnTime; i++) { let node = document.getElementById("timer-node-" + i); if (node) { if (i === elapsed) node.className = "timer-node active"; else if (i < elapsed) node.className = "timer-node passed"; else node.className = "timer-node pending"; } } }
@@ -2473,4 +2486,66 @@ function closePackModal() {
     if(typeof playSound === "function") playSound("click");
     document.getElementById("pack-modal").classList.remove("active");
     // Lógica para descontar pacote: ex: playerPacks--;
+}
+
+// ==========================================
+// 🚨 OUTDOOR DE FASE (LETREIRO NEON PISCANTE)
+// ==========================================
+function showPhaseBanner(texto, isAttack) {
+    let banner = document.getElementById("cyber-phase-banner");
+    
+    // 1. Injeta o CSS do letreiro na primeira vez que rodar
+    if (!document.getElementById("style-phase-banner")) {
+        const style = document.createElement("style");
+        style.id = "style-phase-banner";
+        style.innerHTML = `
+            #cyber-phase-banner {
+                position: fixed;
+                top: 45%; /* Fica bem no centro, um pouco acima das cartas */
+                left: -50%;
+                transform: translateY(-50%);
+                z-index: 999999;
+                font-family: 'Courier New', monospace;
+                font-size: 3.5rem; /* Letras gigantes */
+                font-weight: bold;
+                white-space: nowrap;
+                pointer-events: none; /* Não bloqueia os cliques do jogador */
+                text-transform: uppercase;
+                padding: 15px 50px;
+                background: rgba(10, 5, 5, 0.95);
+                border-top: 4px solid;
+                border-bottom: 4px solid;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    if (!banner) {
+        banner = document.createElement("div");
+        banner.id = "cyber-phase-banner";
+        document.body.appendChild(banner);
+    }
+
+    // 2. Define as cores letais
+    const color = isAttack ? "#ff0055" : "#00ffff"; 
+    banner.style.color = color;
+    banner.style.borderColor = color;
+    banner.style.textShadow = `0 0 15px ${color}, 0 0 30px ${color}`;
+    banner.style.boxShadow = `0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px ${color}`;
+    banner.innerText = texto;
+
+    // Dispara um som de impacto quando a mensagem aparece
+    if(typeof playSound === "function") playSound(isAttack ? "hit" : "deploy"); 
+
+    // 3. A Animação Cinematográfica (Entra, Pisca, Lê, Sai)
+    gsap.killTweensOf(banner); // Limpa animações anteriores
+    let tl = gsap.timeline();
+    
+    tl.fromTo(banner, 
+        { left: "-50%", xPercent: -50, opacity: 0 }, 
+        { left: "50%", xPercent: -50, opacity: 1, duration: 0.4, ease: "power4.out" }
+    )
+    .to(banner, { opacity: 0.1, duration: 0.08, yoyo: true, repeat: 5 }) // O piscar intenso do Neon
+    .to(banner, { opacity: 1, duration: 0.6 }) // Pausa de meio segundo para o cérebro ler
+    .to(banner, { left: "150%", opacity: 0, duration: 0.4, ease: "power3.in" }); // Foge para a direita
 }
