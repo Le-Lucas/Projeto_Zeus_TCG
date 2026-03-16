@@ -2549,3 +2549,124 @@ function showPhaseBanner(texto, isAttack) {
     .to(banner, { opacity: 1, duration: 0.6 }) // Pausa de meio segundo para o cérebro ler
     .to(banner, { left: "150%", opacity: 0, duration: 0.4, ease: "power3.in" }); // Foge para a direita
 }
+// ==========================================
+// 📖 ARQUIVOS DA MATRIZ: CODEX DE FACÇÕES
+// ==========================================
+const faccoesData = {
+    "eao": {
+        nome: "ESQUADRÃO EAO & SEGURANÇA",
+        cor: "#3399ff",
+        lore: "A força militar corporativa de elite e a segurança privada da OMNI-BIO. Atuam como uma unidade tática perfeita, cobrindo os pontos cegos uns dos outros.",
+        sinergia: "COLMEIA: Se houver mais de um agente EAO no campo, eles conectam-se em rede, ganhando status bônus e copiando as habilidades uns dos outros. TROPA COORDENADA: Evocam reforços extras para a linha de frente.",
+        // Filtra militares e nomes do Esquadrão
+        filtro: (c) => ["soldado"].includes(c.tipo) || (c.title.includes("EAO") || ["Branko", "Nyx", "Iris", "Leon", "Rourke", "General Mão de Ferro", "Segurança Aegis", "Atirador Furtivo"].includes(c.title))
+    },
+    "lab": {
+        nome: "PROJETO OMNI-BIO (MUTAÇÃO)",
+        cor: "#00ff66",
+        lore: "Cientistas amorais e as suas abominações biológicas do Subnível 2. Para eles, a carne é apenas um recurso a ser consumido e aprimorado.",
+        sinergia: "MUTAÇÃO E INCUBAÇÃO: Ficam mais fortes a cada turno que sobrevivem ou criam clones infinitos. PREDADOR: Alimentam-se da morte de qualquer carta. EXTRAÇÃO: O laboratório destrói as próprias tropas fracas em troca de comprar mais cartas do deck.",
+        // Filtra mutantes e cartas do laboratório
+        filtro: (c) => ["mutante", "biologico"].includes(c.tipo) || (c.efeito && (c.efeito.includes("mutacao") || c.efeito.includes("predador") || c.efeito.includes("extracao") || c.efeito.includes("incubar") || c.efeito.includes("toxico") || c.efeito.includes("metamorfose")))
+    },
+    "resistencia": {
+        nome: "RESISTÊNCIA & AGENTES FANTASMAS",
+        cor: "#ff0055",
+        lore: "Hackers do submundo, mercenários e infiltradores tentando derrubar o monopólio da corporação.",
+        sinergia: "SOBRECARGA: Tropas rápidas, furtivas e baratas que manipulam o Reator. Quando você atinge o Nível 5 (Crítico) de Sobrecarga, todas as suas tropas da resistência no campo recebem um bônus letal de +5 de Ataque e +5 de Vida simultaneamente.",
+        // Filtra hackers e sobrecarga
+        filtro: (c) => ["agente", "resistencia"].includes(c.tipo) || (c.efeito && c.efeito.includes("sobrecarga"))
+    },
+    "maquinas": {
+        nome: "DIVISÃO MECANIZADA (AUTÔMATOS)",
+        cor: "#ffcc00",
+        lore: "A fria e calculista linha de defesa mecanizada. Drones de segurança, pacíficadores pesados e redes de nanobots.",
+        sinergia: "SINERGIA AUTÔMATO: Uma frota em rede onde a presença de uma máquina no campo de batalha fortalece automaticamente o escudo e o ataque das outras máquinas vizinhas.",
+        // Filtra robôs
+        filtro: (c) => ["automato", "estrutura"].includes(c.tipo) || (c.title === "O Punho da Resistência" || c.title === "Pacificador V.9")
+    }
+};
+
+function abrirCodexFaccoes(faccaoAtiva = "eao") {
+    if(typeof playSound === "function") playSound("click");
+    
+    let modal = document.getElementById("codex-modal");
+
+    // Cria o fundo do Codex se não existir
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "codex-modal";
+        modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,10,15,0.98); z-index:999999; display:flex; flex-direction:column; align-items:center; backdrop-filter: blur(10px); overflow-y:auto; padding: 20px 0;";
+        document.body.appendChild(modal);
+    }
+
+    // 1. Constrói o Menu de Abas (Navegação)
+    let tabsHTML = "";
+    for (let key in faccoesData) {
+        let isAtiva = (key === faccaoAtiva);
+        tabsHTML += `<button onclick="abrirCodexFaccoes('${key}')" style="background:${isAtiva ? faccoesData[key].cor : 'transparent'}; color:${isAtiva ? '#000' : faccoesData[key].cor}; border:2px solid ${faccoesData[key].cor}; padding:10px 15px; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; margin: 5px; border-radius: 4px; box-shadow: ${isAtiva ? '0 0 15px '+faccoesData[key].cor : 'none'}; transition: 0.3s; text-transform: uppercase; font-size: 0.85rem;">${faccoesData[key].nome}</button>`;
+    }
+
+    const fData = faccoesData[faccaoAtiva];
+
+    // 2. Estrutura do HUD (Painel + Grid)
+    modal.innerHTML = `
+        <div style="width: 90%; max-width: 1100px; display:flex; flex-direction:column; gap: 20px; margin-top: 20px;">
+            <h2 style="color:#ffaa00; text-shadow:0 0 15px #ffaa00; text-align:center; font-family:'Courier New', monospace; letter-spacing: 2px;">📖 ARQUIVOS DA MATRIZ: CODEX TÁTICO</h2>
+            
+            <div style="display:flex; justify-content:center; flex-wrap:wrap; gap: 5px;">
+                ${tabsHTML}
+            </div>
+
+            <div style="background:rgba(0,0,0,0.6); border: 1px solid ${fData.cor}; border-left: 5px solid ${fData.cor}; padding: 20px; border-radius: 4px; box-shadow: inset 0 0 30px rgba(0,0,0,0.8);">
+                <h3 style="color:${fData.cor}; margin-top: 0; font-family:'Courier New', monospace; text-shadow: 0 0 10px ${fData.cor}; font-size: 1.4rem;">${fData.nome}</h3>
+                <p style="color:#ccc; font-family:'Courier New', monospace; font-size: 0.95rem; line-height: 1.4;"><i>"${fData.lore}"</i></p>
+                <p style="color:#fff; font-family:'Courier New', monospace; font-size: 1rem; margin-bottom:0; line-height: 1.5; border-top: 1px dashed #444; padding-top: 10px;"><b>⚡ SINERGIA:</b> ${fData.sinergia}</p>
+            </div>
+
+            <div id="codex-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); justify-items: center; gap: 15px; padding: 20px; background: rgba(255,255,255,0.02); border-radius: 8px; border: 1px dashed #333; max-height: 45vh; overflow-y: auto;">
+            </div>
+
+            <button onclick="document.getElementById('codex-modal').remove(); playSound('click');" style="background:transparent; border:2px solid #ff0055; color:#ff0055; padding:15px; margin: 20px auto; width: 300px; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; border-radius: 4px; box-shadow: 0 0 15px rgba(255,0,85,0.4); text-transform:uppercase;">[ FECHAR ARQUIVOS ]</button>
+        </div>
+    `;
+
+    // 3. Renderiza as cartas da facção filtrada
+    const grid = document.getElementById("codex-grid");
+    grid.innerHTML = ""; 
+
+    let cartasFiltradas = [];
+    let nomesJaAdicionados = [];
+    
+    // Varre o banco de dados inteiro procurando quem pertence a essa facção
+    baseDeck.forEach(c => {
+        if (fData.filtro(c) && !nomesJaAdicionados.includes(c.title)) {
+            cartasFiltradas.push(c);
+            nomesJaAdicionados.push(c.title);
+        }
+    });
+
+    // Ordena por custo de energia (do mais barato ao mais caro)
+    cartasFiltradas.sort((a,b) => a.custo - b.custo);
+
+    // 4. Cria o visual reaproveitando o estilo do Mercado e o Olho de Inspecionar!
+    cartasFiltradas.forEach(cardInfo => {
+        let div = document.createElement("div");
+        div.className = `pool-card ${cardInfo.raridade}`;
+        div.style.transform = "scale(0.85)"; // Um pouco menores para caber o exército todo
+        div.style.margin = "0"; 
+        
+        // ⚡ MÁGICA: O botão do Olhinho abre o seu Inspecionar 3D Perfeitamente!
+        div.innerHTML = `
+            <div class="inspect-btn" title="Inspecionar" onclick="openInspectModal(baseDeck.find(c => c.title === '${cardInfo.title}'))">👁️</div>
+            <img src="${cardInfo.img}" class="pool-img" style="filter: contrast(1.1);">
+            <div class="pool-info">
+                <div class="pool-title" style="font-size: 0.7rem;">${cardInfo.title}</div>
+                <div class="pool-cost" style="color:cyan;">${cardInfo.custo}⚡</div>
+            </div>
+        `;
+        grid.appendChild(div);
+    });
+
+    modal.classList.add("active");
+}
