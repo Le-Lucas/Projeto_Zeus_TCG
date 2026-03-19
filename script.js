@@ -930,84 +930,98 @@ function updateAuras() {
 }
 
 
+// =========================================================
+// ⚡ HUD DE SOBRECARGA: ANÉIS ORBITAIS NOS AVATARES
+// =========================================================
 function atualizarHudSobrecarga() {
-    let sbHud = document.getElementById("sobrecarga-hud");
-    
-    // ⚡ Injeta a animação de "Pulso Crítico" no CSS se não existir
-    if (!document.getElementById("anim-sobrecarga")) {
+    // 1. Injeta a Física Orbital no CSS (Se não existir)
+    if (!document.getElementById("anim-sobrecarga-orbital")) {
         const style = document.createElement("style");
-        style.id = "anim-sobrecarga";
+        style.id = "anim-sobrecarga-orbital";
         style.innerHTML = `
-            @keyframes pulse-sobrecarga {
-                0% { box-shadow: 0 0 10px #ff0000, inset 0 0 10px #ff0000; }
-                100% { box-shadow: 0 0 25px #ff0000, inset 0 0 25px #ff0000; }
+            .sobrecarga-orbit {
+                position: absolute;
+                top: 50%; left: 50%;
+                width: 0; height: 0; /* Ponto central exato do Avatar */
+                pointer-events: none;
+                animation: spin-orbit 5s linear infinite;
+                z-index: 20;
+            }
+            .sobrecarga-dot {
+                position: absolute;
+                width: 14px; height: 14px;
+                border-radius: 50%;
+                background: rgba(10, 15, 20, 0.95);
+                border: 2px solid;
+                top: -7px; left: -7px; /* Eixo de rotação perfeito */
+                transition: all 0.4s ease;
+            }
+            @keyframes spin-orbit { 100% { transform: rotate(360deg); } }
+            @keyframes pulse-critical-dot {
+                0% { transform: scale(1); filter: brightness(1); }
+                100% { transform: scale(1.5); filter: brightness(1.5); box-shadow: 0 0 20px #ff0055, inset 0 0 10px #ff0055; }
             }
         `;
         document.head.appendChild(style);
     }
 
-    if (!sbHud) {
-        sbHud = document.createElement("div");
-        sbHud.id = "sobrecarga-hud";
-        // ⚡ AJUSTE AQUI: "left" aumentado para empurrar para a direita, "bottom" levemente ajustado. Padding menor.
-        sbHud.style.cssText = "position:absolute; left: 60px; bottom: 150px; background:rgba(10,5,5,0.85); border:1px solid #444; padding:8px 12px; border-radius:5px; z-index:50; pointer-events:none; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; box-shadow: 0 0 10px rgba(0,0,0,0.5);";
-        document.body.appendChild(sbHud);
-    }
+    // 2. Remove o HUD velho da barra lateral, caso ele ainda esteja perdido na tela
+    const oldHud = document.getElementById("sobrecarga-hud");
+    if (oldHud) oldHud.remove();
 
-    if (sobrecargaAtiva.player > 0 || sobrecargaAtiva.enemy > 0) {
-        sbHud.style.display = "flex";
+    // 3. O Motor que gera as órbitas para cada jogador
+    function atualizarOrbita(heroId, nivel) {
+        const hero = document.getElementById(heroId);
+        if (!hero) return;
+
+        const avatarFrame = hero.querySelector('.hero-avatar-frame');
+        if (!avatarFrame) return;
+
+        // Limpa os satélites do turno anterior
+        let oldOrbit = avatarFrame.querySelector('.sobrecarga-orbit');
+        if (oldOrbit) oldOrbit.remove();
+
+        // Se a Sobrecarga for 0, o avatar fica limpo!
+        if (nivel === 0) return; 
+
+        // 🟢🟡🔴 Lógica do Reator (Cores)
+        let cor = "#00ff00"; // 1-2: Verde (Estável)
+        if (nivel >= 3) cor = "#ffcc00"; // 3-4: Amarelo (Atenção)
+        if (nivel >= 5) cor = "#ff0055"; // 5: Vermelho (Crítico / Letal)
+
+        // Cria o campo gravitacional
+        let orbit = document.createElement("div");
+        orbit.className = "sobrecarga-orbit";
         
-        // 🟢 Lógica de Cores do Reator
-        const getCor = (lvl) => {
-            if (lvl >= 5) return "#ff0000"; // Nível Crítico (Vermelho)
-            if (lvl >= 3) return "#ffcc00"; // Nível Médio (Amarelo)
-            if (lvl >= 1) return "#00ff00"; // Nível Baixo (Verde)
-            return "transparent";
-        };
+        // Detalhe Chique: A órbita do inimigo gira no sentido inverso!
+        if (heroId === "enemy-hero") orbit.style.animationDirection = "reverse";
 
-        // 🚨 Lógica de Animação
-        const getAnimacao = (lvl, cor) => {
-            if (lvl >= 5) return "animation: pulse-sobrecarga 0.6s infinite alternate;";
-            return `box-shadow: 0 0 8px ${cor};`;
-        };
-
-        let pLvl = sobrecargaAtiva.player;
-        let eLvl = sobrecargaAtiva.enemy;
-        let pCor = getCor(pLvl);
-        let eCor = getCor(eLvl);
-
-        // ⚡ AJUSTE AQUI: Fontes menores (0.65rem e 0.55rem), gap menor (15px), e barras menores (14x55px).
-        sbHud.innerHTML = `
-            <div style="color:#fff; font-size:0.65rem; font-family:'Courier New', monospace; font-weight:bold; letter-spacing:1px; margin-bottom:8px; text-shadow: 0 0 5px #fff;">⚡ SOBRECARGA</div>
+        // Cria os pontos de energia (Orbs)
+        for (let i = 0; i < nivel; i++) {
+            let dot = document.createElement("div");
+            dot.className = "sobrecarga-dot";
             
-            <div style="display:flex; gap: 15px; width: 100%; justify-content: center;">
-                <div style="display:flex; flex-direction:column; align-items:center;">
-                    <div style="width: 14px; height: 55px; background: rgba(255,255,255,0.1); border: 1px solid #555; border-radius: 3px; position: relative; overflow: hidden; margin-bottom: 4px;">
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: ${(pLvl/5)*100}%; background: ${pCor}; transition: height 0.3s ease, background 0.3s ease; ${getAnimacao(pLvl, pCor)}"></div>
-                    </div>
-                    <div style="color:#00ffff; font-size:0.55rem; font-family:'Courier New', monospace; font-weight:bold;">VOCÊ</div>
-                </div>
-
-                <div style="display:flex; flex-direction:column; align-items:center;">
-                    <div style="width: 14px; height: 55px; background: rgba(255,255,255,0.1); border: 1px solid #555; border-radius: 3px; position: relative; overflow: hidden; margin-bottom: 4px;">
-                        <div style="position: absolute; bottom: 0; left: 0; width: 100%; height: ${(eLvl/5)*100}%; background: ${eCor}; transition: height 0.3s ease, background 0.3s ease; ${getAnimacao(eLvl, eCor)}"></div>
-                    </div>
-                    <div style="color:#ff0055; font-size:0.55rem; font-family:'Courier New', monospace; font-weight:bold;">NEXUS</div>
-                </div>
-            </div>
-        `;
-
-        if (pLvl === 5 || eLvl === 5) {
-            sbHud.style.borderColor = "#ff0000";
-            sbHud.style.boxShadow = "0 0 15px rgba(255,0,0,0.5)";
-        } else {
-            sbHud.style.borderColor = "#444";
-            sbHud.style.boxShadow = "0 0 10px rgba(0,0,0,0.5)";
+            // ⚡ A MÁGICA: Distribui em 5 posições fixas (72 graus de diferença)
+            // O translateY(-55px) empurra o ponto para fora da moldura da foto!
+            dot.style.transform = `rotate(${i * 72}deg) translateY(-55px)`;
+            
+            dot.style.borderColor = cor;
+            dot.style.boxShadow = `0 0 10px ${cor}, inset 0 0 5px ${cor}`;
+            
+            // Se chegou no nível 5, as esferas começam a pulsar freneticamente!
+            if (nivel >= 5) {
+                dot.style.animation = "pulse-critical-dot 0.4s infinite alternate";
+            }
+            
+            orbit.appendChild(dot);
         }
-
-    } else {
-        sbHud.style.display = "none";
+        
+        avatarFrame.appendChild(orbit);
     }
+
+    // 4. Executa a leitura para ambos os comandantes
+    atualizarOrbita('player-hero', sobrecargaAtiva.player);
+    atualizarOrbita('enemy-hero', sobrecargaAtiva.enemy);
 }
 
 function getCardDesc(item) {
