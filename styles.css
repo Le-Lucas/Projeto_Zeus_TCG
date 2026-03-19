@@ -104,51 +104,6 @@ body {
 .hero-avatar-frame canvas { position: absolute; inset: 0; border-radius: 50%; pointer-events: none; z-index: 1; }
 @keyframes frameGlow { 0% { box-shadow: 0 0 10px var(--theme-glow); } 100% { box-shadow: 0 0 25px var(--theme-glow), 0 0 5px var(--theme-color); } }
 
-/* =========================================================
-   🔥 CYBER-UI: O CORAÇÃO DA CARTA 🔥
-   ========================================================= */
-.card-base { 
-    width: 170px; /* ⚡ TAMANHO EXATO PARA O GSAP NÃO QUEBRAR A MÃO */
-    height: 245px; 
-    position: absolute; /* ⚡ OBRIGATÓRIO PARA O GSAP POSICIONAR */
-    background: transparent !important; 
-    border: none !important; 
-    overflow: visible !important; 
-    perspective: 1000px;
-    z-index: 100; cursor: grab; user-select: none;
-}
-.card-base:active { cursor: grabbing; }
-
-/* O QUADRO PRINCIPAL */
-.cyber-card-inner {
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: #0d0d12; border-radius: 12px; overflow: hidden !important; z-index: 1;
-    box-shadow: -3px -3px 12px rgba(192, 192, 192, 0.4), 3px 3px 12px rgba(176, 39, 155, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8);
-    border-top: 2px solid #c0c0c0; border-left: 2px solid #c0c0c0;
-    border-bottom: 2px solid #b0279b; border-right: 2px solid #b0279b;
-}
-
-/* ARTE DO PERSONAGEM */
-.cyber-art { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: top center; z-index: 2; pointer-events: none;}
-
-/* CAIXA DE TEXTO */
-.cyber-text-box { position: absolute; bottom: 10px; left: 10px; right: 10px; height: 38%; background: rgba(10, 15, 20, 0.15); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border-top: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; z-index: 3; display: flex; align-items: center; justify-content: center; padding: 8px; background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.02) 2px, rgba(255, 255, 255, 0.02) 4px); box-shadow: 0 -2px 10px rgba(0,0,0,0.3); }
-.cyber-desc { color: #e0e0e0; font-family: 'Courier New', monospace; font-size: 10px; text-align: center; text-shadow: 1px 1px 2px #000; font-weight: bold; }
-
-/* BARRA DE TÍTULO */
-.cyber-title-bar { position: absolute; top: 5px; left: 50%; transform: translateX(-50%); background: linear-gradient(90deg, transparent, rgba(0,0,0,0.9), transparent); padding: 2px 20px; z-index: 4; border-bottom: 1px solid rgba(192, 192, 192, 0.5); }
-.cyber-title-text { color: #ffffff; font-family: 'Courier New', monospace; font-size: 12px; font-weight: bold; text-shadow: 0 0 5px #ffffff, 0 0 10px #c0c0c0; white-space: nowrap; }
-
-/* ORBES DE STATUS (Ajustados para o tamanho 170x245) */
-.cyber-orb { position: absolute; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; font-weight: bold; font-size: 15px; z-index: 10; border: 2px solid #fff; box-shadow: 0 0 10px rgba(0,0,0,0.8); }
-.orb-cost { top: -10px; left: -10px; background: radial-gradient(circle at 30% 30%, #e0e0e0, #555); border-color: #ffffff; color: #000; box-shadow: 0 0 15px #c0c0c0, inset 0 0 10px rgba(255,255,255,0.8); }
-.orb-type { top: -10px; right: -10px; background: radial-gradient(circle at 30% 30%, #b0279b, #4a0040); border-color: #ff55ff; font-size: 16px; box-shadow: 0 0 15px #b0279b, inset 0 0 10px rgba(255,255,255,0.5); }
-.orb-def { bottom: -10px; left: -10px; background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa); border-color: #aaffff; color: white; box-shadow: 0 0 15px #00ffff; }
-.orb-atk { bottom: -10px; right: -10px; background: radial-gradient(circle at 30% 30%, #ff5500, #882200); border-color: #ffaa00; color: white; box-shadow: 0 0 15px #ff5500; }
-
-/* FITA DE RARIDADE */
-.cyber-rarity-ribbon { position: absolute; top: 20px; left: -2px; width: 20px; background: linear-gradient(180deg, #444, #111); border: 1px solid #777; border-top: none; border-radius: 0 0 4px 4px; z-index: 9; display: flex; flex-direction: column; align-items: center; padding-top: 8px; padding-bottom: 5px; box-shadow: 2px 5px 10px rgba(0,0,0,0.6); }
-.cyber-star { color: #ffd700; font-size: 8px; text-shadow: 0 0 5px #ffaa00; line-height: 1; }
 
 /* TEMA EAO */
 .card-eao .cyber-card-inner { box-shadow: -3px -3px 12px rgba(255, 170, 0, 0.5), 3px 3px 12px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8); border-top: 2px solid #ffaa00; border-left: 2px solid #ffaa00; border-bottom: 2px solid #00ffff; border-right: 2px solid #00ffff; }
@@ -177,9 +132,9 @@ body {
 .card-base.exhausted::after { content: "ZzZ..."; position: absolute; top: -30px; right: -10px; color: #00ffcc; font-size: 4.2rem; font-family: 'Courier New', Courier, monospace; font-weight: bold; text-shadow: 0 0 15px #00ffcc, 0 0 30px #000, 0 0 5px #fff; z-index: 20; animation: flutuarZTurbinado 2.5s infinite ease-in-out; }
 @keyframes flutuarZTurbinado { 0% { transform: translateY(0) scale(0.8) rotate(5deg); opacity: 0.8; } 50% { transform: translateY(-25px) scale(1.3) rotate(-5deg); opacity: 1; } 100% { transform: translateY(-50px) scale(0.8) rotate(10deg); opacity: 0; } }
 
-.card-base.taunt-card::after { content: "🛡️"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; z-index: 50; }
-.card-base.stealth-card::after { content: "💨"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; z-index: 50;}
-.card-base.shield-card::after { content: "🔰"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; filter: drop-shadow(0 0 5px cyan); z-index: 50;}
+/*.card-base.taunt-card::after { content: "🛡️"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; z-index: 50; }
+/*.card-base.stealth-card::after { content: "💨"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; z-index: 50;}
+/*.card-base.shield-card::after { content: "🔰"; position: absolute; top: -10px; right: -10px; font-size: 1.5rem; filter: drop-shadow(0 0 5px cyan); z-index: 50;}
 
 /* Auras aplicadas atrás da carta */
 .card-base.taunt-card::before, .card-base.shield-card::before { content: ""; position: absolute; inset: -4px; border-radius: 12px; pointer-events: none; filter: blur(4px); z-index: -1; }
@@ -192,9 +147,32 @@ body {
 /* =========================================================
    🪟 MODAIS, HUDs, TIMERS E CEMITÉRIO
    ========================================================= */
-.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; justify-content: center; align-items: center; }
+.modal { 
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+    background: rgba(0,0,0,0.6); z-index: 5000; justify-content: center; align-items: center; 
+    /* ⚡ Fundo da tela inteira embaçado para focar no popup */
+    backdrop-filter: blur(5px); 
+}
 .modal.active { display: flex; }
-.modal-content { background: rgba(10, 10, 10, 0.95); border: 1px solid #ff0000; padding: 30px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 0 30px rgba(255,0,0,0.2); backdrop-filter: blur(5px);}
+
+.modal-content { 
+    /* ⚡ O Segredo: Fundo muito escuro, mas transparente (75%) */
+    background: rgba(10, 12, 16, 0.75); 
+    /* ⚡ Borda quase invisível, exceto pelo topo que tem uma barra Neon */
+    border: 1px solid rgba(0, 255, 255, 0.15); 
+    border-top: 3px solid var(--theme-color, #00ffff); 
+    padding: 30px; 
+    text-align: center; 
+    max-width: 400px; 
+    width: 90%; 
+    border-radius: 8px;
+    /* ⚡ Sombra profunda fora, brilho suave dentro */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.9), inset 0 0 15px rgba(0,255,255,0.05); 
+    /* ⚡ O toque final: desfoca o que estiver atrás da caixa */
+    backdrop-filter: blur(15px); 
+    color: #e0e0e0;
+}
+
 .particle { position: absolute; width: 12px; height: 12px; border-radius: 50%; pointer-events: none; z-index: 9999; box-shadow: 0 0 15px currentColor, 0 0 5px white; }
 
 .cyber-gear { font-size: 2.5rem; color: #444; animation: spin-gear 6s linear infinite; transition: all 0.4s ease; user-select: none; line-height: 1; }
@@ -268,3 +246,83 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
 
 @keyframes spin-cw { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes spin-ccw { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+
+
+
+
+
+/* =========================================================
+   🛡️ 1. O CHASSI METÁLICO E NEON (NOVO TAMANHO: 140x200)
+   ========================================================= */
+.card-base {
+    width: 140px; height: 200px; position: absolute;
+    background: #141518 !important; border: 2px solid #4a4d55 !important;
+    border-radius: 6px; overflow: visible; z-index: 100; cursor: grab; user-select: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.8), inset 0 0 10px var(--rarity-color); 
+    display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-base:active { cursor: grabbing; }
+
+/* As Caixas Neon e Textos */
+.hud-card-image { position: absolute; top: 0; left: 0; width: 100%; height: 65%; background-size: cover; background-position: center top; z-index: 1; filter: contrast(1.1); border-radius: 4px 4px 0 0;text-align: center; }
+.hud-image-fade { position: absolute; top: 45%; left: 0; width: 100%; height: 20%; background: linear-gradient(to bottom, rgba(20,21,24,0), rgba(20,21,24,1)); z-index: 2;text-align: center; }
+.hud-cost-box, .hud-type-box { position: absolute; top: 5px; font-family: 'Courier New', monospace; font-size: 11px; font-weight: bold; background: rgba(10, 10, 12, 0.85); padding: 2px 4px; border-radius: 3px; z-index: 5;text-align: center; }
+.hud-cost-box { left: 5px; color: #00ffff; border: 1px solid #00ffff; text-shadow: 0 0 5px #00ffff; box-shadow: inset 0 0 5px rgba(0,255,255,0.4); }
+.hud-type-box { right: 5px; color: var(--rarity-color); border: 1px solid var(--rarity-color); text-shadow: 0 0 5px var(--rarity-color); box-shadow: inset 0 0 5px var(--rarity-color);text-align: center; }
+.hud-stats-bottom { position: absolute; top: 56%; width: 100%; display: flex; justify-content: space-evenly; z-index: 5; }
+.hud-atk-box, .hud-def-box { font-family: 'Courier New', monospace; font-size: 10px; font-weight: bold; background: rgba(10, 10, 12, 0.95); padding: 2px 6px; border-radius: 4px;text-align: center; }
+.hud-atk-box { color: #ff0055; border: 1px solid #ff0055; text-shadow: 0 0 5px #ff0055; box-shadow: 0 0 8px rgba(255,0,85,0.3), inset 0 0 5px rgba(255,0,85,0.4);text-align: center; }
+.hud-def-box { color: #00ffff; border: 1px solid #00ffff; text-shadow: 0 0 5px #00ffff; box-shadow: 0 0 8px rgba(0,255,255,0.3), inset 0 0 5px rgba(0,255,255,0.4);text-align: center; }
+.hud-card-info { position: absolute; bottom: 0; width: 100%; height: 38%; background: #141518; border-top: 1px solid #333; padding: 10px 5px 5px 5px; box-sizing: border-box; z-index: 4; display: flex; flex-direction: column; border-radius: 0 0 4px 4px;text-align: center; }
+.hud-card-name { font-size: 10px; font-family: 'Courier New', monospace; font-weight: bold; text-transform: uppercase; border-bottom: 1px dotted #444; margin-bottom: 3px; padding-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--rarity-color); text-shadow: 0 0 5px var(--rarity-color);text-align: center; }
+.hud-card-desc { font-size: 8px; line-height: 1.2; color: #a0aab5; overflow: hidden; font-family: Arial, sans-serif,text-align: center; }
+
+/* A Máscara de Luz (Holo Foil) */
+.hud-glare-mask { position: absolute; inset: 0; border-radius: 4px; overflow: hidden; pointer-events: none; z-index: 20; }
+.hud-glare { position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); opacity: 0; }
+.card-base:hover .hud-glare { opacity: 1; animation: card-glare 0.6s ease-out forwards; }
+@keyframes card-glare { 0% { left: -150%; } 100% { left: 200%; } }
+
+/* =========================================================
+   🎛️ 2. ESCALAS CORRIGIDAS (NADA DE GIGANTES) E A MÃO
+   ========================================================= */
+#hand { position: absolute !important; bottom: 10px !important; left: 50% !important; transform: translateX(-50%) !important; width: 100%; height: 220px; z-index: 500; pointer-events: none; display: flex !important; justify-content: center !important; align-items: center !important; }
+#hand .card-base { position: relative !important; top: auto !important; left: auto !important; bottom: auto !important; margin: 0 -40px !important; pointer-events: auto; }
+#hand .card-base:hover { z-index: 600 !important; }
+
+/* A carta no slot (0.65 é o tamanho perfeito) */
+.slot .card-base { position: absolute !important; top: 50% !important; left: 50% !important; margin: 0 !important; transform: translate(-50%, -50%) scale(0.65) !important; }
+.field .card-base:hover { transform: translate(-50%, -50%) scale(0.75) !important; box-shadow: 0 0 25px var(--rarity-color) !important; z-index: 15 !important; }
+
+/* =========================================================
+   🎯 3. O SISTEMA DE MIRA HOLOGRÁFICA (PRATA NEON MINIMALISTA)
+   ========================================================= */
+
+/* Alvos Inimigos (Ataque) */
+.valid-target-attack { 
+    animation: pulse-target-silver 0.8s infinite alternate !important; 
+    cursor: crosshair !important; 
+    z-index: 110 !important; 
+}
+
+/* Alvos Aliados (Buff/Cura) */
+.valid-target-buff { 
+    animation: pulse-target-silver 0.8s infinite alternate !important; 
+    cursor: pointer !important; 
+    z-index: 110 !important; 
+}
+
+/* ⚡ O Brilho Prata Neon (Limpo, Elegante e Intenso) */
+@keyframes pulse-target-silver { 
+    0% { 
+        box-shadow: 0 0 10px rgba(200, 200, 200, 0.5), inset 0 0 10px rgba(200, 200, 200, 0.3); 
+        border-color: #a0aab5; 
+        filter: brightness(1.1); 
+    } 
+    100% { 
+        /* Explosão de luz prateada e branca */
+        box-shadow: 0 0 35px rgba(255, 255, 255, 0.9), inset 0 0 20px rgba(255, 255, 255, 0.6); 
+        border-color: #ffffff; 
+        filter: brightness(1.4); 
+    } 
+}
