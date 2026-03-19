@@ -3,11 +3,7 @@
    ========================================================= */
 
 console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA Ativos.");
-//window.onerror = function(msg, url, line) { 
-   // if (msg.includes("gsap is not defined")) return true; 
-   // alert("🚨 ERRO NA MATRIZ: " + msg + " | Linha: " + line); 
-    //return false; 
-//};
+
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
@@ -1211,6 +1207,7 @@ function executeEquip(equipCard, targetElement, targetOwner) {
     if (equipCard.parentElement && equipCard.parentElement.id === "hand") {
         if (playerMana < cost) { playSound("error"); alert("RAM INSUFICIENTE!"); return; }
         playerMana -= cost; updateLifeAndMana();
+        registrarLog(`Equipou: [${equipCard.dataset.name}]`, "player");
         if(window.conexao && window.conexao.open) { let slotIndex = Array.from(targetElement.parentElement.parentElement.children).indexOf(targetElement.parentElement); window.enviarPacote({ acao: "JOGAR_EQUIPAMENTO", cardName: equipCard.dataset.name, slotIndex: slotIndex }); }
         equipCard.remove(); arrangeHand(); selectedCardFromHand = null; draggedCard = null;
     }
@@ -1236,11 +1233,13 @@ function executeSpell(spellCard, targetElement, targetOwner) {
 
     if (isLocalCaster) {
         if (playerMana < cost) { playSound("error"); alert("RAM INSUFICIENTE!"); return; }
+        
         const efeito = spellCard.dataset.effect;
         if (efeito.includes("cura") && targetOwner !== "player") { playSound("error"); alert("Apenas em aliados!"); return; }
         if (efeito.includes("dano") && !efeito.includes("area") && !efeito.includes("total") && targetOwner !== "enemy") { playSound("error"); alert("Apenas em inimigos!"); return; }
 
         playerMana -= cost; updateLifeAndMana(); 
+        registrarLog(`Lançou Magia: [${spellCard.dataset.name}]`, "player");
         if (window.conexao && window.conexao.open) { let tType = targetElement.id.includes("hero") ? "hero" : "card"; let dSlot = null; if (tType === "card") dSlot = Array.from(targetElement.parentElement.parentElement.children).indexOf(targetElement.parentElement); window.enviarPacote({ acao: "LANCAR_MAGIA", cardName: spellCard.dataset.name, targetOwner: targetOwner, targetType: tType, defSlot: dSlot }); }
         spellCard.remove(); arrangeHand(); selectedCardFromHand = null; draggedCard = null;
     }
@@ -1256,6 +1255,8 @@ function processCardEffect(gatilho, cartaObj, owner) {
     const isPlayer = owner === "player";
 
     if (gatilho === "AoJogar") {
+      // 📜 REGISTRA A INVOCACÃO NO DIÁRIO
+        registrarLog(`Invocou: [${cartaObj.dataset.name}]`, owner);
         
         // ⚡ MECÂNICA: DANO EM ÁREA
         if (efeito.includes("dano_area")) {
@@ -2981,4 +2982,26 @@ function destacarAliados() {
     todosAliados.forEach(card => card.classList.add('valid-target-buff'));
     if(heroiAliado) heroiAliado.classList.add('valid-target-buff');
 }
+
+
+// =========================================================
+// 📜 DIÁRIO DE COMBATE (MATCH LOG)
+// =========================================================
+function registrarLog(mensagem, tipo = "system") {
+    const log = document.getElementById("match-log");
+    if (!log) return;
+    
+    const entry = document.createElement("div");
+    entry.className = `log-entry log-${tipo}`;
+    
+    // Gera a hora exata [HH:MM:SS]
+    const hora = new Date().toLocaleTimeString('pt-BR', { hour12: false, hour: "numeric", minute: "numeric", second: "numeric" });
+    
+    entry.innerHTML = `<span style="color:#666; font-size:0.55rem; margin-right:4px;">[${hora}]</span> ${mensagem}`;
+    log.appendChild(entry);
+    
+    // Auto-scroll: Desce a barra sempre que uma nova linha for adicionada
+    log.scrollTop = log.scrollHeight;
+}
+
 
