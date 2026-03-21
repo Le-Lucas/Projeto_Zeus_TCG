@@ -22,6 +22,26 @@ function preloadAssets() {
     console.log(`[SISTEMA] Iniciando download fantasma de ${imageUrls.size} texturas...`);
 }
 
+// =========================================================
+// 💥 MOTOR DE TEXTO FLUTUANTE (DANO, CURA, BUFFS E AVISOS)
+// =========================================================
+function mostrarTextoFlutuante(alvoDOM, texto, cor = "#ff0055") {
+    if (!alvoDOM) return;
+    const floatText = document.createElement("div");
+    floatText.innerText = texto;
+    floatText.style.cssText = `
+        position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+        color: ${cor}; font-family: 'Courier New', monospace; font-size: 3rem; font-weight: bold;
+        text-shadow: 0 0 15px ${cor}, 0 0 30px #000, 2px 2px 0 #000;
+        z-index: 99999; pointer-events: none; white-space: nowrap;
+    `;
+    alvoDOM.appendChild(floatText);
+    gsap.fromTo(floatText, 
+        { y: 0, opacity: 1, scale: 0.5 }, 
+        { y: -60, opacity: 0, scale: 1.2, duration: 1.2, ease: "power3.out", onComplete: () => floatText.remove() }
+    );
+}
+
 
 // ==========================================
 // 🛡️ PROTOCOLO DE EXTERMÍNIO (GLOBAL WIPE)
@@ -1139,6 +1159,11 @@ function executeSpell(spellCard, targetElement, targetOwner) {
 
     if(efeito === "dano_total" || efeito === "dano_area") { document.getElementById(isLocalCaster ? "enemy-field" : "player-field").querySelectorAll('.card-base').forEach(inimigo => applyDamage(inimigo, 3)); if(efeito === "dano_total") { if(isLocalCaster) enemyLife -= 4; else playerLife -= 4; } screenShake(); } else if (efeito.includes("dano_")) { let dmg = parseInt(efeito.split("_")[1]) || 0; if(targetElement.id.includes("hero")) { if(targetElement.id === "enemy-hero") enemyLife -= dmg; else playerLife -= dmg; if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(targetElement, "#ff0000"); } else { applyDamage(targetElement, dmg); } screenShake(); } else if (efeito.includes("cura_")) { let heal = parseInt(efeito.split("_")[1]) || 0; if(targetElement.id.includes("hero")) { if(targetElement.id === "player-hero") playerLife += heal; else enemyLife += heal; if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(targetElement, "#00ff00"); } else { targetElement.dataset.damageTaken = Math.max(0, (parseInt(targetElement.dataset.damageTaken) || 0) - heal); recalculateStats(targetElement); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(targetElement, "#00ff00"); } } else if (efeito === "atordoar" && !targetElement.id.includes("hero")) { targetElement.classList.add("exhausted"); targetElement.dataset.hasAttacked = "true"; if(window.VFX && window.VFX.stun) VFX.stun(targetElement); }
     checkGameOver(); updateLifeAndMana(); 
+
+    // ⚡ ADICIONE ESTA LINHA AQUI: Ensina o motor a ler o efeito da magia
+    let ef = spellCard.dataset.effect || spellCard.dataset.originalEffect || "";
+
+   
     
     // ⚡ MAGIA: NEGAÇÃO TOTAL (Debuff Mutante)
     if (ef === "negacao_total") {
