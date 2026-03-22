@@ -6,7 +6,102 @@ console.log("Conexão JS Estabelecida. Matriz Limpa: Fases, Botão 3D, VFX e IA 
 
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+// =========================================================
+// 🚨 MOTOR DE ALERTAS (DESIGN TERMINAL HACKER - CLIP PATH)
+// =========================================================
+window.alert = function(msg) {
+    let toast = document.getElementById("cyber-popup");
+    if (!toast) {
+        toast = document.createElement("div"); 
+        toast.id = "cyber-popup"; 
+        document.body.appendChild(toast);
+        
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes borderPulse {
+                0% { filter: drop-shadow(0 0 5px var(--alert-color)); }
+                50% { filter: drop-shadow(0 0 20px var(--alert-glow)); }
+                100% { filter: drop-shadow(0 0 5px var(--alert-color)); }
+            }
 
+            #cyber-popup { 
+                position: fixed; top: 50%; left: 50%; 
+                width: min(420px, 90vw);
+                background: rgba(5, 5, 15, 0.95);
+                border: 2px solid var(--alert-color);
+                color: #fff; 
+                font-family: 'Courier New', monospace; 
+                padding: 20px; 
+                z-index: 99999; 
+                backdrop-filter: blur(6px);
+                
+                /* O Canto Recortado Estiloso */
+                clip-path: polygon(0 0, 95% 0, 100% 15%, 100% 100%, 0 100%);
+                
+                /* Animação de Entrada Centrada */
+                transform: translate(-50%, -50%) scale(0.8); 
+                opacity: 0;
+                transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease; 
+                pointer-events: none; 
+            } 
+            
+            #cyber-popup.show { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 1;
+                animation: borderPulse 2s infinite;
+            }
+
+            /* Efeito de Scanlines (Linhas Holográficas) */
+            #cyber-popup::after {
+                content: ""; position: absolute; inset: 0;
+                background: repeating-linear-gradient(transparent, transparent 2px, rgba(0, 255, 255, 0.05) 3px);
+                pointer-events: none; z-index: 0;
+            }
+
+            .cyber-header {
+                font-size: 14px; font-weight: bold; letter-spacing: 2px;
+                border-bottom: 1px solid var(--alert-color);
+                margin-bottom: 12px; padding-bottom: 6px; 
+                text-shadow: 0 0 6px var(--alert-color);
+                color: var(--alert-color);
+                position: relative; z-index: 1;
+            }
+            
+            .cyber-body {
+                position: relative; z-index: 1; font-size: 13px; line-height: 1.5;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // ⚡ INTELIGÊNCIA DE CORES: Define as cores baseadas na mensagem
+    let corPrincipal, corBrilho, titulo;
+    if (msg.includes("Recompensa") || msg.includes("MISSÃO") || msg.includes("ESTABELECIDA") || msg.includes("SISTEMA") || msg.includes("COMPRADO") || msg.includes("SUCESSO") || msg.includes("BLOQUEADO")) {
+        corPrincipal = "#00ffff"; // Ciano (Sucesso)
+        corBrilho = "#ff00ff";    // Rosa no pulso
+        titulo = "INFO OMNI-BIO";
+    } else {
+        corPrincipal = "#ff0055"; // Vermelho Neon (Erro)
+        corBrilho = "#ffcc00";    // Amarelo no pulso
+        titulo = "ALERTA CRÍTICO";
+    }
+    
+    // Injeta as cores no CSS através de variáveis (var)
+    toast.style.setProperty('--alert-color', corPrincipal);
+    toast.style.setProperty('--alert-glow', corBrilho);
+
+    toast.innerHTML = `
+        <div class="cyber-header">[ ${titulo} ]</div>
+        <div class="cyber-body">${msg}</div>
+    `;
+    
+    // Dispara a animação
+    toast.classList.add("show"); 
+    clearTimeout(toast.timer); 
+    toast.timer = setTimeout(() => { 
+        toast.classList.remove("show"); 
+    }, 3000); // Fica na tela por 3 segundos
+};
 // ==========================================
 // 🟢 SISTEMA DE PRÉ-CARREGAMENTO (PRELOADER)
 // ==========================================
