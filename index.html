@@ -30,63 +30,76 @@
 
     <div id="zeus-engine-container">
 
-      <div id="start-screen" class="screen active">
-    <h1 class="shimmer-text" style="font-size: 4rem;">PROJETO ZEUS  </h1>
-    
-    <button id="btn-start" class="open-btn" style="width: 250px;">
-        [ INICIAR CONEXÃO ]
-    </button>
-    
-    <button id="btn-open-p2p" class="cmd-btn" style="width: 250px; margin-top: 10px; border-color: #00ffff; color: #00ffff;">
-        [ PROTOCOLO MULTIPLAYER ]
-    </button>
-    
-    <button class="cmd-btn" onclick="abrirCodexFaccoes()" style="width: 250px; margin-top: 10px; border-color: #ffaa00; color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.3);">
-        [ 📖 CODEX DE FACÇÕES ]
-    </button>
-</div>
+        <div id="start-screen" class="screen active">
+            <h1 class="shimmer-text" style="font-size: 4rem;">PROJETO ZEUS</h1>
+            <button id="btn-start" class="cmd-btn">[ INICIAR SIMULAÇÃO ]</button>
+
+            <button id="btn-open-p2p" class="cmd-btn" style="width: 250px; margin-top: 10px; border-color: #00ffff; color: #00ffff;">
+                [ PROTOCOLO MULTIPLAYER ]
+            </button>
+            <button class="cmd-btn" onclick="abrirCodexFaccoes()" style="width: 250px; margin-top: 10px; border-color: #ffaa00; color: #ffaa00; box-shadow: 0 0 15px rgba(255,170,0,0.3);">
+                [ 📖 CODEX DE FACÇÕES ]
+            </button>
+        </div>
 
         <div id="hero-screen" class="screen">
-            <div style="text-align: center; padding: 20px;">
-                <h2 class="neon-label">SELECIONE SEU OPERADOR</h2>
-                <span style="color:cyan; font-weight: bold;">CRÉDITOS: <span id="fragment-count">0</span>💽</span>
+            <div id="hero-header-top">
+                Seu Saldo: <span id="fragment-count" style="color:#00ffff; font-weight:bold;">0</span> 💽
             </div>
-           <div class="hero-container">
-                <div class="hero-choice comandante" data-hero="comandante" data-img="https://files.catbox.moe/wkfzj3.png">
-                    <div class="avatar-ring">
-                        <img id="player-avatar" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzPQQWPozotX2rKD0zOSh--F9z71zFRzgCU0QnepyvGw&s">
+
+            <div id="hero-content-split">
+                <div id="ghost-container">
+                    <img id="ghost-image" src="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_c83b1f55-removebg-preview.png" alt="Operador">
+                    <div id="ghost-details">
+                        <h1 id="ghost-name">HACKER (GHOST)</h1>
+                        <div id="ghost-role">INF_SABOTAGEM_AVANÇADA</div>
+                        <p id="ghost-desc">Sabotagem e controle de rede. Deck tático de controle e furtividade.</p>
                     </div>
-                    <h3>COMANDANTE</h3>
                 </div>
-                <div class="hero-choice estrategista" data-hero="tecnomago" data-img="https://files.catbox.moe/tl6rvy.png">
-                    <div class="avatar-ring">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG8_r6b3qkPn8Rh1pDppP0EOkjr-ocA_gsew&s">
+
+                <div id="hero-list">
+                    <div class="hero-item" data-hero="COMANDANTE" data-role="ALERTA_CRITICO_V1" data-img="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_8fc76db8-removebg-preview.png" data-theme="#ff0055" data-desc="Deck agressivo para vitórias rápidas. Esmague as defesas antes que o sistema reaja.">
+                        <div class="hero-avatar-ring"><img src="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_8fc76db8.png" alt="Comandante"></div>
+                        <div class="hero-item-info">
+                            <h4>Comandante - <span style="color: #ff0055;">Alerta Crítico</span></h4>
+                            <p>Deck agressivo para vitórias rápidas.</p>
+                        </div>
                     </div>
-                    <h3>TECNOMAGO</h3>
-                </div>
-                <div class="hero-choice biomedico" data-hero="biomedico" data-img="https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png">
-                    <div class="avatar-ring">
-                        <img src="data:image/png;base64,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">
+
+                    <div class="hero-item" data-hero="BIOMÉDICO" data-role="SUPORTE_TATICO_BIO" data-img="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_270de699-removebg-preview.png" data-theme="#00ffff" data-desc="Foco em durabilidade, cura contínua e aprimoramento de mutantes. Sobreviva à fadiga.">
+                        <div class="hero-avatar-ring"><img src="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_270de699.png" alt="Biomédico"></div>
+                        <div class="hero-item-info">
+                            <h4>Biomédico - <span style="color: #00ffff;">Suporte Tático</span></h4>
+                            <p>Durabilidade e cura.</p>
+                        </div>
                     </div>
-                    <h3>BIOMÉDICO</h3>
+
+                    <div class="hero-item selected" data-hero="HACKER" data-role="INF_SABOTAGEM_AVANÇADA" data-img="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_c83b1f55-removebg-preview.png" data-theme="#ffcc00" data-desc="Sabotagem e controle de rede. Deck tático focado em furtividade e sobrecarga.">
+                        <div class="hero-avatar-ring"><img src="https://uploads.onecompiler.io/44d83yght/44d9dw4q9/image_c83b1f55.png" alt="Hacker"></div>
+                        <div class="hero-item-info">
+                            <h4>Hacker (Ghost) - <span style="color: #ffcc00;">Infiltração</span></h4>
+                            <p>Controle e tática.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            
-            <div id="hero-actions" style="display: none; position: absolute; bottom: 30px; width: 100%; justify-content: center; gap: 20px;">
-                <button id="btn-edit-deck" class="cmd-btn" style="width: 150px;">DECK</button>
-                <button id="btn-market" class="cmd-btn" style="width: 150px;">Mercado Negro</button>
-                <button id="btn-start-battle-direct" class="open-btn" style="width: 200px; color: #00ff00; border-color: #00ff00;">[ MISSÃO ]</button>
+
+            <div id="hero-actions-bottom">
+                <button id="btn-market" class="cmd-btn" style="border-color: #ff00ff; color: #ff00ff; background: rgba(0,0,0,0.5);">[ MERCADO DE DADOS ]</button>
+                <button id="btn-edit-deck" class="cmd-btn" style="border-color: #777; color: #ccc; background: rgba(0,0,0,0.5);">[ FORJAR DECK ]</button>
+                <button id="btn-start-battle-direct" class="cmd-btn" style="border-color: var(--neon-theme); color: var(--neon-theme); font-size: 1.2rem; box-shadow: 0 0 15px var(--neon-theme);">[ INICIAR SIMULAÇÃO ]</button>
             </div>
         </div>
 
         <div id="deck-builder-screen" class="screen">
-             <div class="deck-builder-container">
+            <div class="deck-builder-container">
                 <div class="pool-panel">
                     <div class="toolbar" style="display: flex; gap: 10px; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #330000;">
                         <span style="color: #00ffff; font-weight: bold; align-self: center;">ORDENAR:</span>
                         <button class="cmd-btn" id="sort-cost" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">CUSTO ⚡</button>
                         <button class="cmd-btn" id="sort-rarity" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">RARIDADE ★</button>
                         <button class="cmd-btn" id="sort-type" style="width: auto; padding: 5px 15px; font-size: 0.7rem;">TIPO ⚙️</button>
+                        <button class="cmd-btn" onclick="abrirLojaCosmeticos()" style="border-color:#ffaa00; color:#ffaa00;">[ MERCADO DE SKINS ]</button>
                     </div>
                     <div id="card-pool-grid" class="pool-grid"></div>
                 </div>
@@ -98,8 +111,7 @@
                         <button id="btn-back-from-deck" class="cmd-btn" style="border-color: #444; color: #777;">VOLTAR</button>
                     </div>
                 </div>
-
-             </div>
+            </div>
         </div>
 
         <div id="market-screen" class="screen" style="flex-direction:column; padding:20px; box-sizing:border-box; align-items: center;">
@@ -115,7 +127,6 @@
                 <div id="turn-display" style="font-weight: bold; font-size: 1.2rem; color: white; text-align: center;">TURNO 1</div>
                 <div id="phase-display" class="neon-label" style="text-align: center;">AGUARDANDO</div>
                 <div style="color:cyan; margin-top: 15px; text-align: center;">RAM: <span id="mana" style="font-weight:bold; font-size:1.2rem;">0/0</span></div>
-              
                 
                 <div id="action-container" style="display: flex; flex-direction: column; align-items: center; margin: 25px 0; cursor: pointer;" onclick="handleActionBtn()">
                     <div id="turn-indicator" style="display: flex; gap: 15px; justify-content: center; margin-bottom: 5px;">
@@ -133,9 +144,9 @@
                         <span id="cards-in-grave">0</span>
                     </div>
                 </div>
-               <div id="match-log">
-                        <div class="log-entry log-system"><span style="color:#555;">[SISTEMA]</span> Simulação Iniciada...</div>
-                    </div>             
+                <div id="match-log">
+                    <div class="log-entry log-system"><span style="color:#555;">[SISTEMA]</span> Simulação Iniciada...</div>
+                </div>              
 
                 <div id="player-hero" class="hero-panel-sidebar" style="margin-top: auto;">
                     <div class="hero-avatar-frame"><img id="player-avatar-img" src="" class="hero-avatar"></div>
@@ -231,10 +242,9 @@
                 <button class="cmd-btn" onclick="document.getElementById('graveyard-modal').classList.remove('active')" style="margin-top: 20px; border-color: #ff0055; color: #ff0055;">FECHAR ARQUIVOS</button>
             </div>
         </div>
+
         <div id="dialogue-screen" class="screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9500; display: none; flex-direction: column; justify-content: flex-end; padding-bottom: 50px;">
-            
             <button id="btn-skip-dialogue" class="cmd-btn" style="position: absolute; top: 30px; right: 30px; border-color: #ff3333; color: #ff3333; z-index: 9600;">[ PULAR HISTÓRIA ⏭️ ]</button>
-            
             <div style="width: 100%; max-width: 900px; margin: 0 auto; display: flex; align-items: flex-end; gap: 20px;">
                 <img id="dialogue-avatar" src="" style="width: 250px; height: 350px; object-fit: cover; border: 2px solid cyan; border-radius: 8px; box-shadow: 0 0 20px cyan;">
                 <div style="flex-grow: 1; background: rgba(5,5,10,0.95); border: 2px solid cyan; border-radius: 8px; padding: 25px; min-height: 180px; position: relative;">
@@ -252,109 +262,211 @@
         <circle id="targeting-dot" cx="0" cy="0" r="5" fill="#ff0000" />
     </svg>
     
-   <div id="loader-container">
+  <div id="loader-container">
+
         <canvas id="matrix-canvas"></canvas>
+
         <div id="logo-overlay">
+
             <h1 class="shimmer-text glitch-effect" data-text="PROJETO ZEUS STUDIOS" style="font-size: 4rem; color: white; text-shadow: 0 0 20px #ff0000;">PROJETO ZEUS STUDIOS</h1>
+
         </div>
+
         <div id="tv-off-effect"></div>
+
     </div>
 
+
+
     <style>
+
     /* CSS Isolado para não quebrar o jogo principal */
+
     #loader-container {
+
         position: fixed;
+
         top: 0; left: 0;
+
         width: 100vw; height: 100vh;
+
         z-index: 99999;
+
         display: flex;
+
         justify-content: center;
+
         align-items: center;
+
         background: black;
+
         pointer-events: all; /* Bloqueia cliques enquanto carrega */
+
     }
+
+
 
     #matrix-canvas { position: absolute; top: 0; left: 0; }
 
+
+
     #logo-overlay {
+
         z-index: 10;
+
         opacity: 0;
+
         transition: opacity 0.4s ease, transform 0.4s ease;
+
         transform: scale(0.5);
+
     }
+
+
 
     /* Efeito de desligar TV antiga */
+
     .tv-shutdown {
+
         animation: tv-off 0.5s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+
     }
+
+
 
     @keyframes tv-off {
+
         0% { transform: scaleY(1) scaleX(1); filter: brightness(1); }
+
         50% { transform: scaleY(0.01) scaleX(1.1); filter: brightness(3); }
+
         100% { transform: scaleY(0) scaleX(0); filter: brightness(10); opacity: 0; }
+
     }
+
     </style>
 
+
+
     <script>
+
     const canvas = document.getElementById('matrix-canvas');
+
     const ctx = canvas.getContext('2d');
 
+
+
     canvas.width = window.innerWidth;
+
     canvas.height = window.innerHeight;
 
+
+
     const chars = "ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ23456789ZXYWVUT";
+
     const fontSize = 18;
+
     const columns = canvas.width / fontSize;
+
     const drops = Array(Math.floor(columns)).fill(0).map(() => ({
+
         y: Math.random() * canvas.height,
+
         speed: (Math.random() * 2 + 1) * (Math.random() > 0.5 ? 1 : -1) // Sobe e desce
+
     }));
 
+
+
     function drawMatrix() {
+
         ctx.fillStyle = "rgba(0, 0, 0, 0.15)"; 
+
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+
 
         ctx.font = fontSize + "px 'Courier New', monospace";
 
+
+
         drops.forEach((drop, i) => {
+
             const text = chars.charAt(Math.floor(Math.random() * chars.length));
+
             // Glitch vermelho ou branco
-            if(Math.random() > 0.95) ctx.fillStyle = "#ffffff"; 
+
+            if(Math.random() > 0.95) ctx.fillStyle = "#ffffff"," #00ffff"; 
+
             else ctx.fillStyle = "#ff003c";
 
+
+
             ctx.fillText(text, i * fontSize, drop.y);
+
             drop.y += drop.speed * fontSize;
 
+
+
             if (drop.y > canvas.height && drop.speed > 0) drop.y = 0;
+
             if (drop.y < 0 && drop.speed < 0) drop.y = canvas.height;
+
         });
+
     }
+
+
 
     let matrixInterval = setInterval(drawMatrix, 40);
 
+
+
     // =====================================
+
     // TIMERS ACELERADOS (Apenas ~1.8s total)
+
     // =====================================
+
     setTimeout(() => {
+
         // 1. Aparece o Logo num flash
+
         document.getElementById('logo-overlay').style.opacity = "1";
+
         document.getElementById('logo-overlay').style.transform = "scale(1)";
+
         
+
         setTimeout(() => {
+
             // 2. Para o Matrix e inicia efeito TV OFF agressivo
+
             clearInterval(matrixInterval);
+
             document.getElementById('loader-container').classList.add('tv-shutdown');
+
             
+
             // 3. Destrói o loader para não pesar na memória da Matriz
+
             setTimeout(() => {
+
                 document.getElementById('loader-container').remove();
+
             }, 500); 
+
         }, 2800); // O logo fica só 0.8s na tela
+
     }, 1500); // Apenas 0.5s de chuva antes do logo aparecer
+
     </script>
+   
     
+    <script src= "skin.js"></script>
     <script src="script.js"></script>
     <script src="vfx.js"></script>
+    <script src="battler.js"></script>
     
 </body>
 </html>
