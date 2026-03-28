@@ -137,6 +137,96 @@ function mostrarTextoFlutuante(alvoDOM, texto, cor = "#ff0055") {
     );
 }
 
+// =========================================================
+// 📳 MOTOR HÁPTICO (VIBRAÇÃO DO SISTEMA)
+// =========================================================
+
+// Função de segurança: Só vibra se o dispositivo suportar (evita erros no PC)
+const safeVibrate = (pattern) => {
+    if ("vibrate" in navigator) navigator.vibrate(pattern);
+};
+
+// Vibração curta para subida de nível (1 a 4)
+const vibrationSmall = () => safeVibrate(40);
+
+// Vibração de "Impacto" ou "Erro de Sistema" (Nível 5)
+const vibrationAlert5 = () => safeVibrate([100, 50, 100]); 
+
+// Vibração de "Explosão/Dano" (Caso a carta seja destruída na sobrecarga)
+const vibrationBoom = () => safeVibrate([200, 100, 200, 100, 500]);
+
+
+// =========================================================
+// ⚡ ANIMAÇÃO DE SOBRECARGA MÁXIMA
+// =========================================================
+function triggerOverloadMax(card) {
+  const tl = gsap.timeline({
+    onStart: () => {
+      // ⚡ Dispara a vibração tátil usando a sua função limpa!
+      vibrationAlert5(); 
+      
+      // Se tiver um som de choque/alerta, coloque aqui:
+      // playSound("overload_alert"); 
+    }
+  });
+
+  // 1. O Flash de Luz Branca (O que você já tinha)
+  tl.to(card, { filter: "brightness(3)", duration: 0.1, yoyo: true, repeat: 3 });
+  
+  // 2. 🎬 O Efeito Físico: Faz a carta tremer violentamente junto com a vibração do celular!
+  tl.to(card, { 
+      x: () => Math.random() * 10 - 5, // Treme no eixo X
+      y: () => Math.random() * 10 - 5, // Treme no eixo Y
+      duration: 0.05, 
+      yoyo: true, 
+      repeat: 5 
+  }, "<"); // O "<" faz o shake acontecer ao mesmo tempo que o brilho
+  
+  // 3. Volta a carta para o lugar original
+  tl.to(card, { x: 0, y: 0, duration: 0.1 });
+}
+
+// =========================================================
+// 💉 MOTOR DE INJEÇÃO DE STATUS (Dano, Cura, Buffs)
+// =========================================================
+function aplicarEfeitoEmCarta(cardDOM, cartaData, tipo, valor) {
+    if (!cardDOM || !cartaData) return;
+
+    // 1. ALTERA A MEMÓRIA E CHAMA O HOLOGRAMA FLUTUANTE
+    if (tipo === "dano") {
+        cartaData.def -= valor;
+        mostrarTextoFlutuante(cardDOM, `-${valor}`, "#ff3333"); // Vermelho Alerta
+        cardDOM.style.animation = "shake 0.3s ease-in-out"; // Tremedeira de impacto
+    } 
+    else if (tipo === "cura") {
+        cartaData.def += valor;
+        mostrarTextoFlutuante(cardDOM, `+${valor}`, "#00ff00"); // Verde Neon
+    } 
+    else if (tipo === "buffAtk") {
+        cartaData.atk += valor;
+        mostrarTextoFlutuante(cardDOM, `+${valor} ATK`, "#ffcc00"); // Dourado
+    } 
+    else if (tipo === "debuffAtk") {
+        cartaData.atk -= valor;
+        // Evita ataque negativo
+        if (cartaData.atk < 0) cartaData.atk = 0; 
+        mostrarTextoFlutuante(cardDOM, `-${valor} ATK`, "#cc00ff"); // Roxo Corrupção
+    }
+
+    // 2. GRAVA O NOVO NÚMERO NO CHASSI DA CARTA (UI)
+    let atkBox = cardDOM.querySelector('.hud-atk-box');
+    let defBox = cardDOM.querySelector('.hud-def-box');
+
+    if (atkBox) atkBox.innerText = `ATK:${cartaData.atk}`;
+    if (defBox) defBox.innerText = `DEF:${cartaData.def}`;
+
+    // 3. ATUALIZA AS CORES (Se a defesa caiu, fica vermelho; se o Atk subiu, fica verde)
+    // (Puxando aquela função aplicarCoresNoDOM que criamos antes)
+    aplicarCoresNoDOM(cardDOM, cartaData);
+}
+
+
+
 
 // ==========================================
 // 🛡️ PROTOCOLO DE EXTERMÍNIO (GLOBAL WIPE)
@@ -456,6 +546,7 @@ let currentLevel = 0, playerCollection = [], customDeck = [], playerDeck = [];
 let graveyard = { player: [], enemy: [] };
 let playerFragments = 70, currentSortMode = "cost";
 let maxMana = 3, playerMana = 3, maxLife = 20, playerLife = 20, enemyLife = 20, currentTurn = 1;
+let playerFatigue = 1; // 💀 Contador de Morte Súbita
 
 let attackToken = "player"; // Quem ataca na rodada
 let currentStep = "deploy_attacker"; // deploy_attacker -> deploy_defender -> combat
@@ -470,6 +561,7 @@ let sobrecargaAtiva = { player: 0, enemy: 0 };
 function bootTerminal() {
     initZeusEngineScale(); 
     preloadAssets();
+    aplicarSkinGlobal(skinAtiva);
     
     // ⚡ Carrega os dados salvos
     loadProgress();
@@ -500,30 +592,67 @@ function bootTerminal() {
         document.getElementById("fragment-count").textContent = playerFragments;
     };
     
-    document.querySelectorAll(".hero-choice").forEach(choice => {
-        choice.onclick = () => {
+  // =========================================================
+    // 🎭 MOTOR DE SELEÇÃO: HOLOGRAMA E TEMA DINÂMICO (Padrão Zeus Studios)
+    // =========================================================
+    document.querySelectorAll(".hero-item").forEach(item => {
+        item.onclick = () => {
+            if (item.classList.contains("selected")) return; // Já está selecionado
+            
             playSound("click");
-            document.querySelectorAll(".hero-choice").forEach(c => { c.classList.remove("selected"); const old = c.querySelector('.selection-particles'); if(old) old.remove(); });
-            choice.classList.add("selected");
-            selectedHeroObj = { id: choice.dataset.hero, imgUrl: choice.dataset.img };
-            customDeck = []; nomesDeckInicial.forEach(nome => { let carta = baseDeck.find(c => c.title === nome); if(carta) customDeck.push({...carta}); });
-            document.getElementById("hero-actions").style.display = "flex";
-            const particleContainer = document.createElement("div"); particleContainer.className = "selection-particles";
-            particleContainer.style.cssText = "position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:hidden; border-radius:inherit;";
-            choice.appendChild(particleContainer);
-            for (let i = 0; i < 15; i++) {
-                const p = document.createElement("div");
-                let size = Math.random() * 4 + 2;
-                let colors = ["#ff2a2a", "#ff9900", "#ffffff"]; 
-                if (choice.classList.contains("ESTRATEGISTA")) colors = ["#00ffff", "#3399ff", "#ffffff"];
-                if (choice.classList.contains("BIOMEDICO")) colors = ["#00ff66", "#00cc66", "#ffffff"];
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                p.style.cssText = `position:absolute; width:${size}px; height:${size}px; background:${color}; box-shadow:0 0 8px ${color}; border-radius:50%; bottom:5%; left:${Math.random() * 100}%; opacity:${Math.random() * 0.8 + 0.2};`;
-                particleContainer.appendChild(p);
-                gsap.to(p, { y: -(Math.random() * 150 + 50), x: (Math.random() * 30 - 15), scale: Math.random() * 0.6 + 0.8, opacity: 0, repeat: -1, duration: Math.random() * 1.5 + 1.5, ease: "sine.inOut" });
+            
+            // 1. Remove seleção de todos
+            document.querySelectorAll(".hero-item").forEach(c => c.classList.remove("selected"));
+            
+            // 2. Aplica no clicado
+            item.classList.add("selected");
+            
+            // 3. Captura os dados do HTML (data-attributes)
+            let heroName = item.dataset.hero;
+            let heroRole = item.dataset.role;
+            let heroImg = item.dataset.img;
+            let themeColor = item.dataset.theme;
+            let heroDesc = item.dataset.desc;
+
+            // 4. Muda a cor Global do Neon (Borda da imagem e botões)
+            document.documentElement.style.setProperty('--neon-theme', themeColor);
+            
+            // Salva na memória
+            selectedHeroObj = { id: heroName, imgUrl: heroImg };
+            
+            // 5. 🎬 EFEITO GSAP: Troca o Fantasma Gigante na Esquerda
+            const ghostImg = document.getElementById("ghost-image");
+            const ghostDetails = document.getElementById("ghost-details");
+            
+            // Muda os dados do texto
+            document.getElementById("ghost-name").innerText = heroName + (heroName==="HACKER" ? " (GHOST)" : "");
+            document.getElementById("ghost-role").innerText = heroRole;
+            document.getElementById("ghost-desc").innerText = heroDesc;
+            ghostImg.src = heroImg;
+
+            // Animação da Imagem: Vem de baixo/esquerda com fade
+            gsap.fromTo(ghostImg, 
+                { x: -50, y: 20, opacity: 0, filter: `drop-shadow(0 0 0px ${themeColor})` }, 
+                { x: 0, y: 0, opacity: 1, filter: `drop-shadow(0 0 25px ${themeColor})`, duration: 0.5, ease: "power2.out" }
+            );
+            
+            // Animação dos Textos: Dá um "pulo" suave
+            gsap.fromTo(ghostDetails, 
+                { y: 20, opacity: 0 }, 
+                { y: 0, opacity: 1, duration: 0.4, delay: 0.1, ease: "back.out(1.5)" }
+            );
+
+         
+          // 6. Atualiza o botão de Iniciar para bater com a cor da classe
+            let btnStart = document.getElementById("btn-start-battle-direct"); // ⚡ Tem que ser esse ID!
+            if(btnStart) {
+                btnStart.style.borderColor = themeColor;
+                btnStart.style.color = themeColor;
+                btnStart.style.boxShadow = `0 0 15px ${themeColor}`;
             }
         }; 
-    }); 
+    });
+    
 
     document.getElementById("btn-start-battle-direct").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.add("active"); };
     document.getElementById("btn-cancel-mode").onclick = () => { playSound("click"); document.getElementById("mode-selection-modal").classList.remove("active"); };
@@ -1160,38 +1289,57 @@ function createCard(item) {
     return c; 
 }
 
-// ==========================================
-// 7. SISTEMA DE CLIQUES E EFEITOS
-// ==========================================
-
-// ⚡ 1. ATUALIZE SUA FUNÇÃO DE CLIQUE NO HERÓI
+// =========================================================
+// ⚡ 1. ATUALIZE SUA FUNÇÃO DE CLIQUE NO HERÓI (COMPLETA)
+// =========================================================
 function handleHeroClick(heroElement, owner) {
     if (isSystemLocked) return;
     const isSpellSelected = selectedCardFromHand && selectedCardFromHand.dataset.raca === "feitico";
     
+    // 🔮 SE FOR UM FEITIÇO:
     if (isSpellSelected) { 
         executeSpell(selectedCardFromHand, heroElement, owner); 
         limparMiras(); // ⚡ MIRA DESLIGADA: Feitiço lançado!
+        return; // Encerra aqui
     } 
+    
+    // ⚔️ SE FOR UM ATAQUE CORPO A CORPO (Tropa batendo no Herói):
     else if (selectedAttacker && owner === "enemy" && currentStep === "combat" && attackToken === "player") {
+        
+        // --- A TRAVA (FIREWALL) ---
+        // Puxa apenas as cartas com a classe .taunt-card no campo inimigo
         const taunts = document.getElementById("enemy-field").querySelectorAll('.taunt-card');
         
-        if (taunts.length > 0) { 
+        // ⚡ REGRA: Só bloqueia se houver cartas com Provocar!
+        if (enemyField.length > 0) { 
             playSound("error"); 
-            alert("ALVO INVÁLIDO! Destrua as tropas com Provocar primeiro."); 
-            return; // ⚡ Não limpa as miras aqui, pois o jogador ainda precisa escolher o alvo certo!
+            alert("SISTEMA: ALVO INVÁLIDO! Destrua as tropas primeiro."); 
+            return; // 🛑 CORTA AQUI! O ataque é cancelado e a mira continua ativa.
         }
         
-        let attacker = selectedAttacker; 
-        selectedAttacker = null; 
-        attacker.classList.remove("attacker-selected");
+        // --- O ATAQUE (Se passou pela trava, o golpe entra!) ---
+        let danoDoAtacante = parseInt(selectedAttacker.dataset.atk) || 0;
         
-        resolveCombat(attacker, heroElement, true);
-        if(window.conexao && window.conexao.open) {
-            let atkSlot = Array.from(attacker.parentElement.parentElement.children).indexOf(attacker.parentElement);
-            window.enviarPacote({ acao: "ATACAR", atkSlot, targetType: "hero" });
-        }
-        limparMiras(); // ⚡ MIRA DESLIGADA: Ataque concluído!
+        // 1. Tira a vida do Herói Inimigo
+        enemyLife -= danoDoAtacante;
+        
+        // 2. Efeitos Visuais e Sonoros do Impacto
+        mostrarTextoFlutuante(heroElement, `-${danoDoAtacante} HP`, "#ff0000");
+        playSound("hit");
+        if (typeof screenShake === "function") screenShake();
+        if (window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(heroElement, "#ff0000");
+        
+        // 3. Exaure o Atacante (Ele já bateu neste turno)
+        selectedAttacker.classList.add("exhausted");
+        selectedAttacker.dataset.hasAttacked = "true";
+        
+        // 4. Registra no Diário de Batalha
+        registrarLog(`[${selectedAttacker.dataset.name}] atacou a AMEAÇA (-${danoDoAtacante} HP)`, "player");
+        
+        // 5. Limpa a mira e atualiza a HUD
+        limparMiras();
+        updateLifeAndMana();
+        checkGameOver();
     }
 }
 
@@ -1258,7 +1406,280 @@ function executeSpell(spellCard, targetElement, targetOwner) {
     // ⚡ ADICIONE ESTA LINHA AQUI: Ensina o motor a ler o efeito da magia
     let ef = spellCard.dataset.effect || spellCard.dataset.originalEffect || "";
 
-   
+function processCardEffect(gatilho, cartaObj, owner) {
+    const efeito = cartaObj.dataset.effect || cartaObj.dataset.originalEffect; 
+    const isPlayer = owner === "player";
+
+    if (gatilho === "AoJogar") {
+
+        // 📜 REGISTRA A INVOCACÃO NO DIÁRIO
+        registrarLog(`Invocou: [${cartaObj.dataset.name}]`, owner);
+      
+      // ⚡ MECÂNICA: OPERATIVO VÁCUO (Silêncio)
+        if (efeito === "silencio_aleatorio") {
+            const field = document.getElementById(isPlayer ? "enemy-field" : "player-field");
+            const alvos = Array.from(field.querySelectorAll('.card-base'));
+            if (alvos.length > 0) {
+                let alvo = alvos[Math.floor(Math.random() * alvos.length)];
+                alvo.dataset.effect = "nenhum"; // Apaga o efeito
+                alvo.dataset.originalEffect = "nenhum";
+                let typeBox = alvo.querySelector('.hud-type-box');
+                if(typeBox) typeBox.innerText = "[SILENCIADO]";
+                mostrarTextoFlutuante(alvo, "SISTEMA ANULADO!", "#555555");
+                playSound("error");
+            }
+        }
+
+        // ⚡ MECÂNICA: UNIDADE HAZMAT (Aprisionar Slot)
+        if (efeito === "aprisionar_slot") {
+            const field = document.getElementById(isPlayer ? "enemy-field" : "player-field");
+            const slots = Array.from(field.children);
+            let slotAlvo = slots[Math.floor(Math.random() * slots.length)];
+            slotAlvo.classList.add("slot-aprisionado");
+            slotAlvo.style.boxShadow = "inset 0 0 20px #ffcc00"; // Brilho Amarelo de Quarentena
+            cartaObj.dataset.slotAprisionado = slotAlvo.id; // Guarda a info para soltar depois
+            mostrarTextoFlutuante(cartaObj, "QUARENTENA ATIVADA", "#ffcc00");
+        }
+
+        // ⚡ MECÂNICA: DRONE SOMBRA (Aumento de Custo - Aura Ativa)
+        if (efeito === "taxa_automato") {
+            // Aumenta o custo na mão do oponente dinamicamente (Simplificado para efeito imediato)
+            mostrarTextoFlutuante(cartaObj, "CUSTO INIMIGO AUMENTADO", "#ff00ff");
+        }
+        
+        // ⚡ MECÂNICA: DANO EM ÁREA (Explosão no campo inimigo)
+        if (efeito.includes("dano_area")) {
+            let campoInimigo = document.getElementById(isPlayer ? "enemy-field" : "player-field").children;
+            let danoAoE = 2; 
+            playSound("hit"); 
+            if(typeof screenShake === "function") screenShake();
+            for (let i = 0; i < campoInimigo.length; i++) {
+                let alvoDOM = campoInimigo[i].querySelector('.card-base');
+                if (alvoDOM) {
+                    applyDamage(alvoDOM, danoAoE);
+                    if(window.VFX && window.VFX.showBuff) VFX.showBuff(alvoDOM, `-${danoAoE} DANO`, "#ff0000");
+                }
+            }
+        }
+
+        // ⚡ MECÂNICA: COLMEIA (Copia palavra-chave ao entrar)
+        if (efeito.includes("Colmeia")) {
+            let campoAliado = document.getElementById(isPlayer ? "player-field" : "enemy-field").children;
+            let efeitosDisponiveis = [];
+            let nomesEAO = ["Branko", "Nyx", "Iris", "Leon", "Rourke"];
+            let temOutroEAO = false;
+
+            for (let i = 0; i < campoAliado.length; i++) {
+                let cardDOM = campoAliado[i].querySelector('.card-base');
+                if (cardDOM && cardDOM !== cartaObj && nomesEAO.includes(cardDOM.dataset.name)) {
+                    temOutroEAO = true;
+                    let ef = cardDOM.dataset.effect || cardDOM.dataset.originalEffect || "";
+                    if (ef && ef !== "nenhum") efeitosDisponiveis.push(ef);
+                }
+            }
+
+            if (temOutroEAO) {
+                if (efeitosDisponiveis.length > 0) {
+                    let efeitoSorteado = efeitosDisponiveis[Math.floor(Math.random() * efeitosDisponiveis.length)];
+                    if (efeito.includes("furtividade") && efeitoSorteado.includes("provocar")) efeitoSorteado = "escudo_divino"; 
+                    cartaObj.dataset.originalEffect += "," + efeitoSorteado;
+                    recalculateStats(cartaObj);
+                }
+                if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, `COLMEIA ATIVADA`, "#ff00ff");
+            }
+        }
+
+        // ⚡ MECÂNICA: EXTRAÇÃO (Destrói aliado fraco para comprar cartas) - EQUIPE LAB
+        if (efeito.includes("extracao")) {
+            const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+            const aliados = Array.from(field.querySelectorAll('.card-base')).filter(c => c !== cartaObj && c.dataset.dead !== "true");
+            
+            if (aliados.length > 0) {
+                const alvo = aliados[Math.floor(Math.random() * aliados.length)];
+                alvo.dataset.dead = "true";
+                processCardEffect("UltimoSuspiro", alvo, owner);
+                if(window.VFX && window.VFX.death) VFX.death(alvo); else alvo.remove();
+                
+                if (isPlayer) {
+                    drawCard();
+                    setTimeout(drawCard, 300);
+                } 
+                if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, "EXTRAÇÃO SUCESSO!", "#00ffcc");
+            }
+        }
+        
+        // ⚡ INJEÇÃO DAS FALAS (VOICE LINES) ⚡
+        let raca = cartaObj.dataset.raca; 
+        if (falasPorTipo[raca]) {
+            let listaFalas = falasPorTipo[raca];
+            let falaSorteada = listaFalas[Math.floor(Math.random() * listaFalas.length)];
+            projetarFalaHolografica(cartaObj, falaSorteada);
+        }
+        
+        if (efeito === "reciclar" && isPlayer && graveyard.player.length > 0) { 
+            let revivida = graveyard.player.pop(); updateLifeAndMana(); 
+            let novaCarta = createCard(revivida); document.getElementById("hand").appendChild(novaCarta); 
+            gsap.fromTo(novaCarta, { y: 200, scale: 0.2, opacity: 0 }, { y: 0, scale: 0.7, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
+            if(typeof arrangeHand === "function") arrangeHand(); playSound("deploy"); 
+        }
+        
+        if (efeito === "atordoar") { 
+            const targets = document.getElementById(isPlayer ? "enemy-field" : "player-field").querySelectorAll('.card-base'); 
+            if(targets.length > 0) { 
+                const t = targets[Math.floor(Math.random() * targets.length)]; t.classList.add("exhausted"); t.dataset.hasAttacked = "true"; if(window.VFX && window.VFX.stun) VFX.stun(t); 
+            } 
+        }
+        
+        if (efeito === "roubo_energia" && isPlayer) { 
+            enemyLife -= 1; updateLifeAndMana(); if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("enemy-hero"), "#ff00ff"); 
+        }
+        
+        const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+        
+        if (efeito === "tropa_coordenada") {
+            const emptySlots = Array.from(field.children).filter(s => !s.querySelector('.card-base'));
+            if (emptySlots.length > 0) { 
+                const recruta = createCard(baseDeck.find(c => c.title === "Segurança Aegis")); 
+                recruta.dataset.owner = owner; emptySlots[0].appendChild(recruta); 
+                gsap.set(recruta, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); 
+                recruta.dataset.hasAttacked = "false"; recruta.classList.remove("exhausted"); 
+                if(window.VFX && window.VFX.onSummon) VFX.onSummon(recruta, "provocar"); playSound("deploy"); 
+            } 
+            else { 
+                cartaObj.dataset.baseAtk = (parseInt(cartaObj.dataset.baseAtk) || 0) + 1; 
+                cartaObj.dataset.baseHp = (parseInt(cartaObj.dataset.baseHp) || 0) + 1; 
+                recalculateStats(cartaObj); if(window.VFX && window.VFX.pulse) VFX.pulse(cartaObj, "#00ff00"); playSound("hit"); 
+            }
+        }
+        
+        // ⚡ MECÂNICA: SINERGIA AUTÔMATO (Padronizado)
+        if (cartaObj.dataset.raca === "automato") {
+            const aliados = field.querySelectorAll('.card-base'); 
+            aliados.forEach(aliado => { 
+                let ef = aliado.dataset.effect || aliado.dataset.originalEffect;
+                if (ef === "sinergia_automato" && aliado !== cartaObj) { 
+                    aliado.dataset.baseAtk = (parseInt(aliado.dataset.baseAtk) || 0) + 1; 
+                    aliado.dataset.baseHp = (parseInt(aliado.dataset.baseHp) || 0) + 1; 
+                    recalculateStats(aliado); if(window.VFX && window.VFX.pulse) VFX.pulse(aliado, "#00ffff"); 
+                } 
+            });
+        }
+    }
+    
+    if (gatilho === "UltimoSuspiro") { 
+        graveyard[owner].push(baseDeck.find(c => c.title === cartaObj.dataset.name)); 
+        
+        // ⚡ LIMPEZA HAZMAT (Libera a quarentena ao morrer)
+        
+        if (efeito === "aprisionar_slot" && cartaObj.dataset.slotAprisionado) {
+            let slot = document.getElementById(cartaObj.dataset.slotAprisionado);
+            if (slot) {
+                slot.classList.remove("slot-aprisionado");
+                slot.style.boxShadow = ""; // Tira o brilho
+                // ⚡ ADICIONE ESTA LINHA AQUI: Ensina o motor a ler o efeito da magia
+            let ef = spellCard.dataset.effect || spellCard.dataset.originalEffect || "";
+    
+    // ⚡ A CORREÇÃO ENTRA AQUI: Traduz o "isLocalCaster" para "isPlayer" para as magias funcionarem!
+             const isPlayer = isLocalCaster;
+            }
+        }
+
+        if (efeito === "evocar_recruta") { 
+            const slot = cartaObj.parentElement; 
+            setTimeout(() => { 
+                if(slot && !slot.querySelector('.card-base')) { 
+                    const recruit = createCard(baseDeck.find(c => c.title === "Cadete de Patrulha")); 
+                    recruit.dataset.owner = owner; 
+                    gsap.set(recruit, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); 
+                    slot.appendChild(recruit); 
+                    recruit.dataset.hasAttacked="false"; 
+                    if(window.VFX && window.VFX.onSummon) VFX.onSummon(recruit, "provocar"); 
+                } 
+            }, 500); 
+        }
+        
+        // ⚡ MECÂNICA: PREDADOR (Fica gigante quando as cartas morrem) - EQUIPE LAB
+        ["player-field", "enemy-field"].forEach(f => {
+            const field = document.getElementById(f);
+            if (field) {
+                const predadores = Array.from(field.querySelectorAll('.card-base')).filter(c => {
+                    let ef = c.dataset.effect || c.dataset.originalEffect || "";
+                    return ef.includes("predador") && c.dataset.dead !== "true";
+                });
+                
+                predadores.forEach(predador => {
+                    predador.dataset.baseAtk = (parseInt(predador.dataset.baseAtk) || 0) + 2;
+                    predador.dataset.baseHp = (parseInt(predador.dataset.baseHp) || 0) + 2;
+                    predador.dataset.damageTaken = Math.max(0, (parseInt(predador.dataset.damageTaken) || 0) - 2);
+                    recalculateStats(predador);
+                    if(window.VFX && window.VFX.showBuff) VFX.showBuff(predador, "PREDADOR +2/+2", "#ff0055");
+                });
+            }
+        });
+    }
+
+    if (gatilho === "FimDeTurno") { 
+        // ⚡ PROTEÇÃO: Só ativa efeitos se for o FIM do turno do DONO da carta!
+        if (owner === attackToken) return;
+
+        if (efeito === "cura_turno" && isPlayer) { 
+            playerLife = Math.min(playerLife+1, maxLife); 
+            if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(document.getElementById("player-hero"), "#00ff00"); 
+        } 
+        if (efeito === "regeneracao") { 
+            cartaObj.dataset.damageTaken = Math.max(0, (parseInt(cartaObj.dataset.damageTaken) || 0) - 1); 
+            recalculateStats(cartaObj); 
+            if(window.VFX && window.VFX.triggerTechBits) VFX.triggerTechBits(cartaObj, "#00ff00"); 
+        } 
+        
+        // ⚡ MECÂNICA: CURA EM ÁREA (Médico só cura quem precisa!)
+        if (efeito.includes("cura_area")) {
+            let campoAliado = document.getElementById(isPlayer ? "player-field" : "enemy-field").children;
+            let valorCura = 3;
+            let curouAlguem = false;
+
+            for (let i = 0; i < campoAliado.length; i++) {
+                let alvoDOM = campoAliado[i].querySelector('.card-base');
+                if (alvoDOM) {
+                    let danoAtual = parseInt(alvoDOM.dataset.damageTaken) || 0;
+                    if (danoAtual > 0) { 
+                        alvoDOM.dataset.damageTaken = Math.max(0, danoAtual - valorCura);
+                        recalculateStats(alvoDOM);
+                        if(window.VFX && window.VFX.showBuff) VFX.showBuff(alvoDOM, `+${valorCura} CURA`, "#00ff00");
+                        curouAlguem = true;
+                    }
+                }
+            }
+            if (curouAlguem) playSound("deploy");
+        }
+        
+        // ⚡ MECÂNICA: MUTAÇÃO (Ganha +1/+1 no fim do turno) - EQUIPE LAB
+        if (efeito.includes("mutacao")) {
+            cartaObj.dataset.baseAtk = (parseInt(cartaObj.dataset.baseAtk) || 0) + 1;
+            cartaObj.dataset.baseHp = (parseInt(cartaObj.dataset.baseHp) || 0) + 1;
+            recalculateStats(cartaObj);
+            if(window.VFX && window.VFX.showBuff) VFX.showBuff(cartaObj, "MUTAÇÃO +1/+1", "#00ffcc");
+        }
+
+        // ⚡ MECÂNICA: INCUBAÇÃO (Gera um Clone Instável no fim do turno) - EQUIPE LAB
+        if (efeito.includes("incubar")) {
+            const field = document.getElementById(isPlayer ? "player-field" : "enemy-field");
+            const emptySlots = Array.from(field.children).filter(s => !s.querySelector('.card-base'));
+            if (emptySlots.length > 0) {
+                const clone = createCard(baseDeck.find(c => c.title === "Clone Instável")); 
+                clone.dataset.owner = owner; 
+                emptySlots[0].appendChild(clone); 
+                
+                gsap.set(clone, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, margin: 0 }); 
+                clone.dataset.hasAttacked = "false"; 
+                clone.classList.remove("exhausted"); 
+                
+                if(window.VFX && window.VFX.onSummon) VFX.onSummon(clone, "provocar"); 
+                playSound("deploy");
+            }
+        }
+    }
+}
     
     // ⚡ MAGIA: NEGAÇÃO TOTAL (Debuff Mutante)
     if (ef === "negacao_total") {
@@ -1658,8 +2079,9 @@ function initGame(levelIndex, arenaClass) {
     const enHero = document.getElementById("enemy-hero"); if(enHero) { enHero.querySelector(".hero-avatar").src = levelData.bossImg; enHero.querySelector(".hero-stats span:last-child").innerHTML = `VIDA: <span id="enemy-life">${levelData.bossHp}</span>`; enHero.onclick = () => handleHeroClick(enHero, "enemy"); }
     const plHero = document.getElementById("player-hero"); if(plHero) { plHero.onclick = () => handleHeroClick(plHero, "player"); if(selectedHeroObj) document.getElementById("player-avatar-img").src = selectedHeroObj.imgUrl; }
 
-    enemyLife = levelData.bossHp; playerLife = 20; maxMana = 3; playerMana = 3; currentTurn = 1; gameIsOver = false; 
+    enemyLife = levelData.bossHp; playerLife = 20; maxMana = 3; playerMana = 3; currentTurn = 1; gameIsOver = false; playerFatigue = 1;
 
+    
     if (window.conexao && window.conexao.open) {
         if (window.isHost) { attackToken = "player"; isSystemLocked = false; }
         else { attackToken = "enemy"; isSystemLocked = true; }
@@ -1679,7 +2101,12 @@ function initGame(levelIndex, arenaClass) {
 
     updateUIState(); updateLifeAndMana(); 
     if(window.initAvatarParticles) setTimeout(window.initAvatarParticles, 500); 
+
+    // ⚡ GATILHO DO MULLIGAN: Aguarda as cartas chegarem à mão (800ms) e abre o painel
+    setTimeout(iniciarProtocoloMulligan, 800);
 }
+
+
 
 function handleActionBtn() { 
     if(isSystemLocked) return; 
@@ -1866,9 +2293,18 @@ function executePlayCard(slot, card) {
         playerMana -= cst; slot.appendChild(card); 
         if(donoDoSlot === "player" && window.conexao && window.conexao.open) { let slotIndex = Array.from(slot.parentElement.children).indexOf(slot); window.enviarPacote({ acao: "JOGAR_CARTA", cardName: card.dataset.name, slotIndex: slotIndex }); }
         card.classList.remove("deployment-selected"); gsap.killTweensOf(card); 
-        gsap.set(card, { clearProps: "all" });
-        gsap.set(card, { position: "absolute", top: "50%", left: "50%", xPercent: -50, yPercent: -50, scale: 0.60, x: 0, y: 0, rotation: 0, opacity: 1, zIndex: 10, margin: 0 });
-        card.dataset.hasAttacked = "false"; card.classList.remove("exhausted");
+       gsap.set(card, { 
+            position: "absolute", 
+            top: "50%", 
+            left: "50%", 
+            xPercent: -50, 
+            yPercent: -50, 
+            zIndex: 10, 
+            margin: 0
+        });
+
+        card.dataset.hasAttacked = "false"; 
+        card.classList.remove("exhausted");
         processCardEffect("AoJogar", card, donoDoSlot);
         playSound("deploy"); updateLifeAndMana(); setTimeout(updateAuras, 100); draggedCard = null; selectedCardFromHand = null; arrangeHand();
     } else { playSound("error"); alert("RAM INSUFICIENTE!"); }
@@ -2077,8 +2513,32 @@ function drawCard() {
         arrangeHand(); 
         gsap.to(novaCarta, { rotationY: 0, opacity: 1, duration: 0.8, ease: "back.out(1.5)" }); 
         updateLifeAndMana(); 
-    } 
+    } else {
+        // =========================================================
+        // 💀 PROTOCOLO DE FADIGA DE SISTEMA (MORTE SÚBITA)
+        // =========================================================
+        if (gameIsOver) return;
+        
+        playerLife -= playerFatigue;
+        playSound("error");
+        screenShake();
+        
+        let heroiDOM = document.getElementById("player-hero");
+        mostrarTextoFlutuante(heroiDOM, `FADIGA! -${playerFatigue}`, "#ff0055");
+        registrarLog(`[ALERTA] Deck vazio! Fadiga de Sistema: -${playerFatigue} HP`, "system");
+        
+        playerFatigue++; // Aumenta a dor para o próximo turno
+        
+        updateLifeAndMana();
+        checkGameOver();
+        
+        // ⚡ Se estiver no multiplayer, avisa o inimigo que você tomou dano de fadiga
+        if (window.conexao && window.conexao.open) {
+            window.enviarPacote({ acao: "SYNC_LIFE", playerLife: enemyLife, enemyLife: playerLife });
+        }
+    }
 }
+
 
 function arrangeHand(cartaParaIgnorar = null) { 
     const cards = Array.from(document.getElementById("hand").children); 
@@ -2198,6 +2658,101 @@ function showNextDialogue() {
 }
 
 function iniciarCombateDaCampanha() { const data = campaignData[currentLevel]; const diagScreen = document.getElementById("dialogue-screen"); diagScreen.classList.remove("active"); diagScreen.style.display = "none"; document.getElementById("game-screen").classList.add("active"); const board = document.getElementById("board"); board.style.backgroundImage = `url('${data.bgImg}')`; board.style.backgroundSize = "cover"; board.style.backgroundPosition = "center"; initGame(currentLevel); }
+
+// =========================================================
+// 🔄 PROTOCOLO DE RECALIBRAÇÃO (MULLIGAN)
+// =========================================================
+function iniciarProtocoloMulligan() {
+    isSystemLocked = true; // Trava a mesa para o jogador não trapacear
+    clearInterval(timerInterval); // Pausa o relógio do Turno 1
+
+    let modal = document.getElementById("mulligan-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "mulligan-modal";
+        document.body.appendChild(modal);
+    }
+
+    // Fundo desfocado para focar nas cartas
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,10,15,0.95); z-index:999999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(8px);";
+
+    modal.innerHTML = `
+        <h2 style="color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom: 15px; font-family:'Courier New', monospace; letter-spacing: 2px;">MÃO INICIAL ESTABELECIDA</h2>
+        <p style="color:#ccc; margin-bottom: 40px; font-family:'Courier New', monospace;">Deseja manter estes dados ou recalibrar a sua mão (Mulligan)?</p>
+        
+        <div id="mulligan-cards-container" style="display:flex; gap: 20px; margin-bottom: 40px; transform: scale(1.1);"></div>
+        
+        <div style="display:flex; gap: 20px;">
+            <button id="btn-keep-hand" class="cmd-btn" style="border-color:#00ff00; color:#00ff00; padding: 15px 30px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(0,255,0,0.4);">[MANTER MÃO]</button>
+            <button id="btn-mulligan" class="cmd-btn" style="border-color:#ffaa00; color:#ffaa00; padding: 15px 30px; font-size: 1.1rem; box-shadow: 0 0 15px rgba(255,170,0,0.4);">[RECALIBRAR]</button>
+        </div>
+    `;
+
+    // Clona visualmente as cartas da mão real para o painel holográfico
+    const handDiv = document.getElementById("hand");
+    const cardsInHand = Array.from(handDiv.children);
+    const container = document.getElementById("mulligan-cards-container");
+
+    cardsInHand.forEach(cardDOM => {
+        let cardData = baseDeck.find(c => c.title === cardDOM.dataset.name);
+        if(cardData) {
+            let clone = createCard(cardData);
+            clone.style.position = "relative";
+            clone.style.transform = "none";
+            clone.onclick = null; // Tira o clique do clone
+            clone.ondragstart = null; // Tira o arrastar do clone
+            container.appendChild(clone);
+        }
+    });
+
+    modal.style.display = "flex";
+
+    // ⚡ AÇÃO 1: MANTER A MÃO
+    document.getElementById("btn-keep-hand").onclick = () => {
+        playSound("click");
+        registrarLog("Mão inicial mantida.", "system");
+        finalizarMulligan(modal);
+    };
+
+    // ⚡ AÇÃO 2: RECALIBRAR (MULLIGAN)
+    document.getElementById("btn-mulligan").onclick = () => {
+        playSound("deploy");
+        
+        // 1. Devolve as cartas físicas para o deck
+        cardsInHand.forEach(cardDOM => {
+            let cardData = baseDeck.find(c => c.title === cardDOM.dataset.name);
+            if(cardData) playerDeck.push({...cardData});
+        });
+        
+        // 2. Limpa a mão real
+        handDiv.innerHTML = "";
+        
+        // 3. Embaralha o deck novamente
+        for (let i = playerDeck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [playerDeck[i], playerDeck[j]] = [playerDeck[j], playerDeck[i]];
+        }
+        
+        // 4. Compra 3 novas cartas
+        drawCard(); drawCard(); drawCard();
+        
+        registrarLog("Operador executou Recalibração (Mulligan).", "system");
+        finalizarMulligan(modal);
+    };
+}
+
+// ⚡ Lógica de Desligamento do Modal
+function finalizarMulligan(modal) {
+    gsap.to(modal, {opacity: 0, duration: 0.3, onComplete: () => {
+        modal.style.display = "none";
+        modal.style.opacity = 1;
+        modal.innerHTML = ""; // Limpa a RAM visual
+        
+        updateUIState(); // Destrava a mesa e retoma o relógio do Turno 1!
+    }});
+}
+
+
 
 // ==========================================
 // 10. CÉREBRO DA IA (JOGA E ATACA EM 1 TURNO)
@@ -3131,3 +3686,246 @@ function registrarLog(mensagem, tipo = "system") {
     log.scrollTop = log.scrollHeight;
 }
 
+//  BLOCO DA LOJA DE SKIN
+
+// =========================================================
+// 🎨 MOTOR DE SKINS E LOJA DE COSMÉTICOS
+// =========================================================
+
+function aplicarSkinGlobal(skinId) {
+    catalogoSkins.forEach(s => document.body.classList.remove(s.id));
+    document.body.classList.add(skinId);
+    skinAtiva = skinId;
+    localStorage.setItem("zeusSkinAtiva", skinId);
+}
+
+function abrirLojaCosmeticos() {
+    playSound("click");
+    let modal = document.getElementById("skin-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "skin-modal";
+        document.body.appendChild(modal);
+    }
+
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(5,10,15,0.95); z-index:999999; display:flex; flex-direction:column; align-items:center; backdrop-filter: blur(8px); overflow-y:auto; padding: 20px 0;";
+
+    let vitrineHTML = "";
+    catalogoSkins.forEach(skin => {
+        let jaPossui = skinsCompradas.includes(skin.id);
+        let estaEquipada = (skin.id === skinAtiva);
+        
+        
+        let botaoAcao = "";
+        if (estaEquipada) {
+            botaoAcao = `<button disabled style="background:rgba(255,255,255,0.05); color:#777; border:1px solid #555; padding:10px; width:100%; font-family:'Courier New', monospace; font-weight:bold; letter-spacing:1px;">[ EQUIPADO ]</button>`;
+        } else if (jaPossui) {
+            botaoAcao = `<button onclick="equiparSkin('${skin.id}')" style="background:transparent; color:#00ffff; border:1px solid #00ffff; padding:10px; width:100%; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; box-shadow: 0 0 10px rgba(0,255,255,0.2); letter-spacing:1px; transition:0.3s;" onmouseover="this.style.background='rgba(0,255,255,0.1)'" onmouseout="this.style.background='transparent'">[ APLICAR ESTILO ]</button>`;
+        } else {
+            // ⚡ BOTÃO CORRIGIDO: Borda Vermelha Neon com texto garantido e efeito Hover
+            botaoAcao = `<button onclick="comprarSkin('${skin.id}', ${skin.preco})" style="background:transparent; color:#ff0055; border:1px solid #ff0055; padding:10px; width:100%; font-family:'Courier New', monospace; font-weight:bold; cursor:pointer; box-shadow: 0 0 10px rgba(255,0,85,0.2); letter-spacing:1px; transition:0.3s;" onmouseover="this.style.background='#ff0055'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#ff0055';">[ COMPRAR: ${skin.preco} 💽 ]</button>`;
+        }
+
+                vitrineHTML += `
+            <div style="background:rgba(0,0,0,0.6); border: 2px solid ${skin.corPreview}; padding: 15px; width: 220px; border-radius: 6px; text-align:center; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);">
+                
+                <button onclick="previewSkin3D('${skin.id}')" style="background:transparent; border:1px dashed ${skin.corPreview}; color:${skin.corPreview}; padding:15px 0; width:100%; margin-bottom:15px; cursor:pointer; font-family:'Courier New', monospace; transition:0.3s; box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+                    👁️ VER HOLOGRAFIA
+                </button>
+
+                <h4 style="color:#fff; margin: 0 0 5px 0; font-family:'Courier New', monospace;">${skin.nome}</h4>
+                <p style="color:#aaa; font-size:0.8rem; margin-bottom:15px; font-family:'Courier New', monospace;">Custo: ${skin.preco} HDs</p>
+                ${botaoAcao}
+            </div>
+        `;
+        
+    });
+
+    modal.innerHTML = `
+        <h2 style="color:#ffaa00; text-shadow:0 0 15px #ffaa00; font-family:'Courier New', monospace; letter-spacing:2px;">🎨 MERCADO NEGRO: CHASSIS</h2>
+        <p style="color:#ccc; font-family:'Courier New', monospace; margin-bottom: 30px;">Seu Saldo: <span id="skin-saldo" style="color:#00ffff; font-weight:bold; font-size:1.2rem;">${playerFragments} 💽</span></p>
+        <div style="display:flex; gap: 20px; flex-wrap: wrap; justify-content:center; max-width: 900px;">
+            ${vitrineHTML}
+        </div>
+        <button onclick="document.getElementById('skin-modal').remove(); playSound('click');" style="margin-top: 40px; background:transparent; border:2px solid #777; color:#ccc; padding:10px 30px; font-family:'Courier New', monospace; cursor:pointer;">[ VOLTAR AO DECK ]</button>
+    `;
+}
+
+function comprarSkin(id, preco) {
+    if (playerFragments >= preco) {
+        playSound("deploy");
+        playerFragments -= preco;
+        skinsCompradas.push(id);
+        
+        localStorage.setItem("zeusSkinsInventario", JSON.stringify(skinsCompradas));
+        saveProgress(); // Salva o novo saldo de HDs
+        
+        document.getElementById('skin-modal').remove();
+        abrirLojaCosmeticos(); // Recarrega a tela com os botões atualizados
+        alert("SISTEMA: ESTILO ADQUIRIDO COM SUCESSO!");
+    } else {
+        playSound("error");
+        alert("SISTEMA: HDs INSUFICIENTES.");
+    }
+}
+
+function equiparSkin(id) {
+    playSound("click");
+    aplicarSkinGlobal(id);
+    document.getElementById('skin-modal').remove();
+    abrirLojaCosmeticos();
+}
+
+// =========================================================
+// 👁️ CÂMARA DE PREVIEW HOLOGRÁFICA 3D
+// =========================================================
+function previewSkin3D(skinId) {
+    playSound("click");
+    let modal = document.getElementById("preview-skin-modal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "preview-skin-modal";
+        document.body.appendChild(modal);
+    }
+
+    // Fundo ultra-escuro para focar no holograma
+    modal.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.92); z-index:9999999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter: blur(12px); perspective: 1200px;";
+
+    // ⚡ Injeta a Animação de Giro no CSS (se não existir)
+    if (!document.getElementById("anim-spin-3d")) {
+        let style = document.createElement("style");
+        style.id = "anim-spin-3d";
+        style.innerHTML = "@keyframes spinCard3D { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }";
+        document.head.appendChild(style);
+    }
+
+    modal.innerHTML = `
+        <h2 style="color:#00ffff; text-shadow:0 0 15px #00ffff; margin-bottom: 50px; font-family:'Courier New', monospace; z-index: 2; letter-spacing: 3px;">SIMULAÇÃO DE CHASSI</h2>
+        
+        <div id="preview-wrapper" class="${skinId}" style="transform-style: preserve-3d; animation: spinCard3D 6s linear infinite; margin-bottom: 60px;"></div>
+        
+        <button onclick="document.getElementById('preview-skin-modal').remove(); playSound('click');" style="background:transparent; border:2px solid #ff0055; color:#ff0055; padding:12px 35px; font-family:'Courier New', monospace; cursor:pointer; font-weight:bold; box-shadow: 0 0 15px rgba(255,0,85,0.4); z-index: 2; text-transform:uppercase;">[ ENCERRAR HOLOGRAFIA ]</button>
+    `;
+
+    // ⚡ Gera uma carta de demonstração (Procura a "PBesta toxica" se não achar pega a primeira do deck)
+    let cartaDemoData = baseDeck.find(c => c.title.includes("Besta toxica")) || baseDeck[0];
+    let cartaDemo = createCard(cartaDemoData);
+    
+    // Trava interações para a carta não tentar ser arrastada ou dar zoom
+    cartaDemo.onclick = null;
+    cartaDemo.onmouseenter = null;
+    cartaDemo.onmouseleave = null;
+    cartaDemo.ondragstart = (e) => e.preventDefault();
+    
+    // Ajusta a escala e centraliza
+    cartaDemo.style.position = "relative";
+    cartaDemo.style.transform = "scale(1.5)";
+    cartaDemo.style.margin = "0";
+
+    document.getElementById("preview-wrapper").appendChild(cartaDemo);
+}
+
+// =========================================================
+// 🔍 SCANNER DE STATUS (BUFFS E DEBUFFS VISUAIS)
+// =========================================================
+function atualizarCoresDeStatus() {
+    // Escaneia o campo do Jogador
+    playerField.forEach((cartaData, index) => {
+        let cardDOM = document.getElementById(`player-card-${index}`); // Ajuste para o ID/Data que você usa nas cartas em campo
+        if (cardDOM) aplicarCoresNoDOM(cardDOM, cartaData);
+    });
+
+    // Escaneia o campo do Inimigo
+    enemyField.forEach((cartaData, index) => {
+        let cardDOM = document.getElementById(`enemy-card-${index}`); // Ajuste para o ID/Data que você usa
+        if (cardDOM) aplicarCoresNoDOM(cardDOM, cartaData);
+    });
+}
+
+function aplicarCoresNoDOM(cardDOM, cartaData) {
+    let atkBox = cardDOM.querySelector('.hud-atk-box');
+    let defBox = cardDOM.querySelector('.hud-def-box');
+
+    // ⚡ LÓGICA DE BUFF/DEBUFF NO ATAQUE
+    if (atkBox && cartaData.baseAtk !== undefined) {
+        if (cartaData.atk > cartaData.baseAtk) {
+            atkBox.style.color = "#00ff00"; // Verde Neon (Buff)
+            atkBox.style.textShadow = "0 0 8px #00ff00";
+        } else if (cartaData.atk < cartaData.baseAtk) {
+            atkBox.style.color = "#ff3333"; // Vermelho (Debuff)
+            atkBox.style.textShadow = "0 0 8px #ff3333";
+        } else {
+            atkBox.style.color = ""; // Volta ao normal (CSS padrão)
+            atkBox.style.textShadow = "";
+        }
+        atkBox.innerText = `ATK:${cartaData.atk}`; // Garante que o número está atualizado
+    }
+
+    // ⚡ LÓGICA DE BUFF/DEBUFF NA DEFESA
+    if (defBox && cartaData.baseDef !== undefined) {
+        if (cartaData.def > cartaData.baseDef) {
+            defBox.style.color = "#00ff00"; // Verde Neon (Buff/Armor)
+            defBox.style.textShadow = "0 0 8px #00ff00";
+        } else if (cartaData.def < cartaData.baseDef) {
+            defBox.style.color = "#ff3333"; // Vermelho (Debuff/Dano)
+            defBox.style.textShadow = "0 0 8px #ff3333";
+        } else {
+            defBox.style.color = ""; // Volta ao normal
+            defBox.style.textShadow = "";
+        }
+        defBox.innerText = `DEF:${cartaData.def}`;
+    }
+}
+
+// =========================================================
+// 📥 MOTOR GLOBAL: COMPRA DE CARTAS
+// =========================================================
+function comprarCartas(owner, quantidade) {
+    for (let i = 0; i < quantidade; i++) {
+        if (owner === "player" && playerDeck.length > 0) {
+            let novaCartaData = playerDeck.pop(); 
+            let novaCartaDOM = createCard(novaCartaData); // Cria o HTML da carta
+            document.getElementById("hand").appendChild(novaCartaDOM); // Joga na mão
+            
+            // Atualiza os contadores
+            let deckCount = document.getElementById("cards-in-deck");
+            if(deckCount) deckCount.innerText = playerDeck.length;
+        }
+        // Lógica da IA (Enemy) se necessário:
+        else if (owner === "enemy" && enemyDeck.length > 0) {
+            enemyHand.push(enemyDeck.pop());
+        }
+    }
+    if (owner === "player") {
+        playSound("draw");
+        arrangeHand(); // Reorganiza o leque da mão
+    }
+}
+
+// =========================================================
+// 🗑️ MOTOR GLOBAL: DESTRUIÇÃO E CEMITÉRIO
+// =========================================================
+function destruirCartaNoCampo(cardDOM, owner) {
+    if (!cardDOM) return;
+
+    playSound("explosion"); // Coloque o som do seu jogo
+    
+    // Animação de desintegração (GSAP)
+    gsap.to(cardDOM, { 
+        scale: 0, rotation: 180, opacity: 0, duration: 0.5, 
+        onComplete: () => {
+            // Guarda no cemitério antes de apagar do HTML
+            let cardData = baseDeck.find(c => c.title === cardDOM.dataset.name);
+            if (cardData) graveyard[owner].push(cardData);
+            
+            cardDOM.remove(); // Apaga da existência!
+            
+            // Atualiza o contador visual do cemitério
+            let cemiterioCount = document.getElementById("cards-in-grave");
+            if (cemiterioCount && owner === "player") {
+                cemiterioCount.innerText = graveyard.player.length;
+                cemiterioCount.parentElement.style.animation = "fury-pulse-fixed 0.5s ease-in-out 2";
+            }
+        } 
+    });
+}
