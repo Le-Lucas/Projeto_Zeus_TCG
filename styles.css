@@ -39,7 +39,7 @@ body {
 .shimmer-text { text-transform: uppercase; background: linear-gradient(to right, #777 20%, #ff0000 50%, #777 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation: brilhoFluxo 4s linear infinite; }
 @keyframes brilhoFluxo { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
 .neon-label { font-size: 0.8rem; color: #ff3333; text-shadow: 0 0 8px #ff0000; font-weight: bold; text-transform: uppercase;}
-.cmd-btn { background: rgba(26, 0, 0, 0.8); color: white; border: 1px solid #ff0000; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; backdrop-filter: blur(2px); }
+.cmd-btn { background: rgba(26, 0, 0, 0.8); color: white; border: 1px solid #ff0000; padding: 12px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; backdrop-filter: blur(2px); }*
 .cmd-btn:hover { background: #440000; box-shadow: 0 0 20px #ff0000; }
 .open-btn { width: 100%; padding: 12px 0; font-size: 0.9rem; letter-spacing: 2px; text-align: center; cursor: pointer; background: linear-gradient(to right, #444 20%, #ff0000 50%, #444 80%); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; border: 1px solid #ff0000; animation: brilhoFluxo 4s linear infinite; font-weight: bold; text-transform: uppercase; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(2px);}
 
@@ -85,8 +85,33 @@ body {
 #board.theme-void { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(10,0,20,0.9) 100%), url("https://files.catbox.moe/n0kqle.png"); background-size: cover; background-position: center; box-shadow: inset 0 0 90px rgba(120, 0, 255, 0.5); }
 
 .field { display: flex; justify-content: center; gap: 8px; width: 100%; height: 165px; z-index: 50; align-items: center;}
-.slot { width: 115px; height: 165px; border: 2px dashed var(--arena-color); opacity: 0.4; display: flex; justify-content: center; align-items: center; position: relative; background: rgba(0,0,0,0.2);}
-.slot:hover { opacity: 1; border-style: solid; background: rgba(255,255,255,0.05); }
+/* =========================================================
+   ⚔️ SLOTS DO TABULEIRO (CORREÇÃO DE TRANSPARÊNCIA)
+   ========================================================= */
+
+.slot { 
+    width: 115px; 
+    height: 165px; 
+    border: 2px dashed var(--arena-color); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    position: relative; 
+    background: rgba(0,0,0,0.2);
+    /* ⚡ REMOVIDO: opacity: 0.4; (Ele deixava a carta transparente junto!) */
+    transition: all 0.3s ease;
+}
+
+/* ⚡ REGRA MÁGICA: O slot só fica com 40% de opacidade se NÃO tiver uma carta dentro! */
+.slot:not(:has(.card-base)) {
+    opacity: 0.4;
+}
+
+.slot:hover { 
+    opacity: 1; 
+    border-style: solid; 
+    background: rgba(255,255,255,0.05); 
+}
 
 .field-divider { width: 90%; height: 0px; border-top: 3px dashed var(--arena-color); margin: 40px 0 !important; position: relative; opacity: 0.6; box-shadow: 0 0 10px var(--arena-color); }
 #timeline-bar { position: absolute; top: -3px; left: 0; height: 3px; width: 100%; background: #ff0000; box-shadow: 0 0 15px #ff0000; transition: width 1s linear; }
@@ -105,12 +130,138 @@ body {
 @keyframes frameGlow { 0% { box-shadow: 0 0 10px var(--theme-glow); } 100% { box-shadow: 0 0 25px var(--theme-glow), 0 0 5px var(--theme-color); } }
 
 
-/* TEMA EAO */
-.card-eao .cyber-card-inner { box-shadow: -3px -3px 12px rgba(255, 170, 0, 0.5), 3px 3px 12px rgba(0, 255, 255, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.8); border-top: 2px solid #ffaa00; border-left: 2px solid #ffaa00; border-bottom: 2px solid #00ffff; border-right: 2px solid #00ffff; }
-.card-eao .cyber-title-bar { border-bottom: 1px solid rgba(255, 170, 0, 0.5); }
-.card-eao .cyber-title-text { color: #ffaa00; text-shadow: 0 0 5px #ffaa00; }
-.card-eao .orb-cost { background: radial-gradient(circle at 30% 30%, #ffcc00, #aa5500); border-color: #ffd700; }
-.card-eao .orb-type { background: radial-gradient(circle at 30% 30%, #00ffff, #0055aa); border-color: #aaffff; }
+/* UPGRADE TEMA EAO */
+.card-eao .cyber-card-inner {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(20, 20, 25, 0.95), rgba(5, 5, 10, 0.98));
+    /* Borda Dupla Camada: Ouro e Ciano */
+    border: 2px solid transparent;
+    background-image: linear-gradient(rgba(10, 10, 15, 1), rgba(10, 10, 15, 1)), 
+                      linear-gradient(135deg, #ffaa00, #00ffff);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    box-shadow: 0 0 25px rgba(255, 170, 0, 0.2), 
+                inset 0 0 30px rgba(0, 255, 255, 0.1);
+}
+
+/* Efeito de "Brilho de Varredura" (Passa uma luz pela carta periodicamente) */
+.card-eao .cyber-card-inner::after {
+    content: "";
+    position: absolute;
+    top: -150%; left: -150%;
+    width: 300%; height: 300%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: rotate(45deg);
+    animation: eao-sweep 6s infinite linear;
+    pointer-events: none;
+}
+
+@keyframes eao-sweep {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+.card-eao .cyber-title-text {
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #ffaa00, 0 0 20px rgba(255, 170, 0, 0.5);
+    filter: drop-shadow(2px 2px 0px #00ffff); /* Sombra secundária ciano para contraste */
+}
+.card-eao .orb-cost, .card-eao .orb-type {
+    box-shadow: 0 0 15px currentColor, inset 0 4px 8px rgba(255,255,255,0.4);
+    border-width: 3px;
+    backdrop-filter: blur(4px);
+}
+
+.card-eao .orb-cost { 
+    background: radial-gradient(circle at 30% 30%, #ffcc00, #884400); 
+    color: #ffaa00; 
+}
+
+.card-eao .orb-type { 
+    background: radial-gradient(circle at 30% 30%, #00ffff, #004466); 
+    color: #00ffff; 
+}
+.card-eao {
+    perspective: 1000px; /* Cria o ambiente 3D */
+}
+
+.card-eao .cyber-card-inner {
+    transform-style: preserve-3d;
+    transition: transform 0.5s ease;
+    /* Adiciona uma sombra projetada para dar altura */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px rgba(255, 170, 0, 0.1);
+}
+
+/* =========================================================
+   🛡️ BLINDAGEM VISUAL DAS CARTAS NO TABULEIRO (FIM DA TRANSPARÊNCIA)
+   ========================================================= */
+
+/* Estilo Base da Carta no Grid (Não-Selecionada) */
+.field .card-base {
+    /* ⚡ REGRA DE OURO: Fundo 100% Sólido e Escuro */
+    background: #0a0a0c !important; /* Um preto/chumbo profundo e opaco */
+    
+    /* Remove qualquer transparência antiga */
+    opacity: 1 !important; 
+    filter: none !important;
+
+    /* Aumenta o contraste da borda da raridade */
+    border: 2px solid var(--rarity-color) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5) !important;
+    
+    /* ⚡ Melhora a legibilidade dos textos */
+    color: #fff !important; 
+    text-shadow: 1px 1px 2px #000 !important;
+    
+    transition: all 0.2s ease-in-out;
+}
+
+/* 🟢 Texto do Nome e Descrição com Alto Contraste */
+.field .card-base .hud-card-name {
+    color: var(--rarity-color) !important; /* Nome brilha na cor da raridade */
+    text-shadow: 0 0 5px #000, 0 0 10px var(--rarity-color) !important;
+    border-bottom: 1px solid #333 !important;
+}
+
+.field .card-base .hud-card-desc {
+    color: #f0f0f0 !important; /* Texto branco/claro */
+    background: rgba(0,0,0,0.6) !important; /* Fundo escuro atrás do texto */
+    padding: 2px;
+}
+
+/* 🔴 BOXES DE STATUS (ATK/DEF) MAIS FORTES */
+.field .card-base .hud-atk-box, 
+.field .card-base .hud-def-box {
+    background: #000 !important; /* Fundo preto sólido */
+    border-width: 2px !important;
+    font-size: 12px !important; /* Texto um pouco maior */
+}
+
+/* Faz o Título e os Orbes "saltarem" da carta */
+.card-eao .cyber-title-bar, 
+.card-eao .orb-cost, 
+.card-eao .orb-type {
+    transform: translateZ(30px); /* Move 30px para "frente" do plano da carta */
+}
+.card-eao:hover .cyber-card-inner {
+    transform: rotateX(10deg) rotateY(-10deg); /* Inclinação suave */
+    box-shadow: -15px 15px 50px rgba(0,0,0,0.8), 0 0 30px rgba(0, 255, 255, 0.2);
+}
+.card-eao .cyber-card-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(125deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+    z-index: 5;
+}
+
+.card-eao:hover .cyber-card-inner::before {
+    transform: translateX(100%); /* O brilho "corre" a carta ao inclinar */
+}
 
 /* =========================================================
    📂 CONTROLE DA MÃO E DO CAMPO (GSAP FRIENDLY)
@@ -118,9 +269,7 @@ body {
 #hand { position: absolute !important; bottom: 20px !important; left: 50% !important; transform: translateX(-50%) !important; width: 90%; height: 180px; display: flex; justify-content: center; z-index: 500; overflow: visible !important; background: none !important; border: none !important;}
 #hand-indicator, .hand-toggle-btn { display: none !important; }
 
-/* Encaixa a carta perfeitamente no slot */
-.slot .card-base { position: absolute !important; top: 50% !important; left: 50% !important; margin: 0 !important; transform: translate(-50%, -50%) scale(0.60) !important; }
-.field .card-base:hover { transform: translate(-50%, -50%) scale(0.65) !important; box-shadow: 0 0 15px rgba(0, 255, 255, 0.5) !important; z-index: 15 !important; }
+
 
 /* =========================================================
    ✨ EFEITOS DE STATUS E SELEÇÃO
@@ -338,3 +487,614 @@ body.theme-void .timer-node.active { color: #b700ff; text-shadow: 0 0 12px #b700
 .log-player { color: #00ffff; text-shadow: 0 0 5px rgba(0,255,255,0.4); }
 .log-enemy { color: #ff0055; text-shadow: 0 0 5px rgba(255,0,85,0.4); }
 .log-system { color: #ffcc00; opacity: 0.8; }
+
+
+/* BLOCO DAS SKINS DA LOJA*/
+
+
+/*================================================================
+/* 🟢 SKIN: TERMINAL MATRIX ELITE (VERSÃO FINAL COMPLETA) */
+/*===============================================================*/
+
+.skin-hacker .card-base { 
+    border: 2px solid #00ff00; 
+    box-shadow: inset 0 0 20px rgba(0,255,0,0.2), 0 0 15px rgba(0,255,0,0.4);
+    background: rgba(0, 10, 0, 0.95);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease; /* Transição suave para o hover */
+}
+
+
+
+/* Nome com efeito de Flicker e Decodificação no Hover */
+.skin-hacker .hud-card-name { 
+    color: #00ff00; 
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-family: 'Courier New', monospace;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+    animation: hacker-flicker 4s infinite;
+    position: relative;
+    display: inline-block;
+}
+
+/* Camada de embaralhamento (Hover) */
+.skin-hacker .hud-card-name::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    color: #00ff00;
+    visibility: hidden;
+}
+
+/* Ativa o embaralhar quando passa o mouse no CARD */
+.skin-hacker .card-base:hover .hud-card-name::after {
+    visibility: visible;
+    animation: matrix-decode 0.4s steps(4) forwards;
+}
+
+/* Box de Custo */
+.skin-hacker .hud-cost-box { 
+    color: #00ff00; 
+    border: 1px solid #00ff00;
+    background: rgba(0, 255, 0, 0.1);
+    box-shadow: 0 0 8px #00ff00;
+    font-weight: bold;
+}
+
+/* Efeito visual no card ao dar hover */
+.skin-hacker .card-base:hover {
+    box-shadow: inset 0 0 30px rgba(0,255,0,0.4), 0 0 25px rgba(0,255,0,0.6);
+    transform: translateY(-5px); /* Dá um leve pulo */
+}
+
+/* ANIMAÇÕES */
+@keyframes hacker-flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.7; }
+    98% { opacity: 0.9; }
+}
+
+@keyframes matrix-decode {
+    0% { content: "&$#%@"; }
+    33% { content: "10110"; }
+    66% { content: "X_Z_Q"; }
+    100% { content: ""; visibility: hidden; }
+}
+/*===============================================================
+                             FIM SKIN MATRIX
+=================================================================*/
+
+/*================================================================
+              INICIO DA SKIN ALERTA CRITICO
+==================================================================*/
+/* 🔴 UPGRADE: ALERTA CRÍTICO (SCANLINE HORIZONTAL) */
+
+.skin-sangue .card-base { 
+    border: 2px solid #ff0055; 
+    position: relative;
+    overflow: hidden; /* Garante que a linha não saia do card */
+    box-shadow: inset 0 0 15px rgba(255, 0, 85, 0.4), 0 0 10px rgba(0,0,0,0.8);
+    background: #000; /* Fundo base caso a imagem demore a carregar */
+}
+
+/* A Linha de Laser/Scan */
+.skin-sangue .card-base::after {
+    content: "";
+    position: absolute;
+    top: -20%; /* Começa fora do card no topo */
+    left: 0;
+    width: 100%;
+    height: 15px; /* Espessura do feixe de luz */
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(255, 0, 85, 0.8), /* Cor principal do laser */
+        transparent
+    );
+    box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.8;
+    animation: critical-scan 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* Brilho extra na borda para acompanhar o tema */
+.skin-sangue .hud-card-name { 
+    color: #fff;
+    text-shadow: 0 0 10px #ff0055;
+    z-index: 11;
+}
+
+.skin-sangue .hud-cost-box {
+    z-index: 11;
+    background: #ff0055;
+    box-shadow: 0 0 10px #ff0055;
+}
+
+/* ANIMAÇÃO DA LINHA ATRAVESSANDO */
+@keyframes critical-scan {
+    0% {
+        top: -10%;
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    40%, 100% {
+        top: 110%; /* Desce até o final da carta */
+        opacity: 0;
+    }
+}
+
+/* ANIMAÇÃO DA LUZ GIRATÓRIA */
+@keyframes border-light-rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+/*=================================================================
+                FIM DA SKIN ALERTA CRITICO
+===================================================================*/
+
+/* 🟡 SKIN: ACESSO EXECUTIVO */
+.skin-ouro .card-base { 
+    border-color: #ffcc00; 
+    box-shadow: 0 0 20px rgba(255,204,0,0.8); 
+    background: linear-gradient(145deg, #1a1a1a, #3a2500); 
+}
+.skin-ouro .hud-cost-box { color: #000; background: #ffcc00; border-color: #ffcc00; font-weight: bold; }
+.skin-ouro .hud-card-name { color: #ffcc00; text-shadow: 0 0 8px #ffcc00; }
+/*=====================================================================================================================*/
+/* 🟣 SKIN: NEON VORTEX */
+.skin-vortex .card-base {
+    border: 2px solid #bc13fe;
+    background: #050008;
+    box-shadow: 0 0 20px #bc13fe, inset 0 0 30px rgba(188, 19, 254, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* O Vórtice no fundo (atrás da imagem) */
+.skin-vortex .card-base::before {
+    content: "";
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: repeating-conic-gradient(from 0deg, #050008 0deg 20deg, #bc13fe 25deg, #050008 30deg);
+    opacity: 0.15;
+    animation: vortex-rotate 10s linear infinite;
+    z-index: 1;
+}
+
+@keyframes vortex-rotate {
+    100% { transform: rotate(360deg); }
+}
+
+.skin-vortex .hud-card-name { color: #fff; text-shadow: 0 0 10px #bc13fe, 0 0 20px #bc13fe; }
+
+/*=====================================================================*/
+
+/* 🟢 SKIN: TOXIC WASTE */
+.skin-toxic .card-base {
+    border: 2px solid #39ff14;
+    background: #020a00;
+    box-shadow: 0 0 15px #39ff14;
+    position: relative;
+}
+
+/* Efeito de Bolhas Ácidas */
+.skin-toxic .card-base::after {
+    content: "";
+    position: absolute;
+    bottom: -10px; left: 0;
+    width: 100%; height: 40px;
+    background: radial-gradient(circle, #39ff14 10%, transparent 40%);
+    background-size: 30px 30px;
+    opacity: 0.4;
+    filter: blur(5px);
+    animation: toxic-bubbles 3s ease-in-out infinite;
+    z-index: 5;
+    pointer-events: none;
+}
+
+@keyframes toxic-bubbles {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+    50% { transform: translateY(-20px) scale(1.2); opacity: 0.6; }
+}
+
+.skin-toxic .hud-card-name { 
+    color: #39ff14; 
+    filter: drop-shadow(0 0 5px #1a5c0a);
+    letter-spacing: 1px;
+}
+
+/* =========================================================
+   ✨ TELA DE SELEÇÃO VIP (PADRÃO ZEUS STUDIOS)
+   ========================================================= */
+
+:root {
+    --neon-theme: #ffcc00; /* Cor dinâmica do personagem */
+}
+
+/* Blinda a tela para ocupar tudo e esconder o tabuleiro */
+#hero-screen {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: ;: 100%;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #050205 70%, #000000 100%);
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+    overflow: hidden;
+}
+/* ⚡ Esta classe é quem vai fazer a tela aparecer na hora certa */
+#hero-screen.active {
+    display: flex; 
+}
+
+/* Header do Saldo */
+#hero-header-top {
+    position: absolute;
+    top: 20px; left: 30px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #ccc;
+    z-index: 10;
+}
+
+/* Container Principal Dividido */
+#hero-content-split {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    padding: 0 50px;
+}
+
+/* 👻 LADO ESQUERDO: HOLOGRAMA GIGANTE */
+#ghost-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+}
+
+#ghost-image {
+    max-height: 60vh;
+    object-fit: contain;
+    filter: drop-shadow(0 0 20px var(--neon-theme));
+    transition: filter 0.4s ease;
+}
+
+#ghost-details {
+    margin-top: 10px;
+    max-width: 450px;
+}
+
+#ghost-name {
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    font-size: 4rem;
+    color: #fff;
+    text-shadow: 0 0 15px var(--neon-theme), 0 0 30px var(--neon-theme);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#ghost-role {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    color: #aaa;
+    letter-spacing: 4px;
+    margin: 5px 0 15px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+#ghost-desc {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: #ddd;
+    line-height: 1.4;
+}
+
+/* 📜 LADO DIREITO: LISTA LIMPA */
+#hero-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding-left: 40px;
+}
+
+.hero-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    transition: all 0.3s ease;
+}
+
+.hero-item:hover {
+    opacity: 0.8;
+}
+
+.hero-item.selected {
+    opacity: 1;
+    filter: grayscale(0);
+    transform: translateX(-10px) scale(1.05); /* Dá um leve destaque pra frente */
+}
+
+/* O anel do Avatar */
+.hero-avatar-ring {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    padding: 3px;
+    transition: all 0.3s ease;
+}
+
+.hero-item.selected .hero-avatar-ring {
+    border-color: var(--neon-theme);
+    box-shadow: 0 0 20px var(--neon-theme), inset 0 0 10px var(--neon-theme);
+}
+
+.hero-avatar-ring img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(0,0,0,0.5);
+}
+
+.hero-item-info {
+    font-family: 'Courier New', monospace;
+    text-align: left;
+}
+
+.hero-item-info h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.hero-item-info h4 span {
+    color: var(--item-color); /* Injetado via inline-style no HTML */
+}
+
+.hero-item-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Botões Inferiores Direita - Blindados */
+#hero-actions-bottom {
+    position: absolute;
+    bottom: 20px; 
+    right: 50px; /* Distância da borda direita */
+    display:flex;
+    flex-direction: row; /* Força eles a ficarem lado a lado */
+    gap: 15px;
+    z-index: 200;
+}
+
+/* ⚡ Força os botões a terem um tamanho padrão e elegante */
+#hero-actions-bottom .cmd-btn {
+    width: 260px !important; /* ⚡ A MÁGICA AQUI: Tamanho fixo para todos! Ajuste se precisar (ex: 220px, 260px) */
+    padding: 15px 10px;
+    white-space: nowrap; 
+    text-align: center; /* Garante que o texto fique bem no meio */
+}
+
+/* ⚡ BLINDAGEM DO TEXTO DO BOTÃO DE INICIAR */
+#btn-start {
+    -webkit-text-fill-color: currentColor !important; /* Destrói qualquer transparência fantasma */
+    color: var(--neon-theme) !important;
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+    text-shadow: 0 0 8px currentColor !important;
+    transition: all 0.3s ease;
+}
+
+#btn-start:hover {
+    background: var(--neon-theme) !important;
+    color: #000 !important; /* Fica preto quando passa o mouse por cima */
+    -webkit-text-fill-color: #000 !important;
+}
+
+
+/* =========================================================
+   📱 AJUSTES DO TABULEIRO QUANDO O MOTOR MOBILE ESTÁ ATIVO
+   ========================================================= */
+
+body.motor-expansivo-ativo .layout-battle {
+    /* Mudar para layout vertical se a tela for muito estreita? (Opcional) */
+}
+
+/* 1. CARTAS MAIORES NO GRID MOBILE (UX Premium) */
+body.motor-expansivo-ativo .slot .card-base {
+    /* Aumenta a escala de 0.65 (padrão) para 0.85 no mobile */
+    transform: translate(-50%, -50%) scale(0.85) !important; 
+}
+
+body.motor-expansivo-ativo .field .card-base:hover {
+    /* No toque, o zoom é desativado para não tremer */
+    transform: translate(-50%, -50%) scale(0.85) !important; 
+}
+
+/* 2. SLOTS (GRELHA) MAIORES PARA FACILITAR O TOQUE */
+body.motor-expansivo-ativo .slot {
+    width: 140px; /* Aumenta a hitbox do slot */
+    height: 190px;
+}
+
+/* 3. MÃO DE CARTAS MOBILE (Reforço) */
+body.motor-expansivo-ativo #hand {
+    /* Mão fica gigante e centralizada para o polegar */
+    transform: translateX(-50%) scale(1.3) !important;
+    bottom: 20px !important; 
+    z-index: 999;
+}
+/* Efeito de Hover (Passar o Mouse) no Grid */
+.field .card-base:hover {
+    transform: translate(-50%, -50%) scale(0.7) !important; /* Dá um leve zoom */
+    box-shadow: 0 0 25px var(--rarity-color) !important; /* Brilho intenso da cor da carta */
+    z-index: 20 !important;
+}
+
+/* ⚔️ CARTA SELECIONADA PARA ATACAR (Borda Vermelha Pulsante) */
+.card-base.attacker-selected {
+    border-color: #ff003c !important; /* Vermelho Alerta */
+    box-shadow: 0 0 30px #ff003c, inset 0 0 15px #ff003c !important;
+    animation: attack-pulse 1s infinite alternate;
+}
+
+@keyframes attack-pulse {
+    0% { box-shadow: 0 0 15px #ff003c; }
+    100% { box-shadow: 0 0 35px #ff003c, 0 0 10px #fff; }
+}
+
+/* =========================================================
+   🛡️ BLINDAGEM VISUAL DAS CARTAS NO TABULEIRO (FIM DA TRANSPARÊNCIA)
+   ========================================================= */
+
+/* Estilo Base da Carta no Grid (Não-Selecionada) */
+.field .card-base {
+    /* ⚡ REGRA DE OURO: Fundo 100% Sólido e Escuro */
+    background: #0a0a0c !important; /* Um preto/chumbo profundo e opaco */
+    
+    /* Remove qualquer transparência antiga */
+    opacity: 1 !important; 
+    filter: none !important;
+
+    /* Aumenta o contraste da borda da raridade */
+    border: 2px solid var(--rarity-color) !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8), inset 0 0 15px rgba(0,0,0,0.5) !important;
+    
+    /* ⚡ Melhora a legibilidade dos textos */
+    color: #fff !important; 
+    text-shadow: 1px 1px 2px #000 !important;
+    
+    transition: all 0.2s ease-in-out;
+}
+
+/* 🟢 Texto do Nome e Descrição com Alto Contraste */
+.field .card-base .hud-card-name {
+    color: var(--rarity-color) !important; /* Nome brilha na cor da raridade */
+    text-shadow: 0 0 5px #000, 0 0 10px var(--rarity-color) !important;
+    border-bottom: 1px solid #333 !important;
+}
+
+.field .card-base .hud-card-desc {
+    color: #f0f0f0 !important; /* Texto branco/claro */
+    background: rgba(0,0,0,0.6) !important; /* Fundo escuro atrás do texto */
+    padding: 2px;
+}
+
+/* 🔴 BOXES DE STATUS (ATK/DEF) MAIS FORTES */
+.field .card-base .hud-atk-box, 
+.field .card-base .hud-def-box {
+    background: #000 !important; /* Fundo preto sólido */
+    border-width: 2px !important;
+    font-size: 12px !important; /* Texto um pouco maior */
+}
+
+
+
+Iniciar teste gratuito
+
+Compartilhar
+Lite
+Obrigado por enviar o seu CSS original (pasted_content_4.txt). Analisando o código, identifiquei que o problema do zoom ocorre porque o #zeus-engine-container está usando position: absolute e o container #hero-actions-bottom está configurado com flex-direction: column, o que empilha os botões verticalmente. Vou gerar uma versão corrigida e consolidada do seu CSS para resolver ambos os problemas.
+Corrigi o zoom e o alinhamento dos botões ajustando o CSS, usando posições fixas e flexbox. Próximo passo: aplicar o CSS consolidado ao projeto.
+
+Lite
+Analisei o seu CSS original (pasted_content_4.txt) e identifiquei os conflitos que causavam o zoom incorreto e o desalinhamento dos botões.
+Eu preparei o arquivo final_styles_fix.css com as correções definitivas:
+Correção do Zoom (Fullscreen): O problema ocorria porque o #zeus-engine-container estava com position: absolute. Ao mudar para position: fixed e travar o transform-origin: center center, o motor de escala do seu JS não sofrerá mais saltos de zoom ao entrar em tela cheia.
+Botões Lado a Lado (Hero-Screen): Ajustei o container #hero-actions-bottom para ficar centralizado na parte inferior da tela (left: 50% com translateX(-50%)). Os botões de Mercado, Forjar Deck e Iniciar Simulação agora ficarão perfeitamente alinhados lado a lado com um espaçamento de 20px entre eles.
+Estabilização Visual: Adicionei regras de prioridade (!important) para garantir que o CSS do seu HTML não sobrescreva essas correções críticas, especialmente as dimensões do motor de escala (1366x768).
+Instruções: Copie o conteúdo do arquivo final_styles_fix.css e cole-o no final do seu arquivo styles.css. Isso aplicará as correções sobre o código antigo e resolverá os problemas visuais.
+final_styles_fix.css
+Código · 2.00 KB
+Ver todos os arquivos nesta tarefa
+Como foi este resultado?
+pasted_content_5.txt
+Texto · 48.67 KB
+me ajuda a achar o pq quando desce uma carta em campo ela fica com transparencia 
+Lite
+Vou analisar o seu arquivo script.js (pasted_content_5.txt) para identificar por que as cartas estão ficando transparentes ao serem colocadas no campo. Geralmente, isso ocorre devido a uma configuração de opacity no GSAP ou uma classe CSS que não é removida após a animação de "deploy". Vou investigar agora.
+Identifiquei que a opacidade das cartas ao serem colocadas está relacionada a animações no script. Apesar de usar GSAP, ela pode estar sendo redefinida ou não removida. Planejo investigar esses trechos.
+
+Lite
+Identifiquei a causa da transparência nas cartas. O problema ocorre devido a um conflito entre as animações do GSAP (no script.js) e as regras de estilo das skins no seu CSS.
+As principais causas encontradas foram:
+Animação de Compra (drawCard): A função inicia a carta com opacity: 0 e, em alguns casos de rede ou lag, o GSAP não completa a transição para opacity: 1 ao mover a carta para o campo.
+Skins com Transparência: Algumas skins (como a skin-hacker) usam rgba(0, 10, 0, 0.95), o que permite que o fundo do tabuleiro apareça através da carta, dando a impressão de desbotamento.
+Filtros de Exaustão: A classe .exhausted estava aplicando filtros que alteravam a percepção visual da opacidade.
+Solução: Preparei o arquivo card_opacity_fix.css com regras de "força bruta" (!important) que garantem que qualquer carta no campo (.field .card-base) tenha sempre 100% de opacidade e um fundo preto sólido, independentemente da skin ou animação anterior.
+Instruções: Adicione o conteúdo do card_opacity_fix.css ao final do seu arquivo de estilos. Isso travará a opacidade das cartas no campo e impedirá que fiquem transparentes.
+card_opacity_fix.css
+Código · 1.49 KB
+Ver todos os arquivos nesta tarefa
+Tarefa concluída
+Como foi este resultado?
+Sugestões de acompanhamento
+
+
+
+
+card_opacity_fix.css
+/* 
+   =========================================================
+   🛠️ CORREÇÃO DE TRANSPARÊNCIA: CARTAS NO CAMPO (V1.0)
+   ========================================================= 
+*/
+
+/* 1. Força a opacidade total em todas as cartas que não estão na mão */
+.field .card-base, 
+.slot .card-base,
+#player-field .card-base,
+#enemy-field .card-base {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background-color: #0a0a0c !important; /* Fundo sólido para evitar transparência do elemento pai */
+    filter: none !important; /* Remove filtros que podem causar desbotamento */
+}
+
+/* 2. Garante que o container interno da carta também seja opaco */
+.card-base .cyber-card-inner,
+.card-base .hud-card-image {
+    opacity: 1 !important;
+    background-color: inherit;
+}
+
+/* 3. Ajuste para cartas exaustas (ZzZ) */
+/* Se você quiser que elas fiquem um pouco escuras mas NÃO transparentes */
+.card-base.exhausted {
+    filter: brightness(0.7) contrast(1.2) !important; /* Escurece em vez de dar opacity */
+    opacity: 1 !important;
+}
+
+/* 4. Prevenção de conflito com animações GSAP */
+/* Esta regra garante que, após qualquer animação, a carta volte a ser 100% opaca */
+.card-base {
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* 5. Correção específica para skins que usam RGBA no background */
+.skin-hacker .card-base,
+.skin-sangue .card-base,
+.skin-vortex .card-base,
+.skin-toxic .card-base {
+    background-color: #000 !important; /* Fundo preto sólido por trás da skin */
+}
+Problema com IA jogando card game sem descer cartas - Manus
