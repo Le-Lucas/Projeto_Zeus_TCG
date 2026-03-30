@@ -471,18 +471,18 @@ const baseDeck = [
     // ==========================================
     { title: "Operativo Vácuo", tipo: "humano", raridade: "rara", custo: 3, atk: 3, def: 2, efeito: "silencio_aleatorio", text: "Grito de Guerra: Silencia uma tropa inimiga aleatória, anulando os seus efeitos.", img: "./vacuo.jpg" },
     { title: "Unidade Hazmat", tipo: "humano", raridade: "epica", custo: 4, atk: 2, def: 6, efeito: "aprisionar_slot", text: "Aprisiona um slot. Cartas nele não podem atacar enquanto esta unidade viver.", img: "./hazmat.jpg" },
-    { title: "Faxineiro de Provas", tipo: "humano", raridade: "rara", custo: 2, atk: 2, def: 2, efeito: "faxineiro", text: "Quando esta unidade destrói um inimigo, rouba a carta para a sua mão.", img: "./faxineiro.jpg" },
-    { title: "Interceptador de Anomalias", tipo: "humano", raridade: "epica", custo: 5, atk: 4, def: 5, efeito: "interceptador", text: "Sempre que você jogar um Feitiço, causa 2 de dano a um inimigo aleatório.", img: "./interceptador.jpg" },
-    { title: "Drone Sombra", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "taxa_automato", text: "Aura: Enquanto estiver em campo, os Autômatos inimigos custam +1.", img: "./drone_sombra.jpg" },
+    { title: "Faxineiro de Provas", tipo: "humano", raridade: "rara", custo: 2, atk: 2, def: 2, efeito: "faxineiro", text: "Quando esta unidade destrói um inimigo, rouba a carta para a sua mão.", img: "./faxineiro.png" },
+    { title: "Interceptador de Anomalias", tipo: "humano", raridade: "epica", custo: 5, atk: 4, def: 5, efeito: "interceptador", text: "Sempre que você jogar um Feitiço, causa 2 de dano a um inimigo aleatório.", img: "./interceptador.png" },
+    { title: "Drone Sombra", tipo: "automato", raridade: "comum", custo: 1, atk: 1, def: 1, efeito: "taxa_automato", text: "Aura: Enquanto estiver em campo, os Autômatos inimigos custam +1.", img: "./sombra.png" },
 
     // ==========================================
     // 📜 FEITIÇOS (PROTOCOLOS DE LIMPEZA)
     // ==========================================
-    { title: "Protocolo Negação Total", tipo: "feitico", raridade: "rara", custo: 4, atk: 0, def: 0, efeito: "negacao_total", text: "Reduz o ATK e a DEF de todas as unidades Mutantes em -2/-2.", img: "./negacao.jpg" },
-    { title: "Varredura Amnésia", tipo: "feitico", raridade: "epica", custo: 3, atk: 0, def: 0, efeito: "varredura_amnesia", text: "O oponente deve escolher 2 cartas da mão e embaralhá-las de volta no deck.", img: "./amnesia.jpg" },
-    { title: "Esterilização de Setor", tipo: "feitico", raridade: "lendaria", custo: 6, atk: 0, def: 0, efeito: "esterilizacao_setor", text: "Destrói TODAS as unidades Mutantes no campo de batalha.", img: "./esterilizacao.jpg" },
-    { title: "Extração de Emergência", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "extracao_emergencia", text: "Retorna uma carta do campo de batalha para a mão do seu dono.", img: "./extracao_emergencia.jpg" },
-    { title: "Relatório Classificado", tipo: "feitico", raridade: "epica", custo: 2, atk: 0, def: 0, efeito: "relatorio_classificado", text: "Rouba as 2 cartas do topo do deck inimigo diretamente para a sua mão.", img: "./relatorio.jpg" },
+    { title: "Protocolo Negação Total", tipo: "feitico", raridade: "rara", custo: 4, atk: 0, def: 0, efeito: "negacao_total", text: "Reduz o ATK e a DEF de todas as unidades Mutantes em -2/-2.", img: "./negacao.png" },
+    { title: "Varredura Amnésia", tipo: "feitico", raridade: "epica", custo: 3, atk: 0, def: 0, efeito: "varredura_amnesia", text: "O oponente deve escolher 2 cartas da mão e embaralhá-las de volta no deck.", img: "./amnesia.png" },
+    { title: "Esterilização de Setor", tipo: "feitico", raridade: "lendaria", custo: 6, atk: 0, def: 0, efeito: "esterilizacao_setor", text: "Destrói TODAS as unidades Mutantes no campo de batalha.", img: "./esterilizacao.png" },
+    { title: "Extração de Emergência", tipo: "feitico", raridade: "comum", custo: 2, atk: 0, def: 0, efeito: "extracao_emergencia", text: "Retorna uma carta do campo de batalha para a mão do seu dono.", img: "./extracao_emergencia.png" },
+    { title: "Relatório Classificado", tipo: "feitico", raridade: "epica", custo: 2, atk: 0, def: 0, efeito: "relatorio_classificado", text: "Rouba as 2 cartas do topo do deck inimigo diretamente para a sua mão.", img: "./relatorio.png" },
     // ==========================================
     // 🧬 EQUIPE DO LABORATÓRIO (Mutação, Veneno e Sacrifício)
     // ==========================================
