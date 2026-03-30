@@ -1318,7 +1318,7 @@ function handleHeroClick(heroElement, owner) {
         }
         
         // --- O ATAQUE (Se passou pela trava, o golpe entra!) ---
-        let danoDoAtacante = parseInt(selectedAttacker.dataset.atk) || 0;
+        let danoDoAtacante = parseInt(selectedAttacker.dataset.attack) || 0;
         
         // 1. Tira a vida do Herói Inimigo
         enemyLife -= danoDoAtacante;
