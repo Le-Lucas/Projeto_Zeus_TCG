@@ -494,12 +494,12 @@ const baseDeck = [
     { title: "Cadete de Patrulha", tipo: "soldado", raridade: "comum", custo: 1, atk: 1, def: 3, efeito: "provocar", img: "https://files.catbox.moe/ui0skk.png" },
     { title: "Escudeiro de Elite", tipo: "soldado", raridade: "comum", custo: 3, atk: 2, def: 5, efeito: "escudo_divino", img: "https://files.catbox.moe/ebt0u6.png" },
     { title: "Barreira Eletrônica", tipo: "estrutura", raridade: "comum", custo: 2, atk: 0, def: 7, efeito: "provocar", img: "https://files.catbox.moe/b097ur.png" },
-    { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "investida", img: "https://files.catbox.moe/lc3rez.png" },
+    { title: "Unidade K-9 Cibernética", tipo: "automato", raridade: "comum", custo: 2, atk: 3, def: 1, efeito: "ataque_duplo", img: "https://files.catbox.moe/lc3rez.png" },
     { title: "Interceptor de Zeus", tipo: "automato", raridade: "comum", custo: 2, atk: 2, def: 3, efeito: "provocar", img: "https://files.catbox.moe/05e01v.png" },
     { title: "Cobaia Estágio 1", tipo: "mutante", raridade: "rara", custo: 4, atk: 3, def: 6, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
     { title: "Sobrevivente Rebelde", tipo: "tropa", raridade: "rara", custo: 4, atk: 5, def: 2, efeito: "ataque_duplo", img: "https://i.postimg.cc/bNQHh5Xx/Sobrevivente-Rebelde.png" },
     { title: "Exoesqueleto Mk.II", tipo: "tropa", raridade: "rara", custo: 6, atk: 5, def: 5, efeito: "nenhum", img: "https://i.postimg.cc/qMfXWTFQ/Exoesqueleto-Mk-II.png" },
-    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
+    { title: "Médico de Combate", tipo: "tropa", raridade: "rara", custo: 3, atk: 1, def: 4, efeito: "cura_turno_2", img: "https://i.postimg.cc/65sLFXPh/Medico-de-Combate.png" },
     { title: "Mutante Instável", tipo: "mutante", raridade: "rara", custo: 5, atk: 4, def: 5, efeito: "regeneracao", img: "https://i.postimg.cc/mg1SnrL7/Mutante-Instavel.png" },
     { title: "Hacker do Mainframe", tipo: "humano", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "roubo_energia", img: "https://files.catbox.moe/tl6rvy.png" },
     { title: "Blindado de Transporte", tipo: "automato", raridade: "rara", custo: 5, atk: 3, def: 8, efeito: "evocar_recruta", img: "https://files.catbox.moe/997fyd.png" },
@@ -510,7 +510,7 @@ const baseDeck = [
     { title: "General Mão de Ferro", tipo: "humano", raridade: "lendaria", custo: 7, atk: 6, def: 7, efeito: "aura_defesa", img: "https://files.catbox.moe/wkfzj3.png" },
     { title: "O Punho da Resistência", tipo: "automato", raridade: "lendaria", custo: 7, atk: 7, def: 7, efeito: "furia", img: "https://files.catbox.moe/nuxefh.png" },
     { title: "Pacificador V.9", tipo: "automato", raridade: "lendaria", custo: 8, atk: 9, def: 9, efeito: "anular_efeito", img: "https://files.catbox.moe/7cjywl.png" },
-    { title: "Enxame de Nanobots", tipo: "automato", raridade: "rara", custo: 4, atk: 2, def: 2, efeito: "sinergia_automato", text: "Ganha +1/+1 por Autômato.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKmEat6w4aafi5kCkFL9_gVZvCcdfsufUR6A&s" },
+    { title: "Enxame de Nanobots", tipo: "automato", raridade: "rara", custo: 4, atk: 1, def: 3, efeito: "sinergia_automato", text: "Ganha +1/+1 por Autômato.", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKmEat6w4aafi5kCkFL9_gVZvCcdfsufUR6A&s" },
     { title: "Esquadrão Tático", tipo: "humano", raridade: "comum", custo: 4, atk: 3, def: 2, efeito: "tropa_coordenada", text: "Invoca Aegis ou +1/+1.", img: "https://files.catbox.moe/vynjlp.png" }, 
     { title: "Clone Instável", tipo: "mutante", raridade: "comum", custo: 2, atk: 2, def: 1, efeito: "provocar", img: "https://i.postimg.cc/wThcprKQ/Cobaia-Estagio-1.png" },
     { title: "Kit Médico Tático", tipo: "feitico", raridade: "comum", custo: 1, atk: 0, def: 0, efeito: "cura_3", img: "https://i.postimg.cc/DyqdTNV5/Kit-Medico-Tatico.png" },
@@ -530,10 +530,10 @@ const baseDeck = [
     //=======================================================
                  // ESQUADRÃO EAO
     //=======================================================
-    { title: "Branko", tipo: "tropa", raridade: "rara", custo: 7, atk: 2, def: 8, efeito: "atropelar, furia", text: "Fúria Crescente: Sempre que sobrevive a dano, ganha +2 de ATK.", img: "./branko.png" },
+    { title: "Branko", tipo: "tropa", raridade: "rara", custo: 7, atk: 2, def: 8, efeito: "atropelar, furia,Colmeia", text: "Fúria Crescente: Sempre que sobrevive a dano, ganha +2 de ATK.", img: "./branko.png" },
     { title: "Nyx", tipo: "tropa", raridade: "rara", custo: 6, atk: 4, def: 4, efeito: "furtividade, Colmeia", text: "Colmeia: Grito de Guerra - Ganha +1/+1 por cada EAO aliado e copia palavra-chave.", img: "./nyx.png" },
     { title: "Iris", tipo: "tropa", raridade: "rara", custo: 7, atk: 4, def: 6, efeito: "invocar_ataque, Colmeia", text: "Ao atacar, invoca Drone Lv.1. Colmeia: Ganha +1/+1 por EAO aliado e copia palavra.", img: "./iris.png" },
-    { title: "Leon", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 3, def: 6, efeito: "cura_area", text: "Médico de Combate: Ao final do turno, cura +3 em todos os aliados.", img: "./leon.png" },
+    { title: "Leon", tipo: "tropa", raridade: "lendaria", custo: 8, atk: 3, def: 6, efeito: "cura_area,Colmeia", text: "Médico de Combate: Ao final do turno, cura +3 em todos os aliados.", img: "./leon.png" },
     { title: "Rourke", tipo: "tropa", raridade: "lendaria", custo: 9, atk: 7, def: 7, efeito: "escudo_divino, Colmeia", text: "Grito de Guerra: Concede +2/+2 aos aliados. Colmeia: Ganha status por EAO.", img: "./rourke.png" },
     
     // ==========================================
